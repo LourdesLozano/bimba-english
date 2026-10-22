@@ -97,6 +97,60 @@ vocabTopics.push(
     ["Celebraciones", [["host", "anfitrión", "She is hosting a dinner party."], ["crowd", "multitud", "There was a big crowd."], ["fireworks", "fuegos artificiales", "We watched the fireworks."]]]
   ] }
 );
+const cefrCore = {
+  A1: "be have do go come get make take give know want need like love live work study eat drink sleep wake up start finish open close help ask answer say tell see look hear listen speak read write understand use buy pay find put bring call feel try wait meet play watch walk run sit stand",
+  A2: "agree decide explain remember forget choose change improve learn teach travel arrive leave return carry wear cook clean wash move visit invite enjoy happen plan hope believe worry seem become build break send receive spend save borrow lend order book miss lose win happen continue practise prepare repair share suggest offer promise invite describe compare collect follow check decide",
+  B1: "achieve avoid manage require provide include develop reduce increase support accept refuse mention recommend replace depend involve create imagine solve recognise realise notice consider prefer encourage prevent allow complain apologise arrange attend apply deliver discuss expect express handle introduce organise participate perform publish remind respond review search select succeed suffer train",
+  B2: "analyse assess assume clarify commit convince demonstrate establish estimate identify indicate interpret negotiate obtain perceive propose pursue reflect resolve retain reveal arise attribute contribute coordinate implement justify monitor overcome predict emphasise distinguish adapt advocate calculate collaborate confirm criticise debate eliminate ensure evaluate generate illustrate imply modify prioritise recommend"
+    + "accomplish acquire administer alter anticipate assign compensate concentrate conduct confront consist constrain consult consume contradict convert cooperate decline derive detect distribute dominate draft edit enhance exceed expand facilitate formulate guarantee hesitate infer initiate inspect integrate interrupt investigate maintain manipulate motivate persuade process recover reinforce reject release restore restrict tolerate transform undertake verify withdraw"
+    ,
+  C1: "acknowledge articulate comprehend conceive contradict deduce differentiate elaborate envisage exacerbate facilitate fluctuate formulate hypothesise innovate integrate manipulate mediate mitigate reinforce scrutinise speculate substantiate transcend undermine utilise validate withdraw withhold anticipate circumvent consolidate constitute contemplate correlate deteriorate devise differentiate discriminate distort diversify eradicate evoke exacerbate exemplify exploit extract fluctuate foster generalise hinder inhibit induce infer inhibit invoke mediate merge offset prevail provoke reconcile rectify reinforce reiterate simulate"
+};
+const irregularForms = {
+  be: ["be", "is", "was", "being"], have: ["have", "has", "had", "having"], do: ["do", "does", "did", "doing"],
+  go: ["go", "goes", "went", "going"], come: ["come", "comes", "came", "coming"], get: ["get", "gets", "got", "getting"],
+  make: ["make", "makes", "made", "making"], take: ["take", "takes", "took", "taking"], give: ["give", "gives", "gave", "giving"],
+  know: ["know", "knows", "knew", "knowing"], see: ["see", "sees", "saw", "seeing"], say: ["say", "says", "said", "saying"],
+  tell: ["tell", "tells", "told", "telling"], speak: ["speak", "speaks", "spoke", "speaking"], read: ["read", "reads", "read", "reading"],
+  write: ["write", "writes", "wrote", "writing"], find: ["find", "finds", "found", "finding"], bring: ["bring", "brings", "brought", "bringing"],
+  buy: ["buy", "buys", "bought", "buying"], pay: ["pay", "pays", "paid", "paying"], feel: ["feel", "feels", "felt", "feeling"],
+  think: ["think", "thinks", "thought", "thinking"], leave: ["leave", "leaves", "left", "leaving"], lose: ["lose", "loses", "lost", "losing"],
+  win: ["win", "wins", "won", "winning"], teach: ["teach", "teaches", "taught", "teaching"], learn: ["learn", "learns", "learnt", "learning"]
+};
+const verbForms = base => irregularForms[base] || (base.includes(" ") ? [base] : [base, `${base}s`, `${base}ed`, `${base}ing`]);
+const generatedLexicon = Object.entries(cefrCore).flatMap(([level, words]) =>
+  words.split(" ").flatMap(word => verbForms(word).map((form, index) => ({
+    word: form, meaning: index === 0 ? `verbo: ${word}` : `forma de ${word}`,
+    type: "verb", level, example: index === 3 ? `I am ${form} today.` : `I ${form} every day.`
+  })))
+);
+const catalogFromTopics = vocabTopics.flatMap(topic => topic.sections.flatMap(([section, words]) =>
+  words.map(([word, meaning, example], index) => ({
+    word, meaning, example, topic: topic.title, section, level: ["A1", "A2", "B1", "B2", "C1"][index % 5],
+    type: /^(reliable|outgoing|thoughtful|relieved|annoyed|grateful|tall|curly|casual|ripe|balanced|swollen|loose|durable|comfortable|affordable|humid|available|awkward|brilliant)$/.test(word) ? "adjective" : /ly$/.test(word) ? "adverb" : /^(in|on|at|for|from|to|with|by|of)$/.test(word) ? "preposition" : /^(follow up|figure out|check in|take off|look after)$/.test(word) ? "phrasal verb" : "noun"
+  }))
+));
+const grammarLexicon = [
+  ["always", "siempre", "I always practise in the morning", "adverb", "A1"], ["usually", "normalmente", "I usually walk to work.", "adverb", "A1"],
+  ["often", "a menudo", "We often cook together.", "adverb", "A1"], ["already", "ya", "I have already finished.", "adverb", "A2"],
+  ["carefully", "con cuidado", "Read the instructions carefully.", "adverb", "B1"], ["however", "sin embargo", "However, we decided to continue.", "adverb", "B1"],
+  ["in", "en/dentro de", "I live in Madrid.", "preposition", "A1"], ["on", "en/sobre", "The meeting is on Monday.", "preposition", "A1"],
+  ["at", "en/a", "Meet me at the station.", "preposition", "A1"], ["since", "desde", "I have worked here since June.", "preposition", "A2"],
+  ["although", "aunque", "Although it was late, we continued.", "conjunction", "B1"], ["despite", "a pesar de", "Despite the rain, we went out.", "preposition", "B2"],
+  ["reliable", "fiable", "She is a reliable colleague.", "adjective", "A2"], ["patient", "paciente", "You need to be patient.", "adjective", "A2"],
+  ["confident", "seguro de sí mismo", "I feel more confident now.", "adjective", "B1"], ["effective", "eficaz", "This is an effective method.", "adjective", "B1"],
+  ["challenging", "exigente", "The exercise was challenging.", "adjective", "B1"], ["outstanding", "excelente", "She did an outstanding job.", "adjective", "C1"],
+  ["look after", "cuidar de", "Can you look after my dog?", "phrasal verb", "A2"], ["find out", "averiguar", "I need to find out the answer.", "phrasal verb", "A2"],
+  ["carry on", "continuar", "Please carry on with your work.", "phrasal verb", "B1"], ["work out", "resolver / hacer ejercicio", "We will work out a solution.", "phrasal verb", "B1"],
+  ["bring up", "mencionar / criar", "She brought up an important point.", "phrasal verb", "B2"], ["rule out", "descartar", "We cannot rule out that possibility.", "phrasal verb", "C1"]
+].map(([word, meaning, example, type, level]) => ({ word, meaning, example, type, level }));
+const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...generatedLexicon];
+const vocabularyPartOfSpeech = [
+  ["all", "Todas"], ["noun", "Sustantivos"], ["verb", "Verbos"], ["adjective", "Adjetivos"],
+  ["adverb", "Adverbios"], ["preposition", "Preposiciones"], ["phrasal verb", "Phrasal verbs"]
+];
+const vocabularyLevels = ["all", "A1", "A2", "B1", "B2", "C1"];
+const getCatalogWord = word => vocabularyCatalog.find(item => item.word.toLowerCase() === word.toLowerCase());
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
@@ -211,7 +265,8 @@ function home() {
   <div class="section-head"><h2>Tu menú de aprendizaje</h2></div><div class="cards">
   <div class="lesson-card"><div class="lesson-icon">🎧</div><h3>Escucha y entiende</h3><p class="muted">Un diálogo de la vida real con audio lento y natural.</p><button class="btn secondary" data-action="listen">Practicar escucha</button></div>
   <div class="lesson-card"><div class="lesson-icon">💬</div><h3>Habla sin miedo</h3><p class="muted">Responde en voz alta y recibe una corrección amable.</p><button class="btn secondary" data-action="speak">Practicar conversación</button></div>
-  <div class="lesson-card"><div class="lesson-icon">🧠</div><h3>Repasa lo importante</h3><p class="muted">Tu memoria sabe cuándo necesitas volver a ver cada palabra.</p><button class="btn secondary" data-view="vocabulary">Repasar palabras</button></div></div>`;
+  <div class="lesson-card"><div class="lesson-icon">🧠</div><h3>Repasa lo importante</h3><p class="muted">Tu memoria sabe cuándo necesitas volver a ver cada palabra.</p><button class="btn secondary" data-view="vocabulary">Repasar palabras</button></div>
+  <div class="lesson-card"><div class="lesson-icon">✎</div><h3>Practica con ejercicios</h3><p class="muted">Traduce, completa y ordena frases por nivel y categoría.</p><button class="btn secondary" data-view="practice">Practicar palabras</button></div></div>`;
 }
 const topics = [
   { id: "work", icon: "💼", title: "Inglés para el trabajo", description: "Reuniones, emails y hablar con clientes.", subs: ["Reuniones", "Emails", "Small talk", "Presentaciones", "Llamadas", "Entrevistas"] },
@@ -233,7 +288,8 @@ const topicExamples = {
 };
 function lesson(id) {
   const item = curriculum.find(l => l.id === id) || curriculum[0];
-  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><p class="muted">${item.description}</p><div class="card"><span class="tag">Regla útil</span><h3>${item.tip}</h3><hr><h2 class="selectable-phrase">${item.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2>${audioPlayer(item.phrase)}<p class="muted small">Escucha, repite y pulsa cualquier palabra para guardarla.</p><label style="margin-top:16px">Escribe una frase parecida<textarea id="writing-answer" placeholder="Escribe aquí tu ejemplo en inglés..."></textarea></label><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Corregir mi frase</button><div id="writing-feedback"></div><h3>Mini reto</h3><p>Construye o di una frase parecida usando este patrón en tu vida real.</p><button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button></div></div>`;
+  const related = vocabularyCatalog.filter(word => item.phrase.toLowerCase().includes(word.word.toLowerCase())).slice(0, 4);
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><p class="muted">${item.description}</p><div class="card"><span class="tag">Regla útil</span><h3>${item.tip}</h3><p class="muted">Palabras conectadas: ${related.length ? related.map(word => `<button class="word-chip" data-action="save-word" data-word="${escapeHtml(word.word)}">${escapeHtml(word.word)}</button>`).join(" ") : "guarda los términos nuevos de esta frase."}</p><hr><h2 class="selectable-phrase">${item.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2>${audioPlayer(item.phrase)}<p class="muted small">Escucha, repite y pulsa cualquier palabra para guardarla.</p><label style="margin-top:16px">Escribe una frase parecida<textarea id="writing-answer" placeholder="Escribe aquí tu ejemplo en inglés..."></textarea></label><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Corregir mi frase</button><div id="writing-feedback"></div><h3>Mini reto</h3><p>Construye o di una frase parecida usando este patrón en tu vida real.</p><button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button></div></div>`;
 }
 function learn() {
   content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>¿Qué quieres aprender hoy?</h1><p class="muted">Bimba te recomendará el siguiente paso según tu objetivo, nivel y lo que ya hayas practicado.</p><div class="cards">${topics.map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div>`;
@@ -249,7 +305,18 @@ function seriesScene(id) {
   const scene = scenes[id] || scenes.coffee;
   content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="series">← Volver a escenas</button><div class="eyebrow" style="margin-top:22px">Escena original · ${scene[0]}</div><h1>${scene[0]}</h1><div class="card"><div class="series-thumb">🎬</div><h2>${scene[1]}</h2><p>${scene[2]}</p>${audioPlayer(scene[1])}<hr><h3>Repite la frase en voz alta</h3><p class="muted">Primero escucha. Después pausa, repite y vuelve a escuchar para comparar ritmo y entonación.</p><button class="btn secondary" data-action="repeat" data-text="${scene[1]}">🎙 Repetir conmigo</button></div></div>`;
 }
-function vocabulary() { content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Las palabras vuelven a aparecer con intervalos cada vez más largos.</p><div class="checkboxes">${["Trabajo", "Viajar", "Conversación", "Gramática", "Adjetivos", "Adverbios", "Preposiciones"].map(x => `<button class="check" data-action="filter">${x}</button>`).join("")}</div><div class="card" style="margin-top:16px">${state.vocabulary.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type)}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button><button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sé</button></div></div>`).join("")}</div>`; }
+function vocabulary() {
+  const saved = state.vocabulary || [];
+  content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Tus palabras guardadas vuelven con intervalos cada vez más largos.</p><div class="card"><p><strong>${saved.length}</strong> palabras guardadas · <strong>${reviewDue().length}</strong> repasos pendientes</p>${saved.length ? saved.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type || "expresión")}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button><button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sé</button></div></div>`).join("") : `<p class="muted">Guarda palabras desde cualquier tema para empezar tu lista.</p>`}</div>`;
+}
+function practice() {
+  const filters = state.practiceFilters || { level: "all", type: "all" };
+  const pool = vocabularyCatalog.filter(item => (filters.level === "all" || item.level === filters.level) && (filters.type === "all" || item.type === filters.type));
+  const item = pool[(state.practiceIndex || 0) % Math.max(pool.length, 1)] || vocabularyCatalog[0];
+  const prompt = state.practiceMode || "translation";
+  const answer = prompt === "translation" ? item.meaning : prompt === "fill" ? item.word : item.example.split(" ").map(word => word.replace(/[.,!?]/g, "")).sort(() => .5 - Math.random());
+  content.innerHTML = `<div class="quiz"><div class="eyebrow">Práctica activa · ${vocabularyCatalog.length}+ entradas</div><h1>Practicar palabras</h1><p class="muted">Elige nivel y categoría. Las respuestas fallidas pasan automáticamente a tu repaso.</p><div class="filter-grid"><select data-practice-level>${vocabularyLevels.map(level => `<option value="${level}" ${filters.level === level ? "selected" : ""}>${level === "all" ? "Todos los niveles" : level}</option>`).join("")}</select><select data-practice-type>${vocabularyPartOfSpeech.map(([value, label]) => `<option value="${value}" ${filters.type === value ? "selected" : ""}>${label}</option>`).join("")}</select><select data-practice-mode><option value="translation" ${prompt === "translation" ? "selected" : ""}>Traducción</option><option value="fill" ${prompt === "fill" ? "selected" : ""}>Completar frase</option><option value="order" ${prompt === "order" ? "selected" : ""}>Ordenar palabras</option></select></div><div class="card"><span class="tag">${item.level} · ${item.type}</span><h2>${prompt === "translation" ? `¿Qué significa “${item.word}”?` : prompt === "fill" ? item.example.replace(new RegExp(item.word, "i"), "_____") : "Ordena las palabras para formar la frase"}</h2>${prompt === "order" ? `<p id="order-answer" class="selectable-phrase">${(state.orderAttempt || []).map(escapeHtml).join(" ") || "Pulsa cada palabra en orden"}</p><div class="word-order">${answer.map((word, index) => `<button data-order-word="${index}" data-word="${escapeHtml(word)}">${escapeHtml(word)}</button>`).join("")}</div><button class="btn" data-action="check-practice-order" data-expected="${escapeHtml(item.example)}">Comprobar frase</button>` : `<div class="exercise-answer"><input id="practice-answer" autocomplete="off" placeholder="${prompt === "translation" ? "Escribe la traducción..." : "Escribe la palabra que falta..."}"><button class="btn" data-action="check-practice" data-answer="${escapeHtml(answer)}" data-word="${escapeHtml(item.word)}">Comprobar</button></div>`}<div id="practice-feedback"></div>${audioPlayer(item.example)}<button class="pill-button" data-action="save-word" data-word="${escapeHtml(item.word)}">♡ Guardar palabra</button></div></div>`;
+}
 function vocabularyTopics() { content.innerHTML = `<div class="eyebrow">Palabras que puedes usar</div><h1>Vocabulario por temas</h1><p class="muted">Cada tema tiene subcategorías para avanzar desde lo básico hasta situaciones reales.</p><div class="cards">${vocabTopics.map(t => `<div class="card vocab-topic"><div class="lesson-icon">${t.icon}</div><div><h3>${t.title}</h3><p class="muted">${t.sections.length} subtemas · ${t.sections.reduce((sum, s) => sum + s[1].length, 0)} palabras</p><button class="btn secondary" data-vocab-topic="${t.id}">Ver subtemas →</button></div></div>`).join("")}</div>`; }
 function vocabularyTopic(id) { const topic = vocabTopics.find(t => t.id === id) || vocabTopics[0]; content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="vocabularyTopics">← Todos los temas</button><div class="eyebrow" style="margin-top:22px">${topic.icon} Vocabulario</div><h1>${topic.title}</h1><p class="muted">${topic.description} Elige una subcategoría para ver palabras, ejemplos y audio.</p><div class="cards">${topic.sections.map(([title, words], index) => `<div class="card"><span class="tag">Subtema ${index + 1}</span><h3>${title}</h3><p class="muted">${words.length} palabras prácticas</p><button class="btn secondary" data-vocab-section="${topic.id}|${index}">Abrir subtema →</button></div>`).join("")}</div></div>`; }
 function vocabularySection(topicId, index) { const topic = vocabTopics.find(t => t.id === topicId) || vocabTopics[0]; const [title, words] = topic.sections[Number(index)] || topic.sections[0]; content.innerHTML = `<div class="quiz"><button class="pill-button" data-vocab-topic="${topic.id}">← ${topic.title}</button><div class="eyebrow" style="margin-top:22px">${topic.icon} ${topic.title}</div><h1>${title}</h1><p class="muted">Escucha, mira el ejemplo y guarda lo que quieras repasar.</p><div class="card">${words.map(([word, meaning, example]) => `<div class="word"><div><h3>${word} <span class="tag">${meaning}</span></h3><small>“${example}”</small></div><div><button class="pill-button" data-action="audio" data-text="${example}">🔊</button><button class="pill-button" data-action="save-word" data-word="${word}">♡ Guardar</button></div></div>`).join("")}</div></div>`; }
@@ -258,22 +325,24 @@ function progress() { const skills = Object.entries(state.skills || {}); content
 function week() { const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]; const lessons = curriculum.slice(0, 7); content.innerHTML = `<div class="eyebrow">Tu calendario</div><h1>Plan de esta semana</h1><p class="muted">Si un día no estudias, la lección no desaparece: queda pendiente y se recoloca en tu ruta.</p><div class="week-grid">${days.map((day, i) => { const item = lessons[i]; const done = item && (state.completed || []).includes(item.id); return `<div class="card week-day"><span class="tag">${day}</span><h3>${item ? item.title : "Repaso libre"}</h3><p class="muted">${item ? `${item.minutes} min · ${item.level}` : "Vocabulario y errores"}</p><span class="${done ? "done" : "pending"}">${done ? "✓ Completada" : "Pendiente"}</span>${item && !done ? `<button class="pill-button" data-lesson="${item.id}">Hacer</button>` : ""}</div>`; }).join("")}</div>`; }
 function profile() { const u = state.user || {}; content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Tu perfil</div><h1>Hazlo tuyo</h1><p class="muted">Tu username y avatar aparecerán en tu experiencia Bimba.</p><form id="profile-form"><div class="form-grid"><label>Username<input name="username" value="${escapeHtml(u.username)}" required pattern="[A-Za-z0-9_]{3,20}" placeholder="ej. lour_english"></label><label>Tu nombre<input name="name" value="${escapeHtml(u.name)}" required placeholder="¿Cómo te llamas?"></label><label>Tu nivel aproximado<select name="level"><option ${u.level === "A1-A2" ? "selected" : ""}>A1-A2</option><option ${u.level === "B1-B2" ? "selected" : ""}>B1-B2</option><option ${u.level === "C1-C2" ? "selected" : ""}>C1-C2</option></select></label><label>Foto de perfil<input name="avatar" type="file" accept="image/*"></label></div><div class="avatar-preview">${u.avatar ? `<img src="${u.avatar}" alt="Tu foto de perfil">` : "🐼"}</div><label style="margin-top:17px">¿Cuánto tiempo quieres estudiar al día?</label><select name="dailyMinutes"><option value="10" ${u.dailyMinutes === "10" ? "selected" : ""}>10 minutos · hábito ligero</option><option value="15" ${!u.dailyMinutes || u.dailyMinutes === "15" ? "selected" : ""}>15 minutos · constante</option><option value="30" ${u.dailyMinutes === "30" ? "selected" : ""}>30 minutos · avance rápido</option><option value="45" ${u.dailyMinutes === "45" ? "selected" : ""}>45 minutos · intensivo</option></select><label style="margin-top:17px">¿Para qué quieres usar el inglés? <span class="muted">(puedes elegir varias)</span></label><div class="checkboxes">${["Trabajo", "Viajar", "Series y ocio", "Exámenes", "Conversación"].map(x => `<label class="check"><input type="checkbox" name="goals" value="${x}" ${(u.goals || []).includes(x) ? "checked" : ""}>${x}</label>`).join("")}</div><label style="margin-top:17px">¿En qué trabajas y qué haces? (opcional)<textarea name="job" placeholder="Ej.: Soy diseñadora y hablo con clientes internacionales...">${escapeHtml(u.job)}</textarea></label><button class="btn" type="submit">Guardar mi perfil</button></form></div></div>`; document.querySelector("#profile-form").addEventListener("submit", async e => { e.preventDefault(); const f = new FormData(e.target); const file = f.get("avatar"); let avatar = u.avatar || ""; if (file?.size) { if (file.size > 1500000) return toast("La foto debe pesar menos de 1,5 MB."); avatar = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsDataURL(file); }); } state.user = { username: f.get("username"), name: f.get("name"), level: f.get("level"), dailyMinutes: f.get("dailyMinutes"), job: f.get("job"), goals: f.getAll("goals"), avatar }; ensurePlan(); await save(); toast("Perfil guardado. Tu plan adaptativo está listo."); setView("home"); }); }
 function diagnostic() { const questions = [
-  ["Elige la frase correcta:", ["She work from home.", "She works from home."], 1],
-  ["Completa: I’m interested ___ learning English.", ["on", "in", "at"], 1],
-  ["¿Qué significa “I have been working here for two years”?", ["Trabajo aquí desde hace dos años.", "Trabajé aquí hace dos años."], 0],
-  ["Completa: I ___ to the gym yesterday.", ["go", "went", "have gone"], 1],
-  ["Elige la opción natural:", ["I am agree.", "I agree.", "I have agree."], 1],
-  ["Completa: She is ___ than her brother.", ["more tall", "taller", "tallest"], 1],
-  ["¿Qué significa “I’ve already finished”?", ["Ya he terminado.", "Terminaré mañana.", "Todavía no termino."], 0],
-  ["Completa: If I had time, I ___ travel more.", ["will", "would", "am"], 1],
-  ["Elige el conector correcto: It was difficult; ___, we finished.", ["however", "because", "so that"], 0],
-  ["¿Qué expresa “I suppose that is one way of looking at it”?", ["Un acuerdo totalmente directo.", "Una forma matizada de mostrar una opinión.", "Una pregunta sobre una dirección."], 1]
-]; const index = state.diagnostic?.index || 0; if (index >= questions.length) return diagnosticResult(); const [q, options, answer] = questions[index]; content.innerHTML = `<div class="quiz"><div class="eyebrow">Diagnóstico ${index + 1} de ${questions.length}</div><h1>Descubramos tu punto de partida</h1><p class="muted">No pasa nada si dudas: tus errores ayudan a preparar tu ruta.</p><div class="progress-bar"><i style="width:${(index / questions.length) * 100}%"></i></div><div class="card"><h2>${q}</h2>${options.map((o, i) => `<button class="option" data-diagnostic="${i}" data-answer="${answer === i ? "right" : "wrong"}">${o}</button>`).join("")}</div></div>`; }
-function diagnosticResult() { const score = state.diagnostic?.score || 0; const level = score <= 3 ? "A1-A2" : score <= 6 ? "B1-B2" : "C1-C2"; const detail = score <= 3 ? "Base A1-A2" : score <= 6 ? "Intermedio B1-B2" : "Avanzado C1-C2"; content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Diagnóstico completado · ${score}/10</div><h1>Tu punto de partida: ${detail}</h1><p class="muted">Es una estimación orientativa. Hemos detectado qué contenidos conviene priorizar; puedes cambiarlo desde tu perfil.</p><button class="btn" data-action="apply-level" data-level="${level}">Usar este nivel</button></div></div>`; }
+  ["grammar", "Elige la frase correcta:", ["She work from home.", "She works from home."], 1],
+  ["grammar", "Completa: I’m interested ___ learning English.", ["on", "in", "at"], 1],
+  ["vocabulary", "¿Qué significa “I have been working here for two years”?", ["Trabajo aquí desde hace dos años.", "Trabajé aquí hace dos años."], 0],
+  ["grammar", "Completa: I ___ to the gym yesterday.", ["go", "went", "have gone"], 1],
+  ["writing", "Elige la opción natural:", ["I am agree.", "I agree.", "I have agree."], 1],
+  ["grammar", "Completa: She is ___ than her brother.", ["more tall", "taller", "tallest"], 1],
+  ["listening", "Escucha y elige el significado.", ["Ya he terminado.", "Terminaré mañana.", "Todavía no termino."], 0, "I’ve already finished."],
+  ["grammar", "Completa: If I had time, I ___ travel more.", ["will", "would", "am"], 1],
+  ["writing", "Elige el conector correcto: It was difficult; ___, we finished.", ["however", "because", "so that"], 0],
+  ["vocabulary", "¿Qué expresa “I suppose that is one way of looking at it”?", ["Un acuerdo directo.", "Una opinión matizada.", "Una dirección."], 1],
+  ["pronunciation", "¿Dónde recae el acento principal en “photography”?", ["PHO-to-graphy", "pho-TOG-ra-phy", "photo-GRA-PHY"], 1],
+  ["listening", "Escucha y elige lo que oyes.", ["The deadline is Friday.", "The online is Friday.", "The deadline was frightening."], 0, "The deadline is Friday."]
+]; const index = state.diagnostic?.index || 0; if (index >= questions.length) return diagnosticResult(); const [skill, q, options, answer, spoken] = questions[index]; content.innerHTML = `<div class="quiz"><div class="eyebrow">Diagnóstico ${index + 1} de ${questions.length}</div><h1>Descubramos tu punto de partida</h1><p class="muted">Incluye gramática, vocabulario, escritura y muestras orientativas de escucha y pronunciación.</p><div class="progress-bar"><i style="width:${(index / questions.length) * 100}%"></i></div><div class="card"><span class="tag">${skill}</span><h2>${q}</h2>${spoken ? audioPlayer(spoken) : ""}${options.map((o, i) => `<button class="option" data-diagnostic="${i}" data-skill="${skill}" data-answer="${answer === i ? "right" : "wrong"}">${o}</button>`).join("")}</div></div>`; }
+function diagnosticResult() { const score = state.diagnostic?.score || 0; const level = score <= 4 ? "A1-A2" : score <= 8 ? "B1-B2" : "C1-C2"; const detail = score <= 4 ? "Base A1-A2" : score <= 8 ? "Intermedio B1-B2" : "Avanzado C1-C2"; const breakdown = Object.entries(state.diagnostic?.skills || {}).map(([key, value]) => `<span class="tag">${key}: ${value}</span>`).join(" "); content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Diagnóstico completado · ${score}/12</div><h1>Tu punto de partida: ${detail}</h1><p class="muted">Es una estimación orientativa, no una certificación oficial. Escucha y pronunciación dependen del navegador y sirven para recomendar práctica.</p><p>${breakdown}</p><button class="btn" data-action="apply-level" data-level="${level}">Usar este nivel</button></div></div>`; }
 function auth() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Sincronización segura</div><h1>${currentSession ? "Tu cuenta Bimba" : "Guarda tu progreso en la nube"}</h1><p class="muted">${currentSession ? `Sesión iniciada como ${escapeHtml(currentSession.user.email)}.` : "Usa el mismo progreso en tu ordenador y en tu iPhone. No necesitas tarjeta."}</p>${currentSession ? `<button class="btn secondary" data-action="logout">Cerrar sesión</button>` : `<form id="auth-form"><label>Email<input name="email" type="email" required autocomplete="email" placeholder="tu@email.com"></label><label style="margin-top:14px">Contraseña<input name="password" type="password" minlength="6" required autocomplete="new-password" placeholder="Mínimo 6 caracteres"></label><div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><button class="btn" data-auth="signup">Crear cuenta</button><button class="btn secondary" data-auth="login">Iniciar sesión</button></div></form><p class="muted" style="margin-top:18px;font-size:12px">Tu email solo se usa para iniciar sesión. Nunca compartas tu contraseña.</p>`}</div></div>`; if (!currentSession) document.querySelector("#auth-form").addEventListener("submit", async e => { e.preventDefault(); const button = e.submitter; const f = new FormData(e.target); await authenticate(button.dataset.auth, f.get("email"), f.get("password")); }); }
 async function authenticate(action, email, password) { if (!supabaseClient) return toast("No se ha podido cargar el servicio de sincronización."); const result = action === "signup" ? await supabaseClient.auth.signUp({ email, password, options: { emailRedirectTo: APP_URL } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) return toast(result.error.message); if (result.data.session) { await loadCloudState(result.data.session); setView("home"); } else toast("Revisa tu email para confirmar la cuenta y después inicia sesión."); }
 function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes crear tu perfil y hacer un diagnóstico corto. Después Bimba preparará tu ruta diaria.</div><button class="btn" data-action="setup">Crear mi perfil →</button><button class="btn secondary" data-action="start-diagnostic" style="margin-left:8px">Hacer diagnóstico</button></div></div>`; }
-function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic }[currentView] || home)(); }
+function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice }[currentView] || home)(); }
 
 document.querySelector("#main-nav").addEventListener("click", e => { const button = e.target.closest("[data-view]"); if (button) setView(button.dataset.view); });
 document.querySelector("#profile-button").addEventListener("click", () => setView("profile"));
@@ -337,7 +406,8 @@ document.addEventListener("click", async e => {
   if (action === "save-word") {
     const word = e.target.closest("[data-action=save-word]").dataset.word;
     if (!state.vocabulary.some(item => item.word === word)) {
-      state.vocabulary.unshift({ word, meaning: "expresión guardada", type: "expresión", example: word });
+      const catalogWord = getCatalogWord(word);
+      state.vocabulary.unshift(catalogWord ? { ...catalogWord } : { word, meaning: "expresión guardada", type: "expresión", example: word });
       state.words++;
     }
     await addReview(word);
@@ -365,7 +435,43 @@ document.addEventListener("click", async e => {
     await save();
     return setView("home");
   }
-  if (action === "start-diagnostic") { state.diagnostic = { index: 0, score: 0 }; return setView("diagnostic"); }
+  if (action === "start-diagnostic") { state.diagnostic = { index: 0, score: 0, skills: {} }; return setView("diagnostic"); }
+  if (action === "check-practice") {
+    const button = e.target.closest("[data-action=check-practice]");
+    const answer = document.querySelector("#practice-answer")?.value.trim().toLowerCase();
+    const expected = button.dataset.answer.trim().toLowerCase();
+    const feedback = document.querySelector("#practice-feedback");
+    const correct = answer === expected;
+    if (!correct) {
+      state.errors = [...new Set([...(state.errors || []), `vocabulario: ${button.dataset.word}`])];
+      addReview(button.dataset.word, 1);
+    } else addReview(button.dataset.word, 4);
+    feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Correcto. La recuperación activa ayuda a fijarlo." : `💡 La respuesta era “${escapeHtml(button.dataset.answer)}”. La añadimos a tus repasos.`}</div>`;
+    state.practiceIndex = (state.practiceIndex || 0) + 1;
+    await save();
+    return;
+  }
+  if (action === "check-practice-order") {
+    const button = e.target.closest("[data-action=check-practice-order]");
+    const words = state.orderAttempt || [];
+    const expected = button.dataset.expected.toLowerCase().replace(/[.,!?]/g, "");
+    const correct = words.join(" ").toLowerCase() === expected;
+    const feedback = document.querySelector("#practice-feedback");
+    if (!correct) state.errors = [...new Set([...(state.errors || []), `orden de frase: ${expected}`])];
+    feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Frase correcta." : `💡 Orden recomendado: “${escapeHtml(button.dataset.expected)}”`}</div>`;
+    state.practiceIndex = (state.practiceIndex || 0) + 1;
+    state.orderAttempt = [];
+    await save();
+    return;
+  }
+  if (e.target.closest("[data-order-word]")) {
+    const wordButton = e.target.closest("[data-order-word]");
+    state.orderAttempt = [...(state.orderAttempt || []), wordButton.dataset.word];
+    wordButton.disabled = true;
+    const answer = document.querySelector("#order-answer");
+    if (answer) answer.textContent = state.orderAttempt.join(" ");
+    return;
+  }
   if (action === "notification") {
     if (!("Notification" in window)) return toast("Este navegador no admite notificaciones.");
     const permission = await Notification.requestPermission();
@@ -377,11 +483,21 @@ document.addEventListener("click", async e => {
   const answer = e.target.closest("[data-answer]")?.dataset.answer;
   if (e.target.closest("[data-diagnostic]")) {
     const diagnosticAnswer = e.target.closest("[data-diagnostic]");
-    state.diagnostic = { index: (state.diagnostic?.index || 0) + 1, score: (state.diagnostic?.score || 0) + (diagnosticAnswer.dataset.answer === "right" ? 1 : 0) };
+    const skill = diagnosticAnswer.dataset.skill || "grammar";
+    const skills = { ...(state.diagnostic?.skills || {}), [skill]: (state.diagnostic?.skills?.[skill] || 0) + (diagnosticAnswer.dataset.answer === "right" ? 1 : 0) };
+    state.diagnostic = { index: (state.diagnostic?.index || 0) + 1, score: (state.diagnostic?.score || 0) + (diagnosticAnswer.dataset.answer === "right" ? 1 : 0), skills };
     return render();
   }
   if (answer === "right") { state.lessons++; state.goalProgress = Math.min(100, state.goalProgress + 4); await save(); toast("¡Muy bien! Recuperación activa completada."); render(); }
   else if (answer === "wrong") toast("Casi. Escucha la frase una vez más.");
+});
+document.addEventListener("change", async e => {
+  if (!["practice-level", "practice-type", "practice-mode"].some(name => e.target.matches(`[data-${name}]`))) return;
+  state.practiceFilters = { level: document.querySelector("[data-practice-level]")?.value || "all", type: document.querySelector("[data-practice-type]")?.value || "all" };
+  state.practiceMode = document.querySelector("[data-practice-mode]")?.value || "translation";
+  state.practiceIndex = 0;
+  state.orderAttempt = [];
+  render();
 });
 
 if (supabaseClient) supabaseClient.auth.getSession().then(({ data }) => { if (data.session) loadCloudState(data.session); });

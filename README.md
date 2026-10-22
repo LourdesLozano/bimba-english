@@ -12,6 +12,11 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Lecciones, progreso, racha y vocabulario guardados en `localStorage` como respaldo.
 - Diseño responsive con navegación para móvil.
 - Sección de escenas con diálogos propios tipo sitcom. Una app pública no debe copiar episodios o subtítulos de *Friends* sin licencia.
+- Catálogo de 1.400+ entradas de vocabulario para A1-C1, con filtros por nivel y categoría gramatical.
+- Ejercicios de traducción, completar frases y ordenar palabras.
+- Repaso espaciado de palabras guardadas y errores de ejercicios.
+- Lecciones de gramática que enlazan sus frases con palabras del catálogo.
+- Diagnóstico ampliado de 12 preguntas con dimensiones de gramática, vocabulario, escritura, escucha y pronunciación.
 - Registro e inicio de sesión con Supabase.
 - Sincronización del progreso por usuario entre dispositivos.
 - Políticas RLS para que cada usuario solo pueda leer y modificar sus propios datos.

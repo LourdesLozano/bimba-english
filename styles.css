@@ -79,4 +79,13 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .checkboxes { display: flex; flex-wrap: wrap; gap: 8px; } .check { padding: 10px 12px; background: white; border: 1px solid var(--line); border-radius: 11px; font-weight: 600; } .check:has(input:checked) { background: var(--pink); border-color: var(--pink-deep); } .check input { accent-color: var(--pink-deep); margin-right: 5px; }
 .toast { position: fixed; bottom: 22px; right: 22px; background: #3d3035; color: white; border-radius: 11px; padding: 12px 17px; transform: translateY(120px); transition: .25s; z-index: 5; } .toast.show { transform: translateY(0); }
 .onboarding { max-width: 720px; margin: 5vh auto; } .onboarding .card { padding: clamp(22px, 5vw, 42px); }
+.filter-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 10px; margin: 18px 0; }
+.exercise-answer { display: grid; gap: 10px; margin-top: 16px; }
+.exercise-answer input { width: 100%; }
+.word-order { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.word-order button { background: var(--pink-soft); color: var(--ink); border-radius: 9px; padding: 9px 12px; }
+.feedback { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #eff9f2; color: #386b4a; }
+.feedback.error { background: #fff3f1; color: #934f49; }
+.diagnostic-audio { margin: 15px 0; }
 @media (max-width: 760px) { .sidebar { display: none; } .mobile-brand { display: flex; } .topbar { height: 65px; padding: 0 20px; } #app-content { padding: 25px 18px 90px; } .hero { padding: 24px; min-height: 220px; } .hero-art { font-size: 70px; } .stats, .cards, .form-grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(3,1fr); gap: 8px; } .stat { padding: 13px 10px; } .stat strong { font-size: 22px; } .stat span { font-size: 11px; } .top-actions { gap: 8px; } .sync-status { display: none; } .nav-item { font-size: 11px; } .week-grid { grid-template-columns: 1fr; } .daily-plan { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 760px) { .filter-grid { grid-template-columns: 1fr; } }
