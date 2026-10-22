@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f7d9e4" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Bimba English</title>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand"><span class="dog-mark" aria-hidden="true">🐼</span><span>Bimba <b>English</b></span></div>
+        <nav id="main-nav" aria-label="Navegación principal">
+          <button class="nav-item active" data-view="home"><span>⌂</span> Inicio</button>
+          <button class="nav-item" data-view="learn"><span>✦</span> Aprender</button>
+          <button class="nav-item" data-view="series"><span>▶</span> Series</button>
+          <button class="nav-item" data-view="vocabulary"><span>♡</span> Mi vocabulario</button>
+          <button class="nav-item" data-view="progress"><span>◔</span> Progreso</button>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="mini-dog">🐼</div>
+          <small>Tu constancia es tu superpoder.</small>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="mobile-brand"><span class="dog-mark">🐼</span> Bimba</div>
+          <div class="top-actions">
+            <span class="sync-status" id="sync-status">● Guardado en este dispositivo</span>
+            <button class="btn top-auth" id="auth-button">Sincronizar progreso</button>
+            <button class="icon-button" id="profile-button" aria-label="Abrir perfil">👤</button>
+          </div>
+        </header>
+        <div id="app-content"></div>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
