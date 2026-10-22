@@ -19,6 +19,8 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Diagnóstico ampliado de 12 preguntas con dimensiones de gramática, vocabulario, escritura, escucha y pronunciación.
 - Práctica de conversación con grabación y transcripción del navegador cuando el dispositivo lo permite.
 - Recuperación de contraseña por email y avatar en Supabase Storage para cuentas sincronizadas.
+- Lecciones guiadas en tres pasos, escenarios de conversación, modo oscuro, logros y errores recurrentes.
+- Service worker para abrir el shell de la PWA cuando no haya conexión.
 - Registro e inicio de sesión con Supabase.
 - Sincronización del progreso por usuario entre dispositivos.
 - Políticas RLS para que cada usuario solo pueda leer y modificar sus propios datos.
@@ -34,6 +36,11 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 `supabase-config.js` solo contiene la URL del proyecto y la publishable key. Nunca pongas en el repositorio una contraseña de base de datos, `service_role` key o cadena de conexión directa.
 
 La conversación y la pronunciación usan APIs del navegador: Safari puede pedir permiso para el micrófono y no todos los dispositivos ofrecen transcripción. La app muestra feedback orientativo, no una certificación fonética.
+
+## Funciones que requieren infraestructura adicional
+
+- Las notificaciones push fiables con la app cerrada requieren un proveedor Web Push, un service worker de push y un endpoint seguro para enviar recordatorios. No se añade una clave privada al frontend.
+- La corrección avanzada con IA requiere elegir un proveedor, definir límites de coste y decidir qué texto puede salir del dispositivo. La app mantiene ahora correcciones locales y no envía textos privados a terceros.
 
 ## Publicar
 
