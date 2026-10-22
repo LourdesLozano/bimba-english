@@ -17,6 +17,8 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Repaso espaciado de palabras guardadas y errores de ejercicios.
 - Lecciones de gramática que enlazan sus frases con palabras del catálogo.
 - Diagnóstico ampliado de 12 preguntas con dimensiones de gramática, vocabulario, escritura, escucha y pronunciación.
+- Práctica de conversación con grabación y transcripción del navegador cuando el dispositivo lo permite.
+- Recuperación de contraseña por email y avatar en Supabase Storage para cuentas sincronizadas.
 - Registro e inicio de sesión con Supabase.
 - Sincronización del progreso por usuario entre dispositivos.
 - Políticas RLS para que cada usuario solo pueda leer y modificar sus propios datos.
@@ -27,8 +29,11 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 2. Copia el contenido de [`supabase/schema.sql`](./supabase/schema.sql), pégalo y pulsa **Run**.
 3. En **Authentication → Providers → Email**, deja habilitado Email.
 4. En **Authentication → URL Configuration**, añade la URL publicada de GitHub Pages cuando la tengas.
+5. Si ya ejecutaste una versión anterior del esquema, vuelve a ejecutar el archivo completo para crear el bucket privado `avatars` y sus políticas.
 
 `supabase-config.js` solo contiene la URL del proyecto y la publishable key. Nunca pongas en el repositorio una contraseña de base de datos, `service_role` key o cadena de conexión directa.
+
+La conversación y la pronunciación usan APIs del navegador: Safari puede pedir permiso para el micrófono y no todos los dispositivos ofrecen transcripción. La app muestra feedback orientativo, no una certificación fonética.
 
 ## Publicar
 

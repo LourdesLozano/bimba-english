@@ -87,5 +87,7 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .feedback { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: #eff9f2; color: #386b4a; }
 .feedback.error { background: #fff3f1; color: #934f49; }
 .diagnostic-audio { margin: 15px 0; }
+.recording-status { min-height: 24px; margin: 12px 0; color: var(--muted); }
+.transcript { margin-top: 12px; padding: 12px; background: var(--pink-soft); border-radius: 10px; }
 @media (max-width: 760px) { .sidebar { display: none; } .mobile-brand { display: flex; } .topbar { height: 65px; padding: 0 20px; } #app-content { padding: 25px 18px 90px; } .hero { padding: 24px; min-height: 220px; } .hero-art { font-size: 70px; } .stats, .cards, .form-grid { grid-template-columns: 1fr; } .stats { grid-template-columns: repeat(3,1fr); gap: 8px; } .stat { padding: 13px 10px; } .stat strong { font-size: 22px; } .stat span { font-size: 11px; } .top-actions { gap: 8px; } .sync-status { display: none; } .nav-item { font-size: 11px; } .week-grid { grid-template-columns: 1fr; } .daily-plan { align-items: flex-start; flex-direction: column; } }
 @media (max-width: 760px) { .filter-grid { grid-template-columns: 1fr; } }
