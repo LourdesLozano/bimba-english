@@ -159,6 +159,15 @@ const getCatalogWord = word => vocabularyCatalog.find(item => item.word.toLowerC
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
+const themeNames = { pink: "Rosa", red: "Rojo", blue: "Azul", green: "Verde", purple: "Morado", orange: "Naranja", yellow: "Amarillo" };
+const themeColors = { pink: "#f7d9e4", red: "#f4c5c5", blue: "#c9def4", green: "#cce8d8", purple: "#ddcff2", orange: "#f7d5b7", yellow: "#f5e5a9" };
+function applyTheme(theme) {
+  const selected = themeNames[theme] ? theme : "pink";
+  document.documentElement.dataset.theme = selected === "pink" ? "" : selected;
+  localStorage.setItem("bimba-theme", selected);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColors[selected]);
+  document.querySelector("#theme-button")?.setAttribute("aria-label", `Cambiar color (actual: ${themeNames[selected]})`);
+}
 const base64ToUint8Array = value => {
   const padding = "=".repeat((4 - value.length % 4) % 4);
   const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -424,6 +433,7 @@ document.querySelector("#back-button").addEventListener("click", goBack);
 document.querySelector("#menu-button").addEventListener("click", () => { document.querySelector("#sidebar")?.classList.add("open"); document.querySelector("#menu-scrim")?.classList.add("open"); });
 document.querySelector("#menu-scrim").addEventListener("click", () => { document.querySelector("#sidebar")?.classList.remove("open"); document.querySelector("#menu-scrim")?.classList.remove("open"); });
 document.addEventListener("click", async e => {
+  if (document.querySelector(".theme-menu") && !e.target.closest("#theme-button, .theme-menu")) document.querySelector(".theme-menu").remove();
   const view = e.target.closest("[data-view]"); if (view) return setView(view.dataset.view);
   const topicId = e.target.closest("[data-topic]")?.dataset.topic; if (topicId) return topic(topicId);
   const vocabId = e.target.closest("[data-vocab-topic]")?.dataset.vocabTopic; if (vocabId) return vocabularyTopic(vocabId);
@@ -436,11 +446,12 @@ document.addEventListener("click", async e => {
     const menu = document.querySelector(".theme-menu");
     if (menu) return menu.remove();
     const themes = ["pink", "red", "blue", "green", "purple", "orange", "yellow"];
-    document.body.insertAdjacentHTML("beforeend", `<div class="theme-menu">${themes.map(theme => `<button class="theme-swatch" data-theme="${theme}" aria-label="${theme}"></button>`).join("")}</div>`);
+    const selected = localStorage.getItem("bimba-theme") || "pink";
+    document.body.insertAdjacentHTML("beforeend", `<div class="theme-menu" role="menu" aria-label="Elegir color">${themes.map(theme => `<button class="theme-swatch${theme === selected ? " selected" : ""}" data-theme="${theme}" role="menuitem" aria-label="${themeNames[theme]}" title="${themeNames[theme]}" style="--swatch:${themeColors[theme]}"></button>`).join("")}</div>`);
     return;
   }
   const selectedTheme = e.target.closest(".theme-swatch")?.dataset.theme;
-  if (selectedTheme) { document.documentElement.dataset.theme = selectedTheme === "pink" ? "" : selectedTheme; localStorage.setItem("bimba-theme", selectedTheme); document.querySelector(".theme-menu")?.remove(); return; }
+  if (selectedTheme) { applyTheme(selectedTheme); document.querySelector(".theme-menu")?.remove(); return toast(`Color ${themeNames[selectedTheme].toLowerCase()} aplicado.`); }
   if (action === "setup") return setView("profile");
   if (action === "next-lesson-step") { state.lessonStep = Math.min(2, (state.lessonStep || 0) + 1); return lesson(e.target.closest("[data-action=next-lesson-step]").dataset.lesson, true); }
   if (action === "forgot-password") return requestPasswordReset();
@@ -601,6 +612,9 @@ document.addEventListener("click", async e => {
   if (answer === "right") { state.lessons++; state.goalProgress = Math.min(100, state.goalProgress + 4); await save(); toast("¡Muy bien! Recuperación activa completada."); render(); }
   else if (answer === "wrong") toast("Casi. Escucha la frase una vez más.");
 });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") document.querySelector(".theme-menu")?.remove();
+});
 document.addEventListener("change", async e => {
   if (!["practice-level", "practice-type", "practice-mode"].some(name => e.target.matches(`[data-${name}]`))) return;
   state.practiceFilters = { level: document.querySelector("[data-practice-level]")?.value || "all", type: document.querySelector("[data-practice-type]")?.value || "all" };
@@ -612,7 +626,7 @@ document.addEventListener("change", async e => {
 
 if (supabaseClient) supabaseClient.auth.getSession().then(({ data }) => { if (data.session) loadCloudState(data.session); });
 if (supabaseClient) supabaseClient.auth.onAuthStateChange((event, session) => { if (event === "PASSWORD_RECOVERY") return setView("resetPassword"); if (session) loadCloudState(session); });
-document.documentElement.dataset.theme = localStorage.getItem("bimba-theme") === "pink" ? "" : (localStorage.getItem("bimba-theme") || "");
+applyTheme(localStorage.getItem("bimba-theme") || "pink");
 document.documentElement.dataset.dark = localStorage.getItem("bimba-dark") === "true" ? "true" : "false";
 document.querySelector("#dark-button").addEventListener("click", () => { const dark = document.documentElement.dataset.dark !== "true"; document.documentElement.dataset.dark = dark ? "true" : "false"; localStorage.setItem("bimba-dark", String(dark)); });
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("./sw.js").catch(() => {});
