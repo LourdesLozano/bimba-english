@@ -14,6 +14,7 @@ const supabaseClient = window.supabase?.createClient(window.BIMBA_SUPABASE.url, 
 const APP_URL = "https://lourdeslozano.github.io/bimba-english/";
 let state = JSON.parse(localStorage.getItem(KEY) || "null") || structuredClone(initialState);
 let currentView = "home";
+let viewHistory = [];
 let currentSession = null;
 let saveTimer;
 let activeSpeech = null;
@@ -168,7 +169,16 @@ const save = async () => {
     else setStatus("Sincronizado", true);
   }, 300);
 };
-const setView = (view) => { currentView = view; document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.view === view)); render(); window.scrollTo(0, 0); };
+const setView = (view, { replace = false } = {}) => {
+  if (view !== currentView && !replace) viewHistory.push(currentView);
+  currentView = view;
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.view === view));
+  document.querySelector("#sidebar")?.classList.remove("open");
+  document.querySelector("#menu-scrim")?.classList.remove("open");
+  render();
+  window.scrollTo(0, 0);
+};
+const goBack = () => setView(viewHistory.pop() || "home", { replace: true });
 const speak = (text, rate = speechRate) => {
   if (!("speechSynthesis" in window)) return toast("Tu navegador no permite reproducir voz.");
   window.speechSynthesis.cancel();
@@ -361,6 +371,9 @@ function render() { if (!state.user && currentView === "home") return onboarding
 document.querySelector("#main-nav").addEventListener("click", e => { const button = e.target.closest("[data-view]"); if (button) setView(button.dataset.view); });
 document.querySelector("#profile-button").addEventListener("click", () => setView("profile"));
 document.querySelector("#auth-button").addEventListener("click", () => setView("auth"));
+document.querySelector("#back-button").addEventListener("click", goBack);
+document.querySelector("#menu-button").addEventListener("click", () => { document.querySelector("#sidebar")?.classList.add("open"); document.querySelector("#menu-scrim")?.classList.add("open"); });
+document.querySelector("#menu-scrim").addEventListener("click", () => { document.querySelector("#sidebar")?.classList.remove("open"); document.querySelector("#menu-scrim")?.classList.remove("open"); });
 document.addEventListener("click", async e => {
   const view = e.target.closest("[data-view]"); if (view) return setView(view.dataset.view);
   const topicId = e.target.closest("[data-topic]")?.dataset.topic; if (topicId) return topic(topicId);

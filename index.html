@@ -12,7 +12,7 @@
   </head>
   <body>
     <div class="app-shell">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <div class="brand"><span class="dog-mark" aria-hidden="true">🐼</span><span>Bimba <b>English</b></span></div>
         <nav id="main-nav" aria-label="Navegación principal">
           <button class="nav-item active" data-view="home"><span>⌂</span> Inicio</button>
@@ -34,17 +34,22 @@
 
       <main class="main">
         <header class="topbar">
-          <div class="mobile-brand"><span class="dog-mark">🐼</span> Bimba</div>
+          <div class="top-leading">
+            <button class="icon-button back-button" id="back-button" aria-label="Volver atrás" title="Volver atrás">←</button>
+            <button class="icon-button menu-button" id="menu-button" aria-label="Abrir menú" title="Abrir menú">☰</button>
+            <div class="mobile-brand"><span class="dog-mark">🐼</span> Bimba</div>
+          </div>
           <div class="top-actions">
             <span class="sync-status" id="sync-status">● Guardado en este dispositivo</span>
             <button class="theme-button" id="theme-button" aria-label="Cambiar color" title="Cambiar color">●</button>
-            <button class="btn top-auth" id="auth-button">Sincronizar progreso</button>
+            <button class="icon-button sync-button" id="auth-button" aria-label="Sincronizar progreso" title="Sincronizar progreso">↻</button>
             <button class="icon-button" id="profile-button" aria-label="Abrir perfil">👤</button>
           </div>
         </header>
         <div id="app-content"></div>
       </main>
     </div>
+    <div class="menu-scrim" id="menu-scrim" aria-hidden="true"></div>
     <div id="toast" class="toast" role="status"></div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
