@@ -53,6 +53,50 @@ const vocabTopics = [
     ["Restaurante y ocio", [["bill", "cuenta", "Could we have the bill, please?"], ["booking", "reserva", "I made a booking online."], ["sightseeing", "turismo", "We went sightseeing all day."]]]
   ] }
 ];
+vocabTopics.push(
+  { id: "health", icon: "🩺", title: "Salud y cuerpo", description: "Explicar síntomas, citas y hábitos saludables.", sections: [
+    ["Cuerpo", [["shoulder", "hombro", "My shoulder hurts."], ["ankle", "tobillo", "I twisted my ankle."], ["throat", "garganta", "I have a sore throat."]]],
+    ["Síntomas", [["headache", "dolor de cabeza", "I have a terrible headache."], ["rash", "sarpullido", "This rash is very itchy."], ["swollen", "hinchado", "My knee is swollen."]]],
+    ["Médico y farmacia", [["appointment", "cita", "I need to make an appointment."], ["prescription", "receta médica", "The doctor gave me a prescription."], ["painkiller", "analgésico", "Take this painkiller after eating."]]],
+    ["Hábitos saludables", [["exercise", "ejercicio", "I exercise three times a week."], ["balanced", "equilibrado", "I try to eat a balanced diet."], ["sleep", "dormir", "Getting enough sleep is important."]]]
+  ] },
+  { id: "shopping", icon: "🛍️", title: "Compras y ropa", description: "Comprar, probar, devolver y describir prendas.", sections: [
+    ["Ropa", [["sleeve", "manga", "This shirt has short sleeves."], ["pocket", "bolsillo", "There is a pocket on the jacket."], ["pattern", "estampado", "I like the pattern on this dress."]]],
+    ["Tallas y medidas", [["size", "talla", "Do you have this in a smaller size?"], ["fit", "quedar", "These jeans fit me perfectly."], ["loose", "holgado", "This sweater is too loose."]]],
+    ["Comprar y pagar", [["receipt", "recibo", "Could I have a receipt, please?"], ["refund", "reembolso", "I would like a refund."], ["cash", "efectivo", "Can I pay in cash?"]]],
+    ["Calidad y opiniones", [["durable", "duradero", "These shoes are very durable."], ["comfortable", "cómodo", "They are comfortable to wear."], ["affordable", "asequible", "It is good quality and affordable."]]]
+  ] },
+  { id: "technology", icon: "💻", title: "Tecnología y móvil", description: "Dispositivos, internet y problemas técnicos.", sections: [
+    ["Dispositivos", [["screen", "pantalla", "The screen is cracked."], ["charger", "cargador", "I forgot my phone charger."], ["headphones", "auriculares", "I use headphones for calls."]]],
+    ["Internet y cuentas", [["password", "contraseña", "I need to reset my password."], ["account", "cuenta", "I created a new account."], ["download", "descargar", "Click here to download the file."]]],
+    ["Problemas técnicos", [["freeze", "bloquearse", "My computer keeps freezing."], ["crash", "fallar", "The app crashed again."], ["update", "actualización", "You need to update the software."]]],
+    ["Trabajo digital", [["upload", "subir", "Please upload the document."], ["link", "enlace", "I sent you the link."], ["attachment", "archivo adjunto", "The attachment is too large."]]]
+  ] },
+  { id: "nature", icon: "🌿", title: "Naturaleza y clima", description: "Tiempo, paisajes, animales y actividades al aire libre.", sections: [
+    ["Tiempo", [["forecast", "previsión", "The forecast says it will rain."], ["humid", "húmedo", "It is hot and humid today."], ["breeze", "brisa", "There is a lovely breeze."]]],
+    ["Paisajes", [["valley", "valle", "The village is in a beautiful valley."], ["coast", "costa", "We walked along the coast."], ["waterfall", "cascada", "There is a waterfall nearby."]]],
+    ["Animales y plantas", [["wildlife", "fauna", "The park is famous for its wildlife."], ["branch", "rama", "The bird is sitting on a branch."], ["wildflower", "flor silvestre", "I saw a field of wildflowers."]]],
+    ["Aire libre", [["hike", "hacer senderismo", "We went for a hike."], ["trail", "sendero", "This trail leads to the lake."], ["shelter", "refugio", "We found shelter from the rain."]]]
+  ] },
+  { id: "education", icon: "📚", title: "Estudios y aprendizaje", description: "Clases, exámenes, idiomas y organización.", sections: [
+    ["Clase", [["subject", "asignatura", "English was my favourite subject."], ["assignment", "tarea", "I have to finish an assignment."], ["semester", "semestre", "The semester starts in September."]]],
+    ["Exámenes", [["grade", "nota", "I got a good grade."], ["revise", "repasar", "I need to revise for the test."], ["pass", "aprobar", "She passed her exam."]]],
+    ["Aprender idiomas", [["fluency", "fluidez", "Fluency takes regular practice."], ["accent", "acento", "I am working on my accent."], ["mistake", "error", "Making mistakes is part of learning."]]],
+    ["Organización", [["deadline", "fecha límite", "The deadline is next Friday."], ["notes", "apuntes", "I took notes during the lecture."], ["schedule", "horario", "I made a study schedule."]]]
+  ] },
+  { id: "money", icon: "💳", title: "Dinero y bancos", description: "Pagos, presupuesto, compras y gestiones.", sections: [
+    ["Banco", [["branch", "sucursal", "The bank branch closes at five."], ["transfer", "transferencia", "I made a bank transfer."], ["balance", "saldo", "I checked my account balance."]]],
+    ["Pagos", [["contactless", "sin contacto", "Can I pay contactless?"], ["charge", "cobrar", "They charged me twice."], ["fee", "comisión", "Is there an extra fee?"]]],
+    ["Presupuesto", [["budget", "presupuesto", "I am trying to stick to my budget."], ["save", "ahorrar", "I save a little every month."], ["expense", "gasto", "Rent is my biggest expense."]]],
+    ["Problemas", [["refund", "reembolso", "The refund has not arrived."], ["fraud", "fraude", "I think there has been fraud."], ["receipt", "recibo", "Keep the receipt just in case."]]]
+  ] },
+  { id: "social", icon: "🎉", title: "Vida social y planes", description: "Invitar, aceptar, rechazar y disfrutar con gente.", sections: [
+    ["Invitaciones", [["invite", "invitar", "I would like to invite you to dinner."], ["available", "disponible", "Are you available on Saturday?"], ["join", "unirse", "Would you like to join us?"]]],
+    ["Planes", [["cancel", "cancelar", "I am sorry, I have to cancel."], ["arrange", "organizar", "Let’s arrange a time to meet."], ["venue", "lugar del evento", "The venue is near the station."]]],
+    ["Reacciones", [["brilliant", "genial", "That sounds brilliant."], ["shame", "pena", "What a shame you cannot come."], ["awkward", "incómodo", "There was an awkward silence."]]],
+    ["Celebraciones", [["host", "anfitrión", "She is hosting a dinner party."], ["crowd", "multitud", "There was a big crowd."], ["fireworks", "fuegos artificiales", "We watched the fireworks."]]]
+  ] }
+);
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
