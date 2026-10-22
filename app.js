@@ -1,7 +1,8 @@
 const KEY = "bimba-english-state";
 const initialState = {
-  user: null, streak: 3, lessons: 1, words: 24, goalProgress: 18, completed: [], plan: null,
+  user: null, streak: 3, lessons: 1, words: 24, goalProgress: 18, completed: [], plan: null, diagnostic: null,
   skills: { grammar: 20, vocabulary: 28, listening: 12, speaking: 10, pronunciation: 15 },
+  errors: [], reviewQueue: [],
   vocabulary: [
     { word: "actually", meaning: "en realidad", type: "adverbio", example: "I actually enjoy speaking English." },
     { word: "to figure out", meaning: "averiguar / entender", type: "phrasal verb", example: "I’m trying to figure it out." },
@@ -17,6 +18,7 @@ let currentSession = null;
 let saveTimer;
 let activeSpeech = null;
 let speechRate = 0.86;
+state = { ...structuredClone(initialState), ...state, skills: { ...initialState.skills, ...(state.skills || {}) }, reviewQueue: state.reviewQueue || [], errors: state.errors || [] };
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
@@ -74,6 +76,16 @@ const currentPlanLessons = () => {
   if (!state.plan || state.plan.date !== todayKey()) ensurePlan();
   return (state.plan?.lessons || []).map(id => curriculum.find(l => l.id === id)).filter(Boolean);
 };
+const reviewDue = () => (state.reviewQueue || []).filter(item => !item.nextReview || item.nextReview <= todayKey());
+const addReview = async (word, quality = 4) => {
+  const intervals = [1, 2, 4, 8, 16, 30];
+  const existing = state.reviewQueue.find(item => item.word === word);
+  const level = existing ? Math.min((existing.level || 0) + (quality >= 3 ? 1 : -1), intervals.length - 1) : 0;
+  const next = new Date();
+  next.setDate(next.getDate() + intervals[Math.max(0, level)]);
+  state.reviewQueue = [...(state.reviewQueue || []).filter(item => item.word !== word), { word, level: Math.max(0, level), nextReview: next.toISOString().slice(0, 10) }];
+  await save();
+};
 const completeLesson = async id => {
   state.completed = [...new Set([...(state.completed || []), id])];
   state.lessons = (state.lessons || 0) + 1;
@@ -109,6 +121,8 @@ function home() {
   const pending = planLessons[0];
   content.innerHTML = `<div class="hero"><div class="hero-copy"><div class="eyebrow">Tu plan de hoy · 15 min</div><h1>Hola, ${name}.<br>Hoy puedes dar un pasito más.</h1><p class="muted">Una lección corta, práctica y pensada para tu objetivo: comunicarte con confianza.</p><button class="btn" data-action="lesson">Empezar mi lección <span>→</span></button></div><div class="hero-art" aria-label="Oso panda">🐼</div></div>
   ${pending ? `<div class="section-head"><h2>Tu ruta de hoy</h2><span class="tag">${state.user?.dailyMinutes || 15} min · ${planLessons.length} ${planLessons.length === 1 ? "lección" : "lecciones"}</span></div><div class="card daily-plan"><div><span class="eyebrow">Siguiente recomendación · ${pending.level}</span><h2>${pending.title}</h2><p class="muted">${pending.description}</p><div class="tag">${pending.minutes} min · ${pending.skill}</div></div><button class="btn" data-lesson="${pending.id}">Empezar ahora →</button></div>` : `<div class="notice">Has completado tu ruta de hoy. Mañana tendrás nuevas lecciones.</div>`}
+  <div class="section-head"><h2>Organiza tu aprendizaje</h2></div><div class="card"><p class="muted">Haz el diagnóstico para ajustar tu nivel o activa un recordatorio para no perder tu hábito.</p><button class="btn secondary" data-action="start-diagnostic">Repetir diagnóstico</button><button class="btn secondary" data-action="notification" style="margin-left:8px">Activar recordatorios</button></div>
+  ${reviewDue().length ? `<div class="section-head"><h2>Repasos pendientes</h2></div><div class="card"><p>Tu memoria tiene ${reviewDue().length} elemento${reviewDue().length === 1 ? "" : "s"} listo${reviewDue().length === 1 ? "" : "s"} para repasar.</p><button class="btn secondary" data-view="vocabulary">Repasar ahora →</button></div>` : ""}
   <div class="section-head"><h2>Tu progreso</h2><button class="btn secondary" data-view="progress">Ver detalles</button></div>
   <div class="stats"><div class="stat"><span>Racha actual</span><strong>${state.streak} 🔥</strong><span>¡Sigue así!</span></div><div class="stat"><span>Palabras activas</span><strong>${state.words}</strong><span>+4 esta semana</span></div><div class="stat"><span>Objetivo mensual</span><strong>${state.goalProgress}%</strong><div class="progress-bar"><i style="width:${state.goalProgress}%"></i></div></div></div>
   <div class="section-head"><h2>Tu menú de aprendizaje</h2></div><div class="cards">
@@ -136,7 +150,7 @@ const topicExamples = {
 };
 function lesson(id) {
   const item = curriculum.find(l => l.id === id) || curriculum[0];
-  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><p class="muted">${item.description}</p><div class="card"><span class="tag">Regla útil</span><h3>${item.tip}</h3><hr><h2>${item.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2>${audioPlayer(item.phrase)}<p class="muted small">Escucha, repite y pulsa cualquier palabra para guardarla.</p><h3>Mini reto</h3><p>Construye o di una frase parecida usando este patrón en tu vida real.</p><button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button></div></div>`;
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><p class="muted">${item.description}</p><div class="card"><span class="tag">Regla útil</span><h3>${item.tip}</h3><hr><h2 class="selectable-phrase">${item.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2>${audioPlayer(item.phrase)}<p class="muted small">Escucha, repite y pulsa cualquier palabra para guardarla.</p><label style="margin-top:16px">Escribe una frase parecida<textarea id="writing-answer" placeholder="Escribe aquí tu ejemplo en inglés..."></textarea></label><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Corregir mi frase</button><div id="writing-feedback"></div><h3>Mini reto</h3><p>Construye o di una frase parecida usando este patrón en tu vida real.</p><button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button></div></div>`;
 }
 function learn() {
   content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>¿Qué quieres aprender hoy?</h1><p class="muted">Bimba te recomendará el siguiente paso según tu objetivo, nivel y lo que ya hayas practicado.</p><div class="cards">${topics.map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div>`;
@@ -152,13 +166,15 @@ function seriesScene(id) {
   const scene = scenes[id] || scenes.coffee;
   content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="series">← Volver a escenas</button><div class="eyebrow" style="margin-top:22px">Escena original · ${scene[0]}</div><h1>${scene[0]}</h1><div class="card"><div class="series-thumb">🎬</div><h2>${scene[1]}</h2><p>${scene[2]}</p>${audioPlayer(scene[1])}<hr><h3>Repite la frase en voz alta</h3><p class="muted">Primero escucha. Después pausa, repite y vuelve a escuchar para comparar ritmo y entonación.</p><button class="btn secondary" data-action="repeat" data-text="${scene[1]}">🎙 Repetir conmigo</button></div></div>`;
 }
-function vocabulary() { content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Explora por categorías y guarda expresiones útiles de tus temas.</p><div class="checkboxes">${["Trabajo", "Viajar", "Conversación", "Gramática"].map(x => `<button class="check" data-action="filter">${x}</button>`).join("")}</div><div class="card" style="margin-top:16px">${state.vocabulary.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type)}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊 Escuchar</button></div>`).join("")}</div>`; }
+function vocabulary() { content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Las palabras vuelven a aparecer con intervalos cada vez más largos.</p><div class="checkboxes">${["Trabajo", "Viajar", "Conversación", "Gramática", "Adjetivos", "Adverbios", "Preposiciones"].map(x => `<button class="check" data-action="filter">${x}</button>`).join("")}</div><div class="card" style="margin-top:16px">${state.vocabulary.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type)}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button><button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sé</button></div></div>`).join("")}</div>`; }
 function progress() { const skills = Object.entries(state.skills || {}); content.innerHTML = `<div class="eyebrow">Mira cómo avanzas</div><h1>Tu progreso real</h1><p class="muted">Bimba ajusta tus siguientes lecciones según lo que practicas y completas.</p><div class="card"><h2>Habilidades</h2>${skills.map(([key, value]) => `<div style="margin:16px 0"><div style="display:flex;justify-content:space-between"><strong>${({ grammar: "Gramática", vocabulary: "Vocabulario", listening: "Escucha", speaking: "Conversación", pronunciation: "Pronunciación" })[key] || key}</strong><span>${value}%</span></div><div class="progress-bar"><i style="width:${value}%"></i></div></div>`).join("")}</div><div class="section-head"><h2>Tu consejo de hoy</h2></div><div class="card"><h3>💡 Aprende en frases, no en listas</h3><p class="muted">Cuando guardes una palabra, practica también una frase propia. Así tu cerebro aprende cuándo y cómo usarla.</p></div>`; }
-function profile() { const u = state.user || {}; content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Tu perfil</div><h1>Hazlo tuyo</h1><p class="muted">Tus datos hacen que las lecciones sean relevantes para tu vida real.</p><form id="profile-form"><div class="form-grid"><label>Tu nombre<input name="name" value="${escapeHtml(u.name)}" required placeholder="¿Cómo te llamas?"></label><label>Tu nivel aproximado<select name="level"><option ${u.level === "A1-A2" ? "selected" : ""}>A1-A2</option><option ${u.level === "B1-B2" ? "selected" : ""}>B1-B2</option><option ${u.level === "C1-C2" ? "selected" : ""}>C1-C2</option></select></label></div><label style="margin-top:17px">¿Cuánto tiempo quieres estudiar al día?</label><select name="dailyMinutes"><option value="10" ${u.dailyMinutes === "10" ? "selected" : ""}>10 minutos · hábito ligero</option><option value="15" ${!u.dailyMinutes || u.dailyMinutes === "15" ? "selected" : ""}>15 minutos · constante</option><option value="30" ${u.dailyMinutes === "30" ? "selected" : ""}>30 minutos · avance rápido</option><option value="45" ${u.dailyMinutes === "45" ? "selected" : ""}>45 minutos · intensivo</option></select><label style="margin-top:17px">¿Para qué quieres usar el inglés? <span class="muted">(puedes elegir varias)</span></label><div class="checkboxes">${["Trabajo", "Viajar", "Series y ocio", "Exámenes", "Conversación"].map(x => `<label class="check"><input type="checkbox" name="goals" value="${x}" ${(u.goals || []).includes(x) ? "checked" : ""}>${x}</label>`).join("")}</div><label style="margin-top:17px">¿En qué trabajas y qué haces? (opcional)<textarea name="job" placeholder="Ej.: Soy diseñadora y hablo con clientes internacionales...">${escapeHtml(u.job)}</textarea></label><button class="btn" type="submit">Guardar mi perfil</button></form></div></div>`; document.querySelector("#profile-form").addEventListener("submit", e => { e.preventDefault(); const f = new FormData(e.target); state.user = { name: f.get("name"), level: f.get("level"), dailyMinutes: f.get("dailyMinutes"), job: f.get("job"), goals: f.getAll("goals") }; ensurePlan(); save(); toast("Perfil guardado. Tu plan adaptativo está listo."); setView("home"); }); }
+function profile() { const u = state.user || {}; content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Tu perfil</div><h1>Hazlo tuyo</h1><p class="muted">Tu username y avatar aparecerán en tu experiencia Bimba.</p><form id="profile-form"><div class="form-grid"><label>Username<input name="username" value="${escapeHtml(u.username)}" required pattern="[A-Za-z0-9_]{3,20}" placeholder="ej. lour_english"></label><label>Tu nombre<input name="name" value="${escapeHtml(u.name)}" required placeholder="¿Cómo te llamas?"></label><label>Tu nivel aproximado<select name="level"><option ${u.level === "A1-A2" ? "selected" : ""}>A1-A2</option><option ${u.level === "B1-B2" ? "selected" : ""}>B1-B2</option><option ${u.level === "C1-C2" ? "selected" : ""}>C1-C2</option></select></label><label>Foto de perfil<input name="avatar" type="file" accept="image/*"></label></div><div class="avatar-preview">${u.avatar ? `<img src="${u.avatar}" alt="Tu foto de perfil">` : "🐼"}</div><label style="margin-top:17px">¿Cuánto tiempo quieres estudiar al día?</label><select name="dailyMinutes"><option value="10" ${u.dailyMinutes === "10" ? "selected" : ""}>10 minutos · hábito ligero</option><option value="15" ${!u.dailyMinutes || u.dailyMinutes === "15" ? "selected" : ""}>15 minutos · constante</option><option value="30" ${u.dailyMinutes === "30" ? "selected" : ""}>30 minutos · avance rápido</option><option value="45" ${u.dailyMinutes === "45" ? "selected" : ""}>45 minutos · intensivo</option></select><label style="margin-top:17px">¿Para qué quieres usar el inglés? <span class="muted">(puedes elegir varias)</span></label><div class="checkboxes">${["Trabajo", "Viajar", "Series y ocio", "Exámenes", "Conversación"].map(x => `<label class="check"><input type="checkbox" name="goals" value="${x}" ${(u.goals || []).includes(x) ? "checked" : ""}>${x}</label>`).join("")}</div><label style="margin-top:17px">¿En qué trabajas y qué haces? (opcional)<textarea name="job" placeholder="Ej.: Soy diseñadora y hablo con clientes internacionales...">${escapeHtml(u.job)}</textarea></label><button class="btn" type="submit">Guardar mi perfil</button></form></div></div>`; document.querySelector("#profile-form").addEventListener("submit", async e => { e.preventDefault(); const f = new FormData(e.target); const file = f.get("avatar"); let avatar = u.avatar || ""; if (file?.size) { if (file.size > 1500000) return toast("La foto debe pesar menos de 1,5 MB."); avatar = await new Promise(resolve => { const reader = new FileReader(); reader.onload = () => resolve(reader.result); reader.readAsDataURL(file); }); } state.user = { username: f.get("username"), name: f.get("name"), level: f.get("level"), dailyMinutes: f.get("dailyMinutes"), job: f.get("job"), goals: f.getAll("goals"), avatar }; ensurePlan(); await save(); toast("Perfil guardado. Tu plan adaptativo está listo."); setView("home"); }); }
+function diagnostic() { const questions = [{ q: "Elige la frase correcta:", options: ["She work from home.", "She works from home."], answer: 1 }, { q: "¿Qué significa “I have been working here for two years”?", options: ["Trabajo aquí desde hace dos años.", "Trabajé aquí hace dos años."], answer: 0 }, { q: "Completa: I’m interested ___ learning English.", options: ["on", "in", "at"], answer: 1 }]; const index = state.diagnostic?.index || 0; if (index >= questions.length) return diagnosticResult(); const item = questions[index]; content.innerHTML = `<div class="quiz"><div class="eyebrow">Diagnóstico ${index + 1} de ${questions.length}</div><h1>Descubramos tu punto de partida</h1><div class="card"><h2>${item.q}</h2>${item.options.map((o, i) => `<button class="option" data-diagnostic="${i}" data-answer="${item.answer === i ? "right" : "wrong"}">${o}</button>`).join("")}</div></div>`; }
+function diagnosticResult() { const score = state.diagnostic?.score || 0; const level = score >= 3 ? "B1-B2" : score >= 2 ? "A2" : "A1-A2"; content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Diagnóstico completado</div><h1>Tu punto de partida: ${level}</h1><p class="muted">Hemos detectado qué contenidos conviene priorizar. Puedes cambiarlo desde tu perfil.</p><button class="btn" data-action="apply-level" data-level="${level}">Usar este nivel</button></div></div>`; }
 function auth() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Sincronización segura</div><h1>${currentSession ? "Tu cuenta Bimba" : "Guarda tu progreso en la nube"}</h1><p class="muted">${currentSession ? `Sesión iniciada como ${escapeHtml(currentSession.user.email)}.` : "Usa el mismo progreso en tu ordenador y en tu iPhone. No necesitas tarjeta."}</p>${currentSession ? `<button class="btn secondary" data-action="logout">Cerrar sesión</button>` : `<form id="auth-form"><label>Email<input name="email" type="email" required autocomplete="email" placeholder="tu@email.com"></label><label style="margin-top:14px">Contraseña<input name="password" type="password" minlength="6" required autocomplete="new-password" placeholder="Mínimo 6 caracteres"></label><div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap"><button class="btn" data-auth="signup">Crear cuenta</button><button class="btn secondary" data-auth="login">Iniciar sesión</button></div></form><p class="muted" style="margin-top:18px;font-size:12px">Tu email solo se usa para iniciar sesión. Nunca compartas tu contraseña.</p>`}</div></div>`; if (!currentSession) document.querySelector("#auth-form").addEventListener("submit", async e => { e.preventDefault(); const button = e.submitter; const f = new FormData(e.target); await authenticate(button.dataset.auth, f.get("email"), f.get("password")); }); }
 async function authenticate(action, email, password) { if (!supabaseClient) return toast("No se ha podido cargar el servicio de sincronización."); const result = action === "signup" ? await supabaseClient.auth.signUp({ email, password, options: { emailRedirectTo: APP_URL } }) : await supabaseClient.auth.signInWithPassword({ email, password }); if (result.error) return toast(result.error.message); if (result.data.session) { await loadCloudState(result.data.session); setView("home"); } else toast("Revisa tu email para confirmar la cuenta y después inicia sesión."); }
-function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes probarla sin cuenta. Para conservar tu progreso entre ordenador e iPhone, crea una cuenta gratuita desde “Sincronizar progreso”.</div><button class="btn" data-action="setup">Crear mi perfil →</button></div></div>`; }
-function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, series, vocabulary, progress, profile, auth }[currentView] || home)(); }
+function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes crear tu perfil y hacer un diagnóstico corto. Después Bimba preparará tu ruta diaria.</div><button class="btn" data-action="setup">Crear mi perfil →</button><button class="btn secondary" data-action="start-diagnostic" style="margin-left:8px">Hacer diagnóstico</button></div></div>`; }
+function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, series, vocabulary, progress, profile, auth, diagnostic }[currentView] || home)(); }
 
 document.querySelector("#main-nav").addEventListener("click", e => { const button = e.target.closest("[data-view]"); if (button) setView(button.dataset.view); });
 document.querySelector("#profile-button").addEventListener("click", () => setView("profile"));
@@ -213,14 +229,47 @@ document.addEventListener("click", async e => {
     if (!state.vocabulary.some(item => item.word === word)) {
       state.vocabulary.unshift({ word, meaning: "expresión guardada", type: "expresión", example: word });
       state.words++;
-      await save();
     }
+    await addReview(word);
     return toast("Expresión guardada en tu vocabulario.");
+  }
+  if (action === "review-word") {
+    await addReview(e.target.closest("[data-action=review-word]").dataset.word, 4);
+    return toast("¡Bien! Volveremos a repasarla más adelante.");
+  }
+  if (action === "check-writing") {
+    const answer = document.querySelector("#writing-answer")?.value.trim();
+    const feedback = document.querySelector("#writing-feedback");
+    if (!answer) return toast("Escribe primero una frase.");
+    const hasSubject = /\b(i|you|he|she|we|they)\b/i.test(answer);
+    const hasVerb = /\b(am|is|are|work|works|have|has|do|does|go|goes|like|likes|can|will)\b/i.test(answer);
+    feedback.innerHTML = `<div class="notice">${hasSubject && hasVerb ? "✅ Buena base: hay sujeto y verbo. Revisa ahora el orden y los detalles." : "💡 Te falta una pieza: intenta incluir quién hace la acción y un verbo conjugado."}</div>`;
+    if (!hasSubject || !hasVerb) state.errors = [...new Set([...state.errors, "construcción de frases"])];
+    await save();
+    return;
+  }
+  if (action === "apply-level") {
+    state.user = { ...(state.user || {}), level: e.target.closest("[data-action=apply-level]").dataset.level };
+    state.diagnostic = null;
+    ensurePlan();
+    await save();
+    return setView("home");
+  }
+  if (action === "start-diagnostic") { state.diagnostic = { index: 0, score: 0 }; return setView("diagnostic"); }
+  if (action === "notification") {
+    if (!("Notification" in window)) return toast("Este navegador no admite notificaciones.");
+    const permission = await Notification.requestPermission();
+    return toast(permission === "granted" ? "Recordatorios activados en este navegador." : "Notificaciones no activadas.");
   }
   if (action === "complete-lesson") return completeLesson(e.target.closest("[data-action=complete-lesson]").dataset.lesson);
   if (action === "review") return toast("Repaso programado para dentro de 2 días.");
   if (action === "series") return toast("Lección de escena abierta: audio, subtítulos y ejercicios.");
   const answer = e.target.closest("[data-answer]")?.dataset.answer;
+  if (e.target.closest("[data-diagnostic]")) {
+    const diagnosticAnswer = e.target.closest("[data-diagnostic]");
+    state.diagnostic = { index: (state.diagnostic?.index || 0) + 1, score: (state.diagnostic?.score || 0) + (diagnosticAnswer.dataset.answer === "right" ? 1 : 0) };
+    return render();
+  }
   if (answer === "right") { state.lessons++; state.goalProgress = Math.min(100, state.goalProgress + 4); await save(); toast("¡Muy bien! Recuperación activa completada."); render(); }
   else if (answer === "wrong") toast("Casi. Escucha la frase una vez más.");
 });
