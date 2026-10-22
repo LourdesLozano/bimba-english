@@ -14,6 +14,8 @@ let state = JSON.parse(localStorage.getItem(KEY) || "null") || structuredClone(i
 let currentView = "home";
 let currentSession = null;
 let saveTimer;
+let activeSpeech = null;
+let speechRate = 0.86;
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
@@ -30,6 +32,16 @@ const save = async () => {
   }, 300);
 };
 const setView = (view) => { currentView = view; document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.view === view)); render(); window.scrollTo(0, 0); };
+const speak = (text, rate = speechRate) => {
+  if (!("speechSynthesis" in window)) return toast("Tu navegador no permite reproducir voz.");
+  window.speechSynthesis.cancel();
+  activeSpeech = new SpeechSynthesisUtterance(text);
+  activeSpeech.lang = "en-US";
+  activeSpeech.rate = rate;
+  window.speechSynthesis.speak(activeSpeech);
+  return activeSpeech;
+};
+const audioPlayer = (text) => `<div class="audio-player"><button class="audio-control" data-action="audio" data-text="${escapeHtml(text)}" aria-label="Reproducir audio">▶</button><button class="audio-pause" data-action="pause" aria-label="Pausar audio">Ⅱ</button><div class="audio-track"><strong>Escuchar en inglés</strong><span>${escapeHtml(text)}</span></div><button class="speed-button" data-action="speed">1×</button></div>`;
 
 async function loadCloudState(session) {
   if (!session || !supabaseClient) return;
@@ -59,16 +71,22 @@ function home() {
   <div class="lesson-card"><div class="lesson-icon">🧠</div><h3>Repasa lo importante</h3><p class="muted">Tu memoria sabe cuándo necesitas volver a ver cada palabra.</p><button class="btn secondary" data-view="vocabulary">Repasar palabras</button></div></div>`;
 }
 const topics = [
-  { id: "work", icon: "💼", title: "Inglés para el trabajo", description: "Reuniones, emails y hablar con clientes.", subs: ["Reuniones", "Emails", "Small talk profesional"] },
-  { id: "travel", icon: "✈️", title: "Viajar", description: "Aeropuerto, hotel, restaurante y pedir ayuda.", subs: ["Aeropuerto", "Hotel", "Restaurantes"] },
-  { id: "conversation", icon: "💬", title: "Conversación cotidiana", description: "Hablar de ti, reaccionar y mantener una charla.", subs: ["Presentarte", "Opiniones", "Planes y tiempo libre"] },
-  { id: "grammar", icon: "🧩", title: "Gramática práctica", description: "Patrones que necesitas para expresarte mejor.", subs: ["Pasado", "Preguntas", "Conectores"] }
+  { id: "work", icon: "💼", title: "Inglés para el trabajo", description: "Reuniones, emails y hablar con clientes.", subs: ["Reuniones", "Emails", "Small talk", "Presentaciones", "Llamadas", "Entrevistas"] },
+  { id: "daily", icon: "☀️", title: "Día a día", description: "Casa, compras, recados y rutinas reales.", subs: ["Rutinas", "Compras", "Casa", "Médico", "Citas", "Problemas y soluciones"] },
+  { id: "travel", icon: "✈️", title: "Viajar", description: "Aeropuerto, hotel, restaurante y pedir ayuda.", subs: ["Aeropuerto", "Hotel", "Restaurantes", "Transporte", "Direcciones", "Emergencias"] },
+  { id: "conversation", icon: "💬", title: "Conversación cotidiana", description: "Hablar de ti, reaccionar y mantener una charla.", subs: ["Presentarte", "Opiniones", "Planes", "Emociones", "Bromas", "Historias"] },
+  { id: "media", icon: "🎬", title: "Series, música y ocio", description: "Entender conversaciones naturales y hablar de tus gustos.", subs: ["Películas", "Música", "Libros", "Deportes", "Redes sociales", "Hobbies"] },
+  { id: "grammar", icon: "🧩", title: "Gramática práctica", description: "Patrones que necesitas para expresarte mejor.", subs: ["Pasado", "Preguntas", "Futuro", "Condicionales", "Preposiciones", "Conectores"] },
+  { id: "pronunciation", icon: "🗣️", title: "Pronunciación y fluidez", description: "Sonidos, ritmo, entonación y hablar sin bloquearte.", subs: ["Sonidos difíciles", "Ritmo", "Entonación", "Shadowing", "Frases rápidas"] }
 ];
 const topicExamples = {
   work: { title: "Small talk profesional", phrase: "How is your day going so far?", meaning: "¿Qué tal va tu día hasta ahora?", word: "so far" },
+  daily: { title: "En una tienda", phrase: "I'm just looking, thank you.", meaning: "Solo estoy mirando, gracias.", word: "just" },
   travel: { title: "En el hotel", phrase: "Could I have the Wi-Fi password, please?", meaning: "¿Podría darme la contraseña del Wi-Fi, por favor?", word: "password" },
   conversation: { title: "Hablar de planes", phrase: "What are you up to this weekend?", meaning: "¿Qué planes tienes este fin de semana?", word: "What are you up to?" },
+  media: { title: "Hablar de una serie", phrase: "I can't stop watching this show.", meaning: "No puedo dejar de ver esta serie.", word: "show" },
   grammar: { title: "Preguntar con naturalidad", phrase: "Have you ever been to London?", meaning: "¿Has estado alguna vez en Londres?", word: "Have you ever...?" }
+  , pronunciation: { title: "Ritmo natural", phrase: "Could you say that again, please?", meaning: "¿Podrías repetirlo, por favor?", word: "say that again" }
 };
 function learn() {
   content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>¿Qué quieres aprender hoy?</h1><p class="muted">Bimba te recomendará el siguiente paso según tu objetivo, nivel y lo que ya hayas practicado.</p><div class="cards">${topics.map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div>`;
@@ -76,13 +94,13 @@ function learn() {
 function topic(id) {
   const t = topics.find(item => item.id === id) || topics[0];
   const example = topicExamples[id] || topicExamples.work;
-  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="learn">← Todos los temas</button><div class="eyebrow" style="margin-top:22px">${t.icon} ${t.title}</div><h1>${example.title}</h1><p class="muted">${t.description} Elige una subsección para seguir construyendo confianza.</p><div class="checkboxes">${t.subs.map(s => `<span class="check">${s}</span>`).join("")}</div><div class="card" style="margin-top:22px"><span class="tag">Frase útil · Bimba recomienda</span><h2>${example.phrase}</h2><p>${example.meaning}</p><button class="btn pink" data-action="audio" data-text="${example.phrase}">▶ Escuchar frase</button><button class="btn secondary" data-action="save-word" data-word="${example.word}" style="margin-left:8px">♡ Guardar expresión</button><hr><h3>¿En qué situación la usarías?</h3><button class="option" data-answer="right">En una conversación real relacionada con este tema</button><button class="option" data-answer="wrong">Solo al traducir palabra por palabra</button></div></div>`;
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="learn">← Todos los temas</button><div class="eyebrow" style="margin-top:22px">${t.icon} ${t.title}</div><h1>${example.title}</h1><p class="muted">${t.description} Elige una subsección para seguir construyendo confianza.</p><div class="checkboxes">${t.subs.map(s => `<span class="check">${s}</span>`).join("")}</div><div class="card" style="margin-top:22px"><span class="tag">Frase útil · Bimba recomienda</span><h2 class="selectable-phrase">${example.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2><p>${example.meaning}</p>${audioPlayer(example.phrase)}<p class="muted small">Pulsa una palabra de la frase para guardarla, o usa el botón para escuchar toda la expresión.</p><hr><h3>¿En qué situación la usarías?</h3><button class="option" data-answer="right">En una conversación real relacionada con este tema</button><button class="option" data-answer="wrong">Solo al traducir palabra por palabra</button></div></div>`;
 }
 function series() { content.innerHTML = `<div class="eyebrow">Aprende con historias</div><h1>Series & escenas</h1><p class="muted">Escenas cortas originales, con humor y situaciones cotidianas.</p><div class="notice">No podemos mostrar clips de <em>Friends</em> ni copiar sus subtítulos sin licencia. Para que puedas aprender de forma legal, Bimba crea escenas propias con el mismo tipo de situaciones: amigos, planes, malentendidos y conversaciones naturales.</div><div class="cards"><div class="card series-card"><div class="series-thumb">☕</div><div><span class="tag">A2 · 3 min</span><h3>The coffee plan</h3><p class="muted">Dos amigas organizan el fin de semana y practican expresiones de acuerdo.</p><button class="btn secondary" data-series="coffee">Ver escena</button></div></div><div class="card series-card"><div class="series-thumb">🛋️</div><div><span class="tag">B1 · 4 min</span><h3>The surprise party</h3><p class="muted">Un grupo de amigos intenta guardar un secreto.</p><button class="btn secondary" data-series="party">Ver escena</button></div></div><div class="card series-card"><div class="series-thumb">📱</div><div><span class="tag">B1 · 5 min</span><h3>Work group chat</h3><p class="muted">Mensajes, bromas y cómo aclarar un malentendido.</p><button class="btn secondary" data-series="chat">Ver escena</button></div></div></div>`; }
 function seriesScene(id) {
   const scenes = { coffee: ["The coffee plan", "Are you up for coffee this Saturday?", "¿Te apetece tomar un café este sábado?"], party: ["The surprise party", "Keep it quiet — it’s a surprise!", "No digas nada: ¡es una sorpresa!"], chat: ["Work group chat", "Sorry, I got the wrong end of the stick.", "Perdona, lo entendí completamente mal."] };
   const scene = scenes[id] || scenes.coffee;
-  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="series">← Volver a escenas</button><div class="eyebrow" style="margin-top:22px">Escena original · ${scene[0]}</div><h1>${scene[0]}</h1><div class="card"><div class="series-thumb">🎬</div><h2>${scene[1]}</h2><p>${scene[2]}</p><button class="btn pink" data-action="audio" data-text="${scene[1]}">▶ Escuchar diálogo</button><hr><h3>Repite la frase en voz alta</h3><p class="muted">Primero escucha. Después pausa, repite y vuelve a escuchar para comparar ritmo y entonación.</p><button class="btn secondary" data-action="repeat" data-text="${scene[1]}">🎙 Repetir conmigo</button></div></div>`;
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="series">← Volver a escenas</button><div class="eyebrow" style="margin-top:22px">Escena original · ${scene[0]}</div><h1>${scene[0]}</h1><div class="card"><div class="series-thumb">🎬</div><h2>${scene[1]}</h2><p>${scene[2]}</p>${audioPlayer(scene[1])}<hr><h3>Repite la frase en voz alta</h3><p class="muted">Primero escucha. Después pausa, repite y vuelve a escuchar para comparar ritmo y entonación.</p><button class="btn secondary" data-action="repeat" data-text="${scene[1]}">🎙 Repetir conmigo</button></div></div>`;
 }
 function vocabulary() { content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Explora por categorías y guarda expresiones útiles de tus temas.</p><div class="checkboxes">${["Trabajo", "Viajar", "Conversación", "Gramática"].map(x => `<button class="check" data-action="filter">${x}</button>`).join("")}</div><div class="card" style="margin-top:16px">${state.vocabulary.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type)}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊 Escuchar</button></div>`).join("")}</div>`; }
 function progress() { content.innerHTML = `<div class="eyebrow">Mira cómo avanzas</div><h1>Tu progreso real</h1><p class="muted">La fluidez no es saberlo todo: es poder hacer más cosas cada semana.</p><div class="cards"><div class="card"><h3>Comprensión auditiva</h3><strong>A2 → B1</strong><div class="progress-bar"><i style="width:64%"></i></div></div><div class="card"><h3>Vocabulario</h3><strong>${state.words} palabras activas</strong><div class="progress-bar"><i style="width:48%"></i></div></div><div class="card"><h3>Conversación</h3><strong>12 prácticas</strong><div class="progress-bar"><i style="width:32%"></i></div></div></div><div class="section-head"><h2>Tu consejo de hoy</h2></div><div class="card"><h3>💡 Habla aunque no sea perfecto</h3><p class="muted">Intenta responder primero sin traducir palabra por palabra. Después revisamos la frase y guardamos el patrón que te sirva.</p></div>`; }
@@ -105,13 +123,28 @@ document.addEventListener("click", async e => {
   if (action === "lesson") return setView("learn");
   if (action === "listen" || action === "speak") return toast("Práctica lista: el audio y la grabación se añadirán en la siguiente fase.");
   if (action === "audio") {
-    if (!("speechSynthesis" in window)) return toast("Tu navegador no permite reproducir voz.");
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(e.target.closest("[data-action=audio]").dataset.text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.86;
-    window.speechSynthesis.speak(utterance);
+    const text = e.target.closest("[data-action=audio]").dataset.text;
+    speak(text);
     return toast("Reproduciendo la frase en inglés.");
+  }
+  if (action === "speed") {
+    speechRate = speechRate === 0.86 ? 0.62 : speechRate === 0.62 ? 1.08 : 0.86;
+    e.target.closest("[data-action=speed]").textContent = `${speechRate === 0.62 ? "0,75" : speechRate === 1.08 ? "1,25" : "1"}×`;
+    return toast(`Velocidad ${speechRate === 0.62 ? "lenta" : speechRate === 1.08 ? "rápida" : "normal"}. Pulsa reproducir para aplicarla.`);
+  }
+  if (action === "pause") {
+    if (!("speechSynthesis" in window)) return toast("Tu navegador no permite controlar la voz.");
+    if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+      window.speechSynthesis.pause();
+      e.target.closest("[data-action=pause]").textContent = "▶";
+      return toast("Audio pausado.");
+    }
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      e.target.closest("[data-action=pause]").textContent = "Ⅱ";
+      return toast("Audio reanudado.");
+    }
+    return toast("Pulsa reproducir para empezar.");
   }
   if (action === "repeat") {
     const text = e.target.closest("[data-action=repeat]").dataset.text;

@@ -44,6 +44,17 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .word { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--line); } .word:last-child { border: 0; }
 .word h3 { margin: 0; } .word small { color: var(--muted); }
 .pill-button { background: var(--pink-soft); color: #a35976; border-radius: 20px; padding: 7px 11px; }
+.audio-player { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff9fb; margin: 14px 0; }
+.audio-control, .audio-pause, .speed-button { flex: 0 0 auto; border-radius: 50%; width: 36px; height: 36px; display: grid; place-items: center; background: var(--pink-deep); color: white; font-weight: 800; }
+.audio-pause { background: #633f4e; }
+.speed-button { border-radius: 10px; background: white; color: #633f4e; border: 1px solid var(--pink-deep); width: 45px; }
+.audio-track { min-width: 0; flex: 1; display: grid; gap: 2px; }
+.audio-track strong { font-size: 12px; }
+.audio-track span { color: var(--muted); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.selectable-phrase { display: flex; flex-wrap: wrap; gap: 5px; }
+.word-chip { background: var(--pink-soft); color: var(--ink); border-radius: 7px; padding: 3px 5px; font-size: inherit; font-weight: 750; }
+.word-chip:hover { background: var(--pink); color: #633f4e; }
+.small { font-size: 12px; }
 .quiz { max-width: 660px; margin: auto; } .option { display: block; width: 100%; text-align: left; background: white; border: 1px solid var(--line); padding: 15px; border-radius: 11px; margin: 9px 0; } .option:hover { border-color: var(--pink-deep); background: var(--pink-soft); }
 .form-grid { display: grid; gap: 17px; grid-template-columns: repeat(2, 1fr); } label { display: grid; gap: 7px; font-weight: 700; font-size: 13px; } input, textarea, select { border: 1px solid #e5d9de; padding: 12px; border-radius: 10px; background: white; color: var(--ink); font: inherit; } textarea { min-height: 95px; resize: vertical; }
 .checkboxes { display: flex; flex-wrap: wrap; gap: 8px; } .check { padding: 10px 12px; background: white; border: 1px solid var(--line); border-radius: 11px; font-weight: 600; } .check:has(input:checked) { background: var(--pink); border-color: var(--pink-deep); } .check input { accent-color: var(--pink-deep); margin-right: 5px; }
