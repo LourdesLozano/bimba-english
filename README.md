@@ -21,6 +21,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Recuperación de contraseña por email y avatar en Supabase Storage para cuentas sincronizadas.
 - Lecciones guiadas en tres pasos, escenarios de conversación, modo oscuro, logros y errores recurrentes.
 - Service worker para abrir el shell de la PWA cuando no haya conexión.
+- Preparación para Web Push en iPhone: el service worker recibe avisos y Supabase guarda las suscripciones por usuario.
 - Registro e inicio de sesión con Supabase.
 - Sincronización del progreso por usuario entre dispositivos.
 - Políticas RLS para que cada usuario solo pueda leer y modificar sus propios datos.
@@ -39,7 +40,8 @@ La conversación y la pronunciación usan APIs del navegador: Safari puede pedir
 
 ## Funciones que requieren infraestructura adicional
 
-- Las notificaciones push fiables con la app cerrada requieren un proveedor Web Push, un service worker de push y un endpoint seguro para enviar recordatorios. No se añade una clave privada al frontend.
+- Las notificaciones push sin pagar requieren generar claves VAPID, guardar solo la clave pública en `supabase-config.js`, desplegar una función Edge que lea `push_subscriptions` y programar su ejecución. La clave privada debe quedarse en los secrets de Supabase; nunca en este repositorio. Safari/iPhone exige instalar la web en la pantalla de inicio y aceptar el permiso desde esa PWA.
+- La función preparada está en [`supabase/functions/send-reminders/index.ts`](./supabase/functions/send-reminders/index.ts). Para activarla hay que configurar `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` y `REMINDER_CRON_SECRET` como secrets, copiar la clave pública a `supabase-config.js` y ejecutar esa función con un programador seguro. La función usa la `service_role` únicamente en el servidor y nunca en el navegador.
 - La corrección avanzada con IA requiere elegir un proveedor, definir límites de coste y decidir qué texto puede salir del dispositivo. La app mantiene ahora correcciones locales y no envía textos privados a terceros.
 
 ## Publicar

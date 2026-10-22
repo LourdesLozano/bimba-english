@@ -13,6 +13,7 @@ const initialState = {
 const content = document.querySelector("#app-content");
 const supabaseClient = window.supabase?.createClient(window.BIMBA_SUPABASE.url, window.BIMBA_SUPABASE.publishableKey);
 const APP_URL = "https://lourdeslozano.github.io/bimba-english/";
+const PUSH_PUBLIC_KEY = window.BIMBA_SUPABASE?.pushPublicKey || "";
 let state = JSON.parse(localStorage.getItem(KEY) || "null") || structuredClone(initialState);
 let currentView = "home";
 let viewHistory = [];
@@ -158,6 +159,35 @@ const getCatalogWord = word => vocabularyCatalog.find(item => item.word.toLowerC
 
 const escapeHtml = (value = "") => String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[c]));
 const toast = (message) => { const el = document.querySelector("#toast"); el.textContent = message; el.classList.add("show"); setTimeout(() => el.classList.remove("show"), 2600); };
+const base64ToUint8Array = value => {
+  const padding = "=".repeat((4 - value.length % 4) % 4);
+  const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
+  return Uint8Array.from(atob(base64), character => character.charCodeAt(0));
+};
+async function enableNotifications() {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) return toast("Este dispositivo no admite notificaciones web.");
+  if (location.protocol === "file:") return toast("Abre la versión publicada en Safari para activar avisos en iPhone.");
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") return toast("No se han activado los avisos.");
+  const registration = await navigator.serviceWorker.ready;
+  if (!PUSH_PUBLIC_KEY) {
+    localStorage.setItem("bimba-notifications", "permission-granted");
+    return toast("Permiso concedido. Falta configurar el envío Web Push gratuito.");
+  }
+  const subscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: base64ToUint8Array(PUSH_PUBLIC_KEY)
+  });
+  if (!supabaseClient || !currentSession) return toast("Inicia sesión para guardar este dispositivo.");
+  const { error } = await supabaseClient.from("push_subscriptions").upsert({
+    user_id: currentSession.user.id,
+    endpoint: subscription.endpoint,
+    subscription: subscription.toJSON()
+  }, { onConflict: "user_id,endpoint" });
+  if (error) throw error;
+  localStorage.setItem("bimba-notifications", "subscribed");
+  toast("Avisos activados en este iPhone.");
+}
 const setStatus = (message, online = false) => { const el = document.querySelector("#sync-status"); el.textContent = `${online ? "●" : "○"} ${message}`; el.style.color = online ? "var(--green)" : "var(--muted)"; };
 const localSave = () => localStorage.setItem(KEY, JSON.stringify(state));
 const save = async () => {
@@ -555,9 +585,7 @@ document.addEventListener("click", async e => {
     return;
   }
   if (action === "notification") {
-    if (!("Notification" in window)) return toast("Este navegador no admite notificaciones.");
-    const permission = await Notification.requestPermission();
-    return toast(permission === "granted" ? "Recordatorios activados en este navegador." : "Notificaciones no activadas.");
+    try { return await enableNotifications(); } catch (error) { console.error(error); return toast("No se han podido activar los avisos. Revisa la configuración."); }
   }
   if (action === "complete-lesson") return completeLesson(e.target.closest("[data-action=complete-lesson]").dataset.lesson);
   if (action === "review") return toast("Repaso programado para dentro de 2 días.");
