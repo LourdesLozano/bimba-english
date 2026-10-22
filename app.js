@@ -123,18 +123,68 @@ const irregularForms = {
   win: ["win", "wins", "won", "winning"], teach: ["teach", "teaches", "taught", "teaching"], learn: ["learn", "learns", "learnt", "learning"]
 };
 const verbForms = base => irregularForms[base] || (base.includes(" ") ? [base] : [base, `${base}s`, `${base}ed`, `${base}ing`]);
-const generatedLexicon = Object.entries(cefrCore).flatMap(([level, words]) =>
-  words.split(" ").flatMap(word => verbForms(word).map((form, index) => ({
-    word: form, meaning: index === 0 ? `verbo: ${word}` : `forma de ${word}`,
-    type: "verb", level, example: index === 3 ? `I am ${form} today.` : `I ${form} every day.`
-  })))
-);
+const generatedLexicon = [];
 const catalogFromTopics = vocabTopics.flatMap(topic => topic.sections.flatMap(([section, words]) =>
   words.map(([word, meaning, example], index) => ({
     word, meaning, example, topic: topic.title, section, level: ["A1", "A2", "B1", "B2", "C1"][index % 5],
     type: /^(reliable|outgoing|thoughtful|relieved|annoyed|grateful|tall|curly|casual|ripe|balanced|swollen|loose|durable|comfortable|affordable|humid|available|awkward|brilliant)$/.test(word) ? "adjective" : /ly$/.test(word) ? "adverb" : /^(in|on|at|for|from|to|with|by|of)$/.test(word) ? "preposition" : /^(follow up|figure out|check in|take off|look after)$/.test(word) ? "phrasal verb" : "noun"
   }))
 ));
+const curatedLexicon = [
+  ["be", "ser / estar", "verb", "A1", "I am ready to start."],
+  ["have", "tener", "verb", "A1", "I have a meeting at nine."],
+  ["do", "hacer", "verb", "A1", "What do you do at weekends?"],
+  ["go", "ir", "verb", "A1", "I go to work by bus."],
+  ["come", "venir", "verb", "A1", "Come and sit next to me."],
+  ["get", "conseguir / ponerse", "verb", "A2", "I get tired after work."],
+  ["make", "hacer / fabricar", "verb", "A2", "Let's make a plan."],
+  ["take", "coger / llevar", "verb", "A2", "Take an umbrella with you."],
+  ["give", "dar", "verb", "A1", "Can you give me a hand?"],
+  ["know", "saber / conocer", "verb", "A1", "I know the answer."],
+  ["want", "querer", "verb", "A1", "I want to improve my English."],
+  ["need", "necesitar", "verb", "A1", "We need more time."],
+  ["like", "gustar", "verb", "A1", "I like listening to podcasts."],
+  ["understand", "entender", "verb", "A2", "I don't understand this question."],
+  ["remember", "recordar", "verb", "A2", "Remember to check the address."],
+  ["forget", "olvidar", "verb", "A2", "Don't forget your keys."],
+  ["choose", "elegir", "verb", "B1", "You can choose any topic."],
+  ["improve", "mejorar", "verb", "A2", "Practice helps you improve."],
+  ["suggest", "sugerir", "verb", "B1", "Can you suggest a good restaurant?"],
+  ["achieve", "lograr", "verb", "B1", "She achieved her goal."],
+  ["avoid", "evitar", "verb", "B1", "Try to avoid translating every word."],
+  ["manage", "conseguir / gestionar", "verb", "B1", "I managed to finish on time."],
+  ["require", "requerir", "verb", "B2", "This job requires experience."],
+  ["provide", "proporcionar", "verb", "B2", "The course provides useful practice."],
+  ["include", "incluir", "verb", "B1", "The price includes breakfast."],
+  ["develop", "desarrollar", "verb", "B1", "Develop a regular study habit."],
+  ["support", "apoyar", "verb", "B1", "My colleagues support the idea."],
+  ["accept", "aceptar", "verb", "B1", "They accepted my application."],
+  ["refuse", "rechazar", "verb", "B2", "He refused to sign the document."],
+  ["mention", "mencionar", "verb", "B2", "She mentioned the problem yesterday."],
+  ["recommend", "recomendar", "verb", "B1", "I recommend this book."],
+  ["depend", "depender", "verb", "B1", "It depends on the weather."],
+  ["involve", "implicar", "verb", "B2", "The role involves working with clients."],
+  ["solve", "resolver", "verb", "B1", "Let's solve this together."],
+  ["reliable", "fiable", "adjective", "A2", "We need a reliable internet connection."],
+  ["confident", "seguro de sí mismo", "adjective", "B1", "I feel more confident speaking now."],
+  ["patient", "paciente", "adjective", "A2", "Be patient with yourself."],
+  ["effective", "eficaz", "adjective", "B1", "This is an effective way to revise."],
+  ["challenging", "exigente / difícil", "adjective", "B1", "The listening task was challenging."],
+  ["outstanding", "excelente", "adjective", "C1", "She did an outstanding job."],
+  ["always", "siempre", "adverb", "A1", "I always review my notes."],
+  ["usually", "normalmente", "adverb", "A1", "I usually study in the evening."],
+  ["already", "ya", "adverb", "A2", "I've already finished the exercise."],
+  ["carefully", "con cuidado", "adverb", "B1", "Read the instructions carefully."],
+  ["however", "sin embargo", "adverb", "B1", "However, we decided to continue."],
+  ["although", "aunque", "conjunction", "B1", "Although it was late, we continued."],
+  ["despite", "a pesar de", "preposition", "B2", "Despite the rain, we went out."],
+  ["look after", "cuidar de", "phrasal verb", "A2", "Can you look after my dog?"],
+  ["find out", "averiguar", "phrasal verb", "A2", "I need to find out the answer."],
+  ["carry on", "continuar", "phrasal verb", "B1", "Please carry on with your work."],
+  ["work out", "resolver / hacer ejercicio", "phrasal verb", "B1", "We will work out a solution."],
+  ["bring up", "mencionar / sacar un tema", "phrasal verb", "B2", "She brought up an important point."],
+  ["rule out", "descartar", "phrasal verb", "C1", "We cannot rule out that possibility."]
+].map(([word, meaning, type, level, example]) => ({ word, meaning, type, level, example, editorial: true }));
 const grammarLexicon = [
   ["always", "siempre", "I always practise in the morning", "adverb", "A1"], ["usually", "normalmente", "I usually walk to work.", "adverb", "A1"],
   ["often", "a menudo", "We often cook together.", "adverb", "A1"], ["already", "ya", "I have already finished.", "adverb", "A2"],
@@ -149,7 +199,9 @@ const grammarLexicon = [
   ["carry on", "continuar", "Please carry on with your work.", "phrasal verb", "B1"], ["work out", "resolver / hacer ejercicio", "We will work out a solution.", "phrasal verb", "B1"],
   ["bring up", "mencionar / criar", "She brought up an important point.", "phrasal verb", "B2"], ["rule out", "descartar", "We cannot rule out that possibility.", "phrasal verb", "C1"]
 ].map(([word, meaning, example, type, level]) => ({ word, meaning, example, type, level }));
-const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...generatedLexicon];
+const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...curatedLexicon]
+  .filter((item, index, catalog) => catalog.findIndex(candidate => candidate.word.toLowerCase() === item.word.toLowerCase()) === index)
+  .map(item => ({ ...item, editorial: item.editorial ?? true }));
 const vocabularyPartOfSpeech = [
   ["all", "Todas"], ["noun", "Sustantivos"], ["verb", "Verbos"], ["adjective", "Adjetivos"],
   ["adverb", "Adverbios"], ["preposition", "Preposiciones"], ["phrasal verb", "Phrasal verbs"]
