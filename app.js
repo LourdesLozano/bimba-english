@@ -184,6 +184,18 @@ const curatedLexicon = [
   ["work out", "resolver / hacer ejercicio", "phrasal verb", "B1", "We will work out a solution."],
   ["bring up", "mencionar / sacar un tema", "phrasal verb", "B2", "She brought up an important point."],
   ["rule out", "descartar", "phrasal verb", "C1", "We cannot rule out that possibility."]
+  ,["make a decision", "tomar una decisión", "collocation", "B1", "We need to make a decision today."]
+  ,["take a break", "tomarse un descanso", "collocation", "A2", "Let's take a short break."]
+  ,["have a look", "echar un vistazo", "collocation", "A2", "Can I have a look at the menu?"]
+  ,["pay attention", "prestar atención", "collocation", "B1", "Please pay attention to the instructions."]
+  ,["make progress", "progresar", "collocation", "B1", "You are making progress every week."]
+  ,["keep in touch", "mantener el contacto", "collocation", "B1", "Let's keep in touch after the course."]
+  ,["get ready", "prepararse", "phrasal verb", "A2", "I need to get ready for work."]
+  ,["deal with", "ocuparse de / afrontar", "phrasal verb", "B1", "I deal with customers every day."]
+  ,["look forward to", "tener ganas de", "phrasal verb", "B1", "I look forward to hearing from you."]
+  ,["run out of", "quedarse sin", "phrasal verb", "B1", "We have run out of coffee."]
+  ,["set up", "configurar / montar", "phrasal verb", "B1", "Can you help me set up my account?"]
+  ,["turn down", "rechazar / bajar el volumen", "phrasal verb", "B2", "She turned down the offer."]
 ].map(([word, meaning, type, level, example]) => ({ word, meaning, type, level, example, editorial: true }));
 const grammarLexicon = [
   ["always", "siempre", "I always practise in the morning", "adverb", "A1"], ["usually", "normalmente", "I usually walk to work.", "adverb", "A1"],
@@ -204,7 +216,7 @@ const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...curatedLe
   .map(item => ({ ...item, editorial: item.editorial ?? true }));
 const vocabularyPartOfSpeech = [
   ["all", "Todas"], ["noun", "Sustantivos"], ["verb", "Verbos"], ["adjective", "Adjetivos"],
-  ["adverb", "Adverbios"], ["preposition", "Preposiciones"], ["phrasal verb", "Phrasal verbs"]
+  ["adverb", "Adverbios"], ["preposition", "Preposiciones"], ["phrasal verb", "Phrasal verbs"], ["collocation", "Colocaciones"]
 ];
 const vocabularyLevels = ["all", "A1", "A2", "B1", "B2", "C1"];
 const getCatalogWord = word => vocabularyCatalog.find(item => item.word.toLowerCase() === word.toLowerCase());
@@ -297,12 +309,33 @@ const curriculum = [
   { id: "formal-presentation", title: "Presentar una idea con claridad", topic: "work", skill: "speaking", level: "B2", minutes: 22, description: "Organizar una presentación y responder preguntas.", phrase: "Let me walk you through the main points.", tip: "Los conectores guían al oyente: first, however, as a result, finally." },
   { id: "advanced-argument", title: "Argumentar con precisión", topic: "conversation", skill: "speaking", level: "C1", minutes: 25, description: "Matizar opiniones y reconocer otros puntos de vista.", phrase: "That is a valid point; however, I would argue that...", tip: "Concede una parte antes de matizar: it is true that..., nevertheless..." },
   { id: "advanced-listening", title: "Escucha de ideas implícitas", topic: "media", skill: "listening", level: "C1", minutes: 25, description: "Detectar intención, ironía y opinión indirecta.", phrase: "I suppose that is one way of looking at it.", tip: "El significado depende del tono y del contexto, no solo de las palabras." }
+  ,{ id: "to-be-and-pronouns", title: "To be y pronombres", topic: "grammar", skill: "grammar", level: "A1", minutes: 12, description: "Presentarte, decir quién eres y describir estados.", phrase: "I am from Spain and she is my colleague.", tip: "I am, you are, he/she/it is, we/they are." }
+  ,{ id: "there-is-are", title: "There is y there are", topic: "grammar", skill: "grammar", level: "A1", minutes: 12, description: "Describir lo que hay en un lugar.", phrase: "There are two cafés near my office.", tip: "There is para singular y there are para plural." }
+  ,{ id: "questions-can", title: "Preguntas y can", topic: "grammar", skill: "grammar", level: "A1", minutes: 15, description: "Pedir información, permiso y ayuda.", phrase: "Can you help me, please?", tip: "Do/does pregunta por hábitos; can pregunta por capacidad o permiso." }
+  ,{ id: "countable-uncountable", title: "Contables e incontables", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Hablar de cantidades y compras.", phrase: "How much water and how many bottles do we need?", tip: "How many con contables; how much con incontables." }
+  ,{ id: "comparatives", title: "Comparar personas y cosas", topic: "grammar", skill: "grammar", level: "A2", minutes: 15, description: "Comparativos, superlativos y opiniones.", phrase: "This route is cheaper than the other one.", tip: "Adjetivo corto + -er; more + adjetivo largo." }
+  ,{ id: "present-perfect", title: "Present perfect para experiencias", topic: "grammar", skill: "grammar", level: "B1", minutes: 20, description: "Hablar de experiencias y acciones recientes.", phrase: "Have you ever worked abroad?", tip: "Have/has + participio; usa ever y never para experiencias." }
+  ,{ id: "future-plans", title: "Planes con will y going to", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Decisiones, predicciones y planes.", phrase: "I am going to visit my family next weekend.", tip: "Going to para planes; will para decisiones espontáneas y predicciones." }
+  ,{ id: "passive-voice", title: "Voz pasiva útil", topic: "grammar", skill: "grammar", level: "B1", minutes: 20, description: "Describir procesos y noticias.", phrase: "The report was sent this morning.", tip: "Be + participio cuando importa la acción, no quién la hace." }
+  ,{ id: "reported-speech", title: "Contar lo que alguien dijo", topic: "grammar", skill: "grammar", level: "B2", minutes: 22, description: "Transmitir información y conversaciones.", phrase: "She said that she would call me later.", tip: "Ajusta tiempos y pronombres al contar palabras de otra persona." }
+  ,{ id: "relative-clauses", title: "Frases relativas", topic: "grammar", skill: "grammar", level: "B2", minutes: 20, description: "Añadir información sin crear frases cortas.", phrase: "The colleague who helped me works in Madrid.", tip: "Who para personas, which para cosas y that en muchos contextos." }
+  ,{ id: "mixed-conditionals", title: "Condicionales avanzados", topic: "grammar", skill: "grammar", level: "C1", minutes: 25, description: "Relacionar situaciones pasadas y consecuencias actuales.", phrase: "If I had studied earlier, I would feel more confident now.", tip: "Combina tiempos cuando la condición y el resultado están en momentos distintos." }
+  ,{ id: "restaurant-order", title: "Pedir en un restaurante", topic: "daily", skill: "speaking", level: "A1", minutes: 12, description: "Pedir comida, preguntar ingredientes y pagar.", phrase: "Could I have the bill, please?", tip: "Could I have... es una petición educada y muy reutilizable." }
+  ,{ id: "shopping-return", title: "Devolver una compra", topic: "daily", skill: "speaking", level: "A2", minutes: 15, description: "Explicar un problema y pedir un cambio o reembolso.", phrase: "I would like to return this because it is damaged.", tip: "I would like to... suena más amable que I want." }
+  ,{ id: "phone-call", title: "Hablar por teléfono", topic: "conversation", skill: "listening", level: "B1", minutes: 18, description: "Identificarte, pedir que repitan y dejar un mensaje.", phrase: "Could you put me through to the accounts department?", tip: "Usa Could you repeat that? cuando no entiendas una llamada." }
+  ,{ id: "problem-solving", title: "Resolver un problema", topic: "work", skill: "speaking", level: "B1", minutes: 18, description: "Explicar qué ocurre y proponer soluciones.", phrase: "There seems to be an issue with the delivery.", tip: "There seems to be suaviza una queja o problema." }
+  ,{ id: "opinion-debate", title: "Dar opiniones con educación", topic: "conversation", skill: "speaking", level: "B2", minutes: 22, description: "Estar de acuerdo, discrepar y justificar.", phrase: "I see your point, but I look at it differently.", tip: "Concede primero y después introduce tu matiz." }
+  ,{ id: "email-complaint", title: "Escribir una reclamación", topic: "work", skill: "writing", level: "B1", minutes: 20, description: "Explicar un problema, pedir una solución y cerrar.", phrase: "I am writing to complain about the service I received.", tip: "Sé específico, educado y termina con una petición clara." }
+  ,{ id: "photo-description", title: "Describir una imagen", topic: "conversation", skill: "writing", level: "A2", minutes: 15, description: "Describir personas, lugares y acciones.", phrase: "In the foreground, there is a woman who is smiling.", tip: "Usa there is/are y present continuous para lo que está ocurriendo." }
+  ,{ id: "food-listening", title: "Listening: pedir comida", topic: "daily", skill: "listening", level: "A2", minutes: 15, description: "Escuchar una conversación breve en un restaurante.", phrase: "Are you ready to order?", tip: "Escucha primero la intención general y después los detalles." }
+  ,{ id: "connected-speech", title: "Pronunciación: palabras enlazadas", topic: "pronunciation", skill: "pronunciation", level: "B1", minutes: 15, description: "Reconocer cómo se unen las palabras al hablar.", phrase: "What are you going to do?", tip: "En el inglés natural las palabras se conectan; practica por grupos de sentido." }
+  ,{ id: "th-sounds", title: "Pronunciación: el sonido th", topic: "pronunciation", skill: "pronunciation", level: "B1", minutes: 15, description: "Distinguir el sonido de think y this.", phrase: "I think this is the right thing.", tip: "Coloca suavemente la lengua entre los dientes y deja salir el aire." }
 ];
 const todayKey = () => new Date().toISOString().slice(0, 10);
 const ensurePlan = () => {
   if (!state.user) return;
   const minutes = Number(state.user.dailyMinutes || 15);
-  const level = state.user.level?.startsWith("A1") ? "A1" : state.user.level?.startsWith("C") ? "C1" : "A2";
+  const level = state.user.level?.startsWith("A1") ? "A1" : state.user.level?.startsWith("A2") ? "A2" : state.user.level?.startsWith("B1") ? "B1" : state.user.level?.startsWith("B2") ? "B2" : "C1";
   const goals = state.user.goals || [];
   const preferred = goals.includes("Trabajo") ? ["work", "grammar"] : goals.includes("Viajar") ? ["travel", "daily"] : ["conversation", "grammar"];
   const done = new Set(state.completed || []);
