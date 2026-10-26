@@ -719,7 +719,7 @@ function speaking() {
   const selected = state.speakingScenario || 0;
   const scenario = scenarios[selected];
   const prompt = scenario[2];
-  content.innerHTML = `<div class="quiz"><div class="eyebrow">Hablar y pronunciar</div><h1>Practica una respuesta real</h1><p class="muted">Escucha el modelo, grábate y compara la transcripción cuando tu navegador lo permita.</p><div class="checkboxes">${scenarios.map((item, index) => `<button class="check ${selected === index ? "active" : ""}" data-speaking-scenario="${index}">${item[1]}</button>`).join("")}</div><div class="card"><span class="tag">A2-B1 · ${scenario[3]}</span><h2>${prompt}</h2>${audioPlayer(prompt)}<button class="btn" data-action="record">🎙 Empezar grabación</button><button class="btn secondary" data-action="stop-record" style="margin-left:8px">Detener</button><div id="recording-status" class="recording-status"></div><div id="transcript" class="transcript">La transcripción aparecerá aquí si Safari o tu navegador la admite.</div><p class="muted small">Pronuncia despacio, escucha el modelo y repite por bloques. La puntuación es orientativa.</p></div></div>`;
+  content.innerHTML = `<div class="quiz"><div class="eyebrow">Hablar y pronunciar</div><h1>Practica una respuesta real</h1><p class="muted">Primero escucha la pregunta y después responde por escrito o con el micrófono. Así siempre puedes completar la actividad, aunque tu navegador no admita transcripción.</p><div class="checkboxes">${scenarios.map((item, index) => `<button class="check ${selected === index ? "active" : ""}" data-speaking-scenario="${index}">${item[1]}</button>`).join("")}</div><div class="card"><span class="tag">A2-B1 · ${scenario[3]}</span><h2>${prompt}</h2>${audioPlayer(prompt)}<label>Tu respuesta en inglés<textarea id="speaking-answer" placeholder="Write 2–4 sentences in English..."></textarea></label><div class="speaking-actions"><button class="btn pink" data-action="check-speaking">Comprobar respuesta</button><button class="btn secondary" data-action="record">🎙 Usar micrófono</button><button class="btn secondary" data-action="stop-record">Detener</button></div><div id="recording-status" class="recording-status"></div><div id="transcript" class="transcript">La transcripción aparecerá aquí si Safari o tu navegador la admite.</div><div id="speaking-feedback"></div><p class="muted small">Una respuesta útil tiene sujeto + verbo y al menos un detalle. La corrección es orientativa.</p></div></div>`;
 }
 function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes crear tu perfil y hacer un diagnóstico corto. Después Bimba preparará tu ruta diaria.</div><button class="btn" data-action="setup">Crear mi perfil →</button><button class="btn secondary" data-action="start-diagnostic" style="margin-left:8px">Hacer diagnóstico</button></div></div>`; }
 function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice, speaking, resetPassword }[currentView] || home)(); }
@@ -751,7 +751,12 @@ document.addEventListener("click", async e => {
   const selectedTheme = e.target.closest(".theme-swatch")?.dataset.theme;
   if (selectedTheme) { applyTheme(selectedTheme); document.querySelector(".theme-menu")?.remove(); return toast(`Color ${themeNames[selectedTheme].toLowerCase()} aplicado.`); }
   if (action === "setup") return setView("profile");
-  if (action === "next-lesson-step") { state.lessonStep = Math.min(2, (state.lessonStep || 0) + 1); return lesson(e.target.closest("[data-action=next-lesson-step]").dataset.lesson, true); }
+  if (action === "next-lesson-step") {
+    const lessonItem = curriculum.find(item => item.id === e.target.closest("[data-action=next-lesson-step]").dataset.lesson);
+    const stepCount = lessonItem?.guide ? 4 : 3;
+    state.lessonStep = Math.min(stepCount - 1, (state.lessonStep || 0) + 1);
+    return lesson(lessonItem?.id, true);
+  }
   if (action === "forgot-password") return requestPasswordReset();
   if (action === "record") {
     const status = document.querySelector("#recording-status");
@@ -781,6 +786,25 @@ document.addEventListener("click", async e => {
     activeRecorder = null;
     const status = document.querySelector("#recording-status");
     if (status) status.textContent = "Grabación terminada.";
+    return;
+  }
+  if (action === "check-speaking") {
+    const answer = document.querySelector("#speaking-answer")?.value.trim() || "";
+    const feedback = document.querySelector("#speaking-feedback");
+    const words = answer.split(/\s+/).filter(Boolean);
+    const hasSubject = /\b(I|you|he|she|we|they|my|the)\b/i.test(answer);
+    const hasVerb = /\b(am|is|are|have|has|work|live|would|can|went|go|like|need|feel|think|want)\w*/i.test(answer);
+    if (!answer) {
+      feedback.innerHTML = `<div class="feedback error">Escribe o dicta una respuesta antes de comprobarla.</div>`;
+      return;
+    }
+    if (hasSubject && hasVerb && words.length >= 5) {
+      state.skills.speaking = Math.min(100, (state.skills.speaking || 0) + 3);
+      feedback.innerHTML = `<div class="feedback">✅ Buena respuesta: tiene estructura y suficiente detalle. Ahora intenta decirla en voz alta.</div>`;
+    } else {
+      feedback.innerHTML = `<div class="feedback error">💡 Añade un sujeto, un verbo y un detalle más. Por ejemplo: “I work with customers, and I enjoy solving problems.”</div>`;
+    }
+    await save();
     return;
   }
   const speakingScenario = e.target.closest("[data-speaking-scenario]")?.dataset.speakingScenario;
@@ -925,7 +949,7 @@ document.addEventListener("click", async e => {
     const filters = state.practiceFilters || { level: "all", type: "all", topic: "all", mode: "useful" };
     const source = filters.topic === "all" ? vocabularyCatalog : topicVocabulary(filters.topic, filters.mode);
     const pool = source.filter(item => (filters.level === "all" || item.level === filters.level) && (filters.type === "all" || item.type === filters.type));
-    state.practiceIndex = Math.min((state.practiceIndex || 0) + 1, Math.max(pool.length - 1, 0));
+    state.practiceIndex = pool.length ? ((state.practiceIndex || 0) + 1) % pool.length : 0;
     state.orderAttempt = [];
     return render();
   }
