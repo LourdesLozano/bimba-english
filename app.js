@@ -1,7 +1,7 @@
 const KEY = "bimba-english-state";
 const initialState = {
   user: null, streak: 3, lessons: 1, words: 24, goalProgress: 18, completed: [], plan: null, diagnostic: null,
-  achievements: [], lessonStep: 0,
+  achievements: [], lessonStep: 0, topicProgress: {},
   skills: { grammar: 20, vocabulary: 28, listening: 12, speaking: 10, pronunciation: 15 },
   errors: [], reviewQueue: [],
   vocabulary: [
@@ -23,7 +23,7 @@ let activeSpeech = null;
 let speechRate = 0.86;
 let activeRecorder = null;
 let activeRecognition = null;
-state = { ...structuredClone(initialState), ...state, skills: { ...initialState.skills, ...(state.skills || {}) }, reviewQueue: state.reviewQueue || [], errors: state.errors || [] };
+state = { ...structuredClone(initialState), ...state, skills: { ...initialState.skills, ...(state.skills || {}) }, topicProgress: state.topicProgress || {}, reviewQueue: state.reviewQueue || [], errors: state.errors || [] };
 const vocabTopics = [
   { id: "food", icon: "🍽️", title: "Comida y cocina", description: "Todo lo necesario para comprar, cocinar y hablar de comida.", sections: [
     ["Recetas y cocina", [["chop", "picar", "Chop the onion into small pieces."], ["boil", "hervir", "Boil the pasta for ten minutes."], ["recipe", "receta", "This recipe is easy to follow."]]],
@@ -297,9 +297,55 @@ const expansionLexicon = [
   ["argument","discusión","noun","B1","They had an argument yesterday.","people","Relaciones"],
   ["trust","confiar","verb","B1","I trust my closest friends.","people","Relaciones"]
 ].map(([word, meaning, type, level, example, topic, section]) => ({ word, meaning, type, level, example, topic, section, editorial: true }));
-const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...curatedLexicon, ...expansionLexicon]
-  .filter((item, index, catalog) => catalog.findIndex(candidate => candidate.word.toLowerCase() === item.word.toLowerCase()) === index)
-  .map(item => ({ ...item, editorial: item.editorial ?? true }));
+const topicTitleToId = Object.fromEntries(vocabTopics.map(topic => [topic.title, topic.id]));
+const normalizeVocabularyEntry = (item, index, source = "legacy") => {
+  const theme = item.theme || topicTitleToId[item.topic] || "general";
+  const word = item.word.trim();
+  return {
+    id: item.id || `${theme}-${word.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${index}`,
+    theme,
+    subtopic: item.subtopic || item.section || "General",
+    word,
+    meaning: item.meaning,
+    type: item.type || "word",
+    cefr: item.cefr || item.level || "A2",
+    level: item.level || item.cefr || "A2",
+    frequency: item.frequency || "medium",
+    priority: item.priority || 2,
+    variant: item.variant || "both",
+    variantUk: item.variantUk || "",
+    variantUs: item.variantUs || "",
+    example: item.example || word,
+    exercises: item.exercises || ["translation", "gap", "audio"],
+    editorial: item.editorial ?? source !== "legacy"
+  };
+};
+const rawVocabulary = [
+  ...(window.BIMBA_VOCABULARY || []),
+  ...catalogFromTopics,
+  ...grammarLexicon,
+  ...curatedLexicon,
+  ...expansionLexicon
+];
+const vocabularyCatalog = rawVocabulary
+  .map((item, index) => normalizeVocabularyEntry(item, index, index < (window.BIMBA_VOCABULARY || []).length ? "editorial" : "legacy"))
+  .filter((item, index, catalog) => catalog.findIndex(candidate => `${candidate.theme}:${candidate.word.toLowerCase()}:${candidate.type}` === `${item.theme}:${item.word.toLowerCase()}:${item.type}`) === index);
+const topicVocabulary = (theme, mode = "useful") => {
+  const items = vocabularyCatalog.filter(item => item.theme === theme);
+  if (mode !== "unique") return items;
+  return items.filter((item, index, all) => all.findIndex(candidate => candidate.word.toLowerCase() === item.word.toLowerCase()) === index);
+};
+const topicProgress = theme => {
+  const progress = state.topicProgress?.[theme] || { learned: 0, reviewed: 0, saved: 0 };
+  const total = topicVocabulary(theme, "unique").length;
+  return { ...progress, total, percentage: total ? Math.round((progress.learned / total) * 100) : 0 };
+};
+const markTopicProgress = (word, field) => {
+  const item = vocabularyCatalog.find(candidate => candidate.word.toLowerCase() === word.toLowerCase());
+  if (!item?.theme || !vocabTopics.some(topic => topic.id === item.theme)) return;
+  const current = state.topicProgress?.[item.theme] || { learned: 0, reviewed: 0, saved: 0 };
+  state.topicProgress = { ...(state.topicProgress || {}), [item.theme]: { ...current, [field]: (current[field] || 0) + 1, lastStudiedAt: new Date().toISOString() } };
+};
 const vocabularyPartOfSpeech = [
   ["all", "Todas"], ["noun", "Sustantivos"], ["verb", "Verbos"], ["adjective", "Adjetivos"],
   ["adverb", "Adverbios"], ["preposition", "Preposiciones"], ["phrasal verb", "Phrasal verbs"], ["collocation", "Colocaciones"]
@@ -582,16 +628,34 @@ function vocabulary() {
   content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Tus palabras guardadas vuelven con intervalos cada vez más largos.</p><div class="card"><p><strong>${saved.length}</strong> palabras guardadas · <strong>${reviewDue().length}</strong> repasos pendientes</p>${saved.length ? saved.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type || "expresión")}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button><button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sé</button></div></div>`).join("") : `<p class="muted">Guarda palabras desde cualquier tema para empezar tu lista.</p>`}</div>`;
 }
 function practice() {
-  const filters = state.practiceFilters || { level: "all", type: "all" };
-  const pool = vocabularyCatalog.filter(item => (filters.level === "all" || item.level === filters.level) && (filters.type === "all" || item.type === filters.type));
+  const filters = state.practiceFilters || { level: "all", type: "all", topic: "all", mode: "useful" };
+  const source = filters.topic === "all" ? vocabularyCatalog : topicVocabulary(filters.topic, filters.mode);
+  const pool = source.filter(item => (filters.level === "all" || item.level === filters.level) && (filters.type === "all" || item.type === filters.type));
   const item = pool[(state.practiceIndex || 0) % Math.max(pool.length, 1)] || vocabularyCatalog[0];
   const prompt = state.practiceMode || "translation";
   const answer = prompt === "translation" ? item.meaning : prompt === "fill" ? item.word : item.example.split(" ").map(word => word.replace(/[.,!?]/g, "")).sort(() => .5 - Math.random());
-  content.innerHTML = `<div class="quiz"><div class="eyebrow">Práctica activa · ${vocabularyCatalog.length}+ entradas</div><h1>Practicar palabras</h1><p class="muted">Elige nivel y categoría. Las respuestas fallidas pasan automáticamente a tu repaso.</p><div class="filter-grid"><select data-practice-level>${vocabularyLevels.map(level => `<option value="${level}" ${filters.level === level ? "selected" : ""}>${level === "all" ? "Todos los niveles" : level}</option>`).join("")}</select><select data-practice-type>${vocabularyPartOfSpeech.map(([value, label]) => `<option value="${value}" ${filters.type === value ? "selected" : ""}>${label}</option>`).join("")}</select><select data-practice-mode><option value="translation" ${prompt === "translation" ? "selected" : ""}>Traducción</option><option value="fill" ${prompt === "fill" ? "selected" : ""}>Completar frase</option><option value="order" ${prompt === "order" ? "selected" : ""}>Ordenar palabras</option></select></div><div class="card"><span class="tag">${item.level} · ${item.type}</span><h2>${prompt === "translation" ? `¿Qué significa “${item.word}”?` : prompt === "fill" ? item.example.replace(new RegExp(item.word, "i"), "_____") : "Ordena las palabras para formar la frase"}</h2>${prompt === "order" ? `<p id="order-answer" class="selectable-phrase">${(state.orderAttempt || []).map(escapeHtml).join(" ") || "Pulsa cada palabra en orden"}</p><div class="word-order">${answer.map((word, index) => `<button data-order-word="${index}" data-word="${escapeHtml(word)}">${escapeHtml(word)}</button>`).join("")}</div><button class="btn" data-action="check-practice-order" data-expected="${escapeHtml(item.example)}">Comprobar frase</button>` : `<div class="exercise-answer"><input id="practice-answer" autocomplete="off" placeholder="${prompt === "translation" ? "Escribe la traducción..." : "Escribe la palabra que falta..."}"><button class="btn" data-action="check-practice" data-answer="${escapeHtml(answer)}" data-word="${escapeHtml(item.word)}">Comprobar</button></div>`}<div id="practice-feedback"></div>${audioPlayer(item.example)}<button class="pill-button" data-action="save-word" data-word="${escapeHtml(item.word)}">♡ Guardar palabra</button></div></div>`;
+  const topicOptions = [{ id: "all", title: "Todos los temas" }, ...vocabTopics.map(topic => ({ id: topic.id, title: topic.title }))];
+  const hasPrevious = (state.practiceIndex || 0) > 0;
+  const solution = prompt === "order" ? item.example : answer;
+  content.innerHTML = `<div class="quiz"><div class="eyebrow">Práctica activa · ${source.length} unidades disponibles</div><h1>Practicar palabras</h1><p class="muted">Elige nivel, tema y tipo. Después de responder, usa Anterior o Siguiente para continuar.</p><div class="filter-grid"><select data-practice-topic>${topicOptions.map(topic => `<option value="${topic.id}" ${filters.topic === topic.id ? "selected" : ""}>${topic.title}</option>`).join("")}</select><select data-practice-scope><option value="useful" ${filters.mode === "useful" ? "selected" : ""}>Unidades útiles</option><option value="unique" ${filters.mode === "unique" ? "selected" : ""}>Palabras únicas</option></select><select data-practice-level>${vocabularyLevels.map(level => `<option value="${level}" ${filters.level === level ? "selected" : ""}>${level === "all" ? "Todos los niveles" : level}</option>`).join("")}</select><select data-practice-type>${vocabularyPartOfSpeech.map(([value, label]) => `<option value="${value}" ${filters.type === value ? "selected" : ""}>${label}</option>`).join("")}</select><select data-practice-mode><option value="translation" ${prompt === "translation" ? "selected" : ""}>Traducción</option><option value="fill" ${prompt === "fill" ? "selected" : ""}>Completar frase</option><option value="order" ${prompt === "order" ? "selected" : ""}>Ordenar palabras</option></select></div><div class="card"><span class="tag">${item.level} · ${item.type} · ${item.frequency}</span><h2>${prompt === "translation" ? `¿Qué significa “${item.word}”?` : prompt === "fill" ? item.example.replace(new RegExp(item.word, "i"), "_____") : "Ordena las palabras para formar la frase"}</h2>${prompt === "order" ? `<p id="order-answer" class="selectable-phrase">${(state.orderAttempt || []).map(escapeHtml).join(" ") || "Pulsa cada palabra en orden"}</p><div class="word-order">${answer.map((word, index) => `<button data-order-word="${index}" data-word="${escapeHtml(word)}">${escapeHtml(word)}</button>`).join("")}</div><button class="btn" data-action="check-practice-order" data-expected="${escapeHtml(item.example)}">Comprobar frase</button>` : `<div class="exercise-answer"><input id="practice-answer" autocomplete="off" placeholder="${prompt === "translation" ? "Escribe la traducción..." : "Escribe la palabra que falta..."}"><button class="btn" data-action="check-practice" data-answer="${escapeHtml(answer)}" data-word="${escapeHtml(item.word)}">Comprobar</button></div>`}<div class="practice-help"><button class="pill-button" data-action="reveal-practice" data-solution="${escapeHtml(solution)}" data-word="${escapeHtml(item.word)}">Mostrar respuesta</button><span class="muted small">Si la miras, volverá a tu repaso.</span></div><div id="practice-feedback"></div>${audioPlayer(item.example)}<button class="pill-button" data-action="save-word" data-word="${escapeHtml(item.word)}">♡ Guardar palabra</button><div class="practice-navigation"><button class="btn secondary" data-action="practice-previous" ${hasPrevious ? "" : "disabled"}>← Anterior</button><span class="muted">Palabra ${(state.practiceIndex || 0) + 1} de ${source.length}</span><button class="btn pink" data-action="practice-next">Siguiente →</button></div></div></div>`;
 }
-function vocabularyTopics() { content.innerHTML = `<div class="eyebrow">Palabras que puedes usar</div><h1>Vocabulario por temas</h1><p class="muted">Cada tema tiene subcategorías para avanzar desde lo básico hasta situaciones reales.</p><div class="cards">${vocabTopics.map(t => `<div class="card vocab-topic"><div class="lesson-icon">${t.icon}</div><div><h3>${t.title}</h3><p class="muted">${t.sections.length} subtemas · ${t.sections.reduce((sum, s) => sum + s[1].length, 0)} palabras</p><button class="btn secondary" data-vocab-topic="${t.id}">Ver subtemas →</button></div></div>`).join("")}</div>`; }
-function vocabularyTopic(id) { const topic = vocabTopics.find(t => t.id === id) || vocabTopics[0]; content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="vocabularyTopics">← Todos los temas</button><div class="eyebrow" style="margin-top:22px">${topic.icon} Vocabulario</div><h1>${topic.title}</h1><p class="muted">${topic.description} Elige una subcategoría para ver palabras, ejemplos y audio.</p><div class="cards">${topic.sections.map(([title, words], index) => `<div class="card"><span class="tag">Subtema ${index + 1}</span><h3>${title}</h3><p class="muted">${words.length} palabras prácticas</p><button class="btn secondary" data-vocab-section="${topic.id}|${index}">Abrir subtema →</button></div>`).join("")}</div></div>`; }
-function vocabularySection(topicId, index) { const topic = vocabTopics.find(t => t.id === topicId) || vocabTopics[0]; const [title, words] = topic.sections[Number(index)] || topic.sections[0]; content.innerHTML = `<div class="quiz"><button class="pill-button" data-vocab-topic="${topic.id}">← ${topic.title}</button><div class="eyebrow" style="margin-top:22px">${topic.icon} ${topic.title}</div><h1>${title}</h1><p class="muted">Escucha, mira el ejemplo y guarda lo que quieras repasar.</p><div class="card">${words.map(([word, meaning, example]) => `<div class="word"><div><h3>${word} <span class="tag">${meaning}</span></h3><small>“${example}”</small></div><div><button class="pill-button" data-action="audio" data-text="${example}">🔊</button><button class="pill-button" data-action="save-word" data-word="${word}">♡ Guardar</button></div></div>`).join("")}</div></div>`; }
+function vocabularyTopics() { content.innerHTML = `<div class="eyebrow">Palabras que puedes usar</div><h1>Vocabulario por temas</h1><p class="muted">Cada tema combina palabras únicas con unidades útiles: expresiones, colocaciones y phrasal verbs. El progreso se guarda por tema.</p><div class="cards">${vocabTopics.map(t => { const useful = topicVocabulary(t.id, "useful"); const unique = topicVocabulary(t.id, "unique"); const progress = topicProgress(t.id); return `<div class="card vocab-topic"><div class="lesson-icon">${t.icon}</div><div><h3>${t.title}</h3><p class="muted">${unique.length} palabras únicas · ${useful.length} unidades útiles · ${t.sections.length} subtemas</p><div class="progress-track"><span style="width:${progress.percentage}%"></span></div><small class="muted">${progress.percentage}% dominado · ${progress.learned}/${progress.total}</small><br><button class="btn secondary" data-vocab-topic="${t.id}">Ver subtemas →</button></div></div>`; }).join("")}</div>`; }
+function vocabularyTopic(id) {
+  const topic = vocabTopics.find(t => t.id === id) || vocabTopics[0];
+  const grouped = Object.entries(topicVocabulary(topic.id).reduce((groups, item) => {
+    (groups[item.subtopic] ||= []).push(item);
+    return groups;
+  }, {}));
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="vocabularyTopics">← Todos los temas</button><div class="eyebrow" style="margin-top:22px">${topic.icon} Vocabulario</div><h1>${topic.title}</h1><p class="muted">${topic.description} Ahora puedes entrar en cada subtema del catálogo amplio, no solo en la muestra inicial.</p><div class="cards">${grouped.map(([subtopic, words]) => `<div class="card"><span class="tag">Catálogo editorial · ${words.length} unidades</span><h3>${escapeHtml(subtopic)}</h3><p class="muted">${words.filter(item => item.type === "word").length} palabras · ${words.filter(item => item.type !== "word").length} expresiones y unidades</p><button class="btn secondary" data-vocab-section="${topic.id}|editorial|${encodeURIComponent(subtopic)}">Abrir subtema →</button></div>`).join("")}</div></div>`;
+}
+function vocabularySection(topicId, index, encodedSubtopic) {
+  const topic = vocabTopics.find(t => t.id === topicId) || vocabTopics[0];
+  const editorial = index === "editorial";
+  const subtopic = encodedSubtopic ? decodeURIComponent(encodedSubtopic) : "";
+  const words = editorial ? topicVocabulary(topic.id).filter(item => !subtopic || item.subtopic === subtopic) : (topic.sections[Number(index)] || topic.sections[0])[1].map(([word, meaning, example]) => ({ word, meaning, example, type: "word" }));
+  const title = editorial ? (subtopic || "Catálogo editorial") : (topic.sections[Number(index)] || topic.sections[0])[0];
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-vocab-topic="${topic.id}">← ${topic.title}</button><div class="eyebrow" style="margin-top:22px">${topic.icon} ${topic.title}</div><h1>${escapeHtml(title)}</h1><p class="muted">${words.length} unidades. Escucha, mira el ejemplo y guarda lo que quieras repasar.</p><div class="card">${words.map(item => `<div class="word"><div><h3>${escapeHtml(item.word)} <span class="tag">${escapeHtml(item.meaning)} · ${escapeHtml(item.cefr || "A2")} · ${escapeHtml(item.type || "word")}</span></h3><small>“${escapeHtml(item.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(item.example)}">🔊</button><button class="pill-button" data-action="save-word" data-word="${escapeHtml(item.word)}">♡ Guardar</button></div></div>`).join("")}</div></div>`;
+}
 function library() { content.innerHTML = `<div class="eyebrow">Aprende a tu manera</div><h1>Lecciones sueltas</h1><p class="muted">Elige cualquier lección sin cambiar tu ruta diaria. La práctica se guardará igualmente.</p><div class="cards">${curriculum.map(item => `<div class="card"><span class="tag">${item.level} · ${item.minutes} min</span><h3>${item.title}</h3><p class="muted">${item.description}</p><button class="btn secondary" data-lesson="${item.id}">Hacer lección →</button></div>`).join("")}</div>`; }
 function progress() { const skills = Object.entries(state.skills || {}); const errors = state.errors || []; content.innerHTML = `<div class="eyebrow">Mira cómo avanzas</div><h1>Tu progreso real</h1><p class="muted">Bimba ajusta tus siguientes lecciones según lo que practicas y completas.</p><div class="card"><h2>Habilidades</h2>${skills.map(([key, value]) => `<div style="margin:16px 0"><div style="display:flex;justify-content:space-between"><strong>${({ grammar: "Gramática", vocabulary: "Vocabulario", listening: "Escucha", speaking: "Conversación", pronunciation: "Pronunciación" })[key] || key}</strong><span>${value}%</span></div><div class="progress-bar"><i style="width:${value}%"></i></div></div>`).join("")}</div><div class="card"><h2>Errores recurrentes</h2>${errors.length ? errors.map(error => `<p class="notice">↻ ${escapeHtml(error)}</p>`).join("") : `<p class="muted">Todavía no hay errores recurrentes. Practicar y equivocarte forma parte del aprendizaje.</p>`}</div><div class="card"><h2>Logros</h2><span class="tag">${state.completed.length >= 5 ? "🏅 5 lecciones" : "🌱 Primeros pasos"}</span> <span class="tag">${state.vocabulary.length >= 10 ? "📚 10 palabras" : "📝 Guarda palabras"}</span><span class="tag">${state.streak >= 7 ? "🔥 7 días" : "🔥 Racha activa"}</span></div><div class="section-head"><h2>Tu consejo de hoy</h2></div><div class="card"><h3>💡 Aprende en frases, no en listas</h3><p class="muted">Cuando guardes una palabra, practica también una frase propia. Así tu cerebro aprende cuándo y cómo usarla.</p></div>`; }
 function week() {
@@ -663,7 +727,7 @@ document.addEventListener("click", async e => {
   const view = e.target.closest("[data-view]"); if (view) return setView(view.dataset.view);
   const topicId = e.target.closest("[data-topic]")?.dataset.topic; if (topicId) return topic(topicId);
   const vocabId = e.target.closest("[data-vocab-topic]")?.dataset.vocabTopic; if (vocabId) return vocabularyTopic(vocabId);
-  const vocabSection = e.target.closest("[data-vocab-section]")?.dataset.vocabSection; if (vocabSection) { const [topicId, index] = vocabSection.split("|"); return vocabularySection(topicId, index); }
+  const vocabSection = e.target.closest("[data-vocab-section]")?.dataset.vocabSection; if (vocabSection) { const [topicId, index, subtopic] = vocabSection.split("|"); return vocabularySection(topicId, index, subtopic); }
   const seriesId = e.target.closest("[data-series]")?.dataset.series; if (seriesId) return seriesScene(seriesId);
   const lessonId = e.target.closest("[data-lesson]")?.dataset.lesson;
   if (lessonId && !e.target.closest("[data-action=complete-lesson]")) return lesson(lessonId);
@@ -756,6 +820,7 @@ document.addEventListener("click", async e => {
       const catalogWord = getCatalogWord(word);
       state.vocabulary.unshift(catalogWord ? { ...catalogWord } : { word, meaning: "expresión guardada", type: "expresión", example: word });
       state.words++;
+      markTopicProgress(word, "saved");
     }
     await addReview(word);
     return toast("Expresión guardada en tu vocabulario.");
@@ -818,9 +883,11 @@ document.addEventListener("click", async e => {
     if (!correct) {
       state.errors = [...new Set([...(state.errors || []), `vocabulario: ${button.dataset.word}`])];
       addReview(button.dataset.word, 1);
-    } else addReview(button.dataset.word, 4);
+    } else {
+      addReview(button.dataset.word, 4);
+      markTopicProgress(button.dataset.word, "learned");
+    }
     feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Correcto. La recuperación activa ayuda a fijarlo." : `💡 La respuesta era “${escapeHtml(button.dataset.answer)}”. La añadimos a tus repasos.`}</div>`;
-    state.practiceIndex = (state.practiceIndex || 0) + 1;
     await save();
     return;
   }
@@ -832,10 +899,32 @@ document.addEventListener("click", async e => {
     const feedback = document.querySelector("#practice-feedback");
     if (!correct) state.errors = [...new Set([...(state.errors || []), `orden de frase: ${expected}`])];
     feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Frase correcta." : `💡 Orden recomendado: “${escapeHtml(button.dataset.expected)}”`}</div>`;
-    state.practiceIndex = (state.practiceIndex || 0) + 1;
     state.orderAttempt = [];
     await save();
     return;
+  }
+  if (action === "reveal-practice") {
+    const button = e.target.closest("[data-action=reveal-practice]");
+    const feedback = document.querySelector("#practice-feedback");
+    const word = button.dataset.word;
+    addReview(word, 1);
+    state.errors = [...new Set([...(state.errors || []), `vocabulario: ${word}`])];
+    feedback.innerHTML = `<div class="feedback error">💡 Respuesta: <strong>${escapeHtml(button.dataset.solution)}</strong><br><span class="small">No pasa nada: la volveremos a practicar.</span></div>`;
+    await save();
+    return;
+  }
+  if (action === "practice-next") {
+    const filters = state.practiceFilters || { level: "all", type: "all", topic: "all", mode: "useful" };
+    const source = filters.topic === "all" ? vocabularyCatalog : topicVocabulary(filters.topic, filters.mode);
+    const pool = source.filter(item => (filters.level === "all" || item.level === filters.level) && (filters.type === "all" || item.type === filters.type));
+    state.practiceIndex = Math.min((state.practiceIndex || 0) + 1, Math.max(pool.length - 1, 0));
+    state.orderAttempt = [];
+    return render();
+  }
+  if (action === "practice-previous") {
+    state.practiceIndex = Math.max(0, (state.practiceIndex || 0) - 1);
+    state.orderAttempt = [];
+    return render();
   }
   if (e.target.closest("[data-order-word]")) {
     const wordButton = e.target.closest("[data-order-word]");
@@ -866,8 +955,8 @@ document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelector(".theme-menu")?.remove();
 });
 document.addEventListener("change", async e => {
-  if (!["practice-level", "practice-type", "practice-mode"].some(name => e.target.matches(`[data-${name}]`))) return;
-  state.practiceFilters = { level: document.querySelector("[data-practice-level]")?.value || "all", type: document.querySelector("[data-practice-type]")?.value || "all" };
+  if (!["practice-topic", "practice-scope", "practice-level", "practice-type", "practice-mode"].some(name => e.target.matches(`[data-${name}]`))) return;
+  state.practiceFilters = { topic: document.querySelector("[data-practice-topic]")?.value || "all", mode: document.querySelector("[data-practice-scope]")?.value || "useful", level: document.querySelector("[data-practice-level]")?.value || "all", type: document.querySelector("[data-practice-type]")?.value || "all" };
   state.practiceMode = document.querySelector("[data-practice-mode]")?.value || "translation";
   state.practiceIndex = 0;
   state.orderAttempt = [];

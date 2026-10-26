@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"social-acquaintance", theme:"social", subtopic:"Relationships", word:"acquaintance", meaning:"conocido", type:"word", cefr:"B2", frequency:"medium", priority:3, variant:"both", example:"He is an old acquaintance of mine.", exercises:["translation","gap","audio"] },
+  { id:"social-celebrate", theme:"social", subtopic:"Celebrations", word:"celebrate", meaning:"celebrar", type:"word", cefr:"A1", frequency:"high", priority:1, variant:"both", example:"Let's celebrate your birthday.", exercises:["translation","choice","audio"] },
+  { id:"social-available", theme:"social", subtopic:"Plans", word:"available", meaning:"disponible", type:"adjective", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Are you available on Saturday?", exercises:["translation","gap","speaking"] },
+  { id:"social-cancel", theme:"social", subtopic:"Plans", word:"cancel", meaning:"cancelar", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"I am sorry, I have to cancel.", exercises:["translation","choice","audio"] },
+  { id:"social-join-in", theme:"social", subtopic:"Activities", word:"join in", meaning:"participar", type:"phrasal verb", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"Come and join in the game.", exercises:["translation","gap","speaking"] },
+  { id:"social-looking-forward", theme:"social", subtopic:"Plans", word:"look forward to", meaning:"tener ganas de", type:"phrasal verb", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"I look forward to seeing you.", exercises:["translation","writing","audio"] }
+);

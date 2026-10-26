@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"food-ingredient", theme:"food", subtopic:"Ingredients", word:"ingredient", meaning:"ingrediente", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Check the ingredients for nuts.", exercises:["translation","gap","audio"] },
+  { id:"food-seasoning", theme:"food", subtopic:"Flavours", word:"seasoning", meaning:"condimento", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"Add some seasoning before serving.", exercises:["translation","gap","speaking"] },
+  { id:"food-simmer", theme:"food", subtopic:"Cooking methods", word:"simmer", meaning:"cocer a fuego lento", type:"word", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"Let the sauce simmer for ten minutes.", exercises:["translation","gap","audio"] },
+  { id:"food-takeaway", theme:"food", subtopic:"Eating out", word:"takeaway", meaning:"comida para llevar", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"uk", variantUs:"takeout", example:"We ordered a takeaway after work.", exercises:["translation","choice","audio"] },
+  { id:"food-takeout", theme:"food", subtopic:"Eating out", word:"takeout", meaning:"comida para llevar", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"us", variantUk:"takeaway", example:"Let's get takeout tonight.", exercises:["translation","choice","audio"] },
+  { id:"food-have-bite", theme:"food", subtopic:"Everyday expressions", word:"have a bite", meaning:"comer un bocado", type:"expression", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"Do you want to have a bite before we leave?", exercises:["translation","speaking","audio"] }
+);

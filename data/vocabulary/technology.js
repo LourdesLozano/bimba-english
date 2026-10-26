@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"technology-device", theme:"technology", subtopic:"Devices", word:"device", meaning:"dispositivo", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"This device connects to Wi-Fi.", exercises:["translation","gap","audio"] },
+  { id:"technology-keyboard", theme:"technology", subtopic:"Devices", word:"keyboard", meaning:"teclado", type:"word", cefr:"A1", frequency:"high", priority:1, variant:"both", example:"My keyboard is not working.", exercises:["translation","choice","audio"] },
+  { id:"technology-privacy", theme:"technology", subtopic:"Accounts", word:"privacy", meaning:"privacidad", type:"word", cefr:"B2", frequency:"high", priority:2, variant:"both", example:"Check your privacy settings.", exercises:["translation","gap","audio"] },
+  { id:"technology-browse", theme:"technology", subtopic:"Internet", word:"browse", meaning:"navegar", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"I browse the internet on my phone.", exercises:["translation","choice","speaking"] },
+  { id:"technology-back-up", theme:"technology", subtopic:"Files", word:"back up", meaning:"hacer una copia de seguridad", type:"phrasal verb", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"Back up your photos regularly.", exercises:["translation","gap","audio"] },
+  { id:"technology-glitch", theme:"technology", subtopic:"Problems", word:"glitch", meaning:"fallo técnico", type:"word", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"There is a small glitch in the app.", exercises:["translation","speaking","audio"] }
+);

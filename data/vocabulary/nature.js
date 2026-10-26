@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"nature-thunderstorm", theme:"nature", subtopic:"Weather", word:"thunderstorm", meaning:"tormenta", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"A thunderstorm is coming.", exercises:["translation","gap","audio"] },
+  { id:"nature-temperature", theme:"nature", subtopic:"Weather", word:"temperature", meaning:"temperatura", type:"word", cefr:"A1", frequency:"high", priority:1, variant:"both", example:"The temperature is below zero.", exercises:["translation","choice","audio"] },
+  { id:"nature-environment", theme:"nature", subtopic:"Environment", word:"environment", meaning:"medio ambiente", type:"word", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"We should protect the environment.", exercises:["translation","gap","speaking"] },
+  { id:"nature-recycle", theme:"nature", subtopic:"Environment", word:"recycle", meaning:"reciclar", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"We recycle glass and paper.", exercises:["translation","choice","audio"] },
+  { id:"nature-wildlife", theme:"nature", subtopic:"Animals", word:"wildlife", meaning:"fauna", type:"word", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"The park is home to diverse wildlife.", exercises:["translation","gap","audio"] },
+  { id:"nature-set-off", theme:"nature", subtopic:"Outdoor activities", word:"set off", meaning:"ponerse en camino", type:"phrasal verb", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"We set off before sunrise.", exercises:["translation","speaking","audio"] }
+);

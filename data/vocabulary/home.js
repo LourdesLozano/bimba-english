@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"home-ceiling", theme:"home", subtopic:"Rooms", word:"ceiling", meaning:"techo", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"There is a lamp on the ceiling.", exercises:["translation","gap","audio"] },
+  { id:"home-stairs", theme:"home", subtopic:"Rooms", word:"stairs", meaning:"escaleras", type:"word", cefr:"A1", frequency:"high", priority:1, variant:"both", example:"The bathroom is upstairs.", exercises:["translation","choice","audio"] },
+  { id:"home-carpet", theme:"home", subtopic:"Furniture and objects", word:"carpet", meaning:"alfombra", type:"word", cefr:"A2", frequency:"high", priority:2, variant:"both", example:"The carpet needs cleaning.", exercises:["translation","gap","audio"] },
+  { id:"home-screwdriver", theme:"home", subtopic:"Repairs", word:"screwdriver", meaning:"destornillador", type:"word", cefr:"B1", frequency:"medium", priority:3, variant:"both", example:"I need a screwdriver to fix it.", exercises:["translation","speaking","audio"] },
+  { id:"home-sort-out", theme:"home", subtopic:"Repairs", word:"sort out", meaning:"solucionar / arreglar", type:"phrasal verb", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"We need to sort out the leak.", exercises:["translation","gap","speaking"] },
+  { id:"home-make-yourself", theme:"home", subtopic:"Everyday expressions", word:"make yourself at home", meaning:"siéntete como en casa", type:"expression", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"Come in and make yourself at home.", exercises:["translation","audio","speaking"] }
+);

@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"shopping-discount", theme:"shopping", subtopic:"Prices", word:"discount", meaning:"descuento", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Is there a student discount?", exercises:["translation","gap","audio"] },
+  { id:"shopping-fitting-room", theme:"shopping", subtopic:"Clothes", word:"fitting room", meaning:"probador", type:"expression", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Where are the fitting rooms?", exercises:["translation","choice","audio"] },
+  { id:"shopping-durable", theme:"shopping", subtopic:"Quality", word:"durable", meaning:"resistente", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"These bags are durable and practical.", exercises:["translation","gap","audio"] },
+  { id:"shopping-exchange", theme:"shopping", subtopic:"Returns", word:"exchange", meaning:"cambio", type:"word", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"Could I exchange this for a larger size?", exercises:["translation","speaking","audio"] },
+  { id:"shopping-try-on", theme:"shopping", subtopic:"Clothes", word:"try on", meaning:"probarse", type:"phrasal verb", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Can I try this jacket on?", exercises:["translation","gap","speaking"] },
+  { id:"shopping-out-of-stock", theme:"shopping", subtopic:"Availability", word:"out of stock", meaning:"agotado", type:"expression", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"Sorry, that size is out of stock.", exercises:["translation","choice","audio"] }
+);

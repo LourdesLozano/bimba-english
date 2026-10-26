@@ -1,5 +1,23 @@
-const CACHE_NAME = "bimba-shell-v2";
-const APP_SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./manifest.webmanifest", "./supabase-config.js"];
+const CACHE_NAME = "bimba-shell-v3";
+const APP_SHELL = [
+  "./", "./index.html", "./styles.css", "./app.js", "./sw.js",
+  "./manifest.webmanifest", "./supabase-config.js",
+  "./data/vocabulary/manifest.js",
+  "./data/vocabulary/food.js", "./data/vocabulary/food-expanded.js",
+  "./data/vocabulary/themes-expanded.js",
+  "./data/vocabulary/home.js", "./data/vocabulary/people.js",
+  "./data/vocabulary/work.js", "./data/vocabulary/travel.js",
+  "./data/vocabulary/health.js", "./data/vocabulary/shopping.js",
+  "./data/vocabulary/technology.js", "./data/vocabulary/nature.js",
+  "./data/vocabulary/education.js", "./data/vocabulary/money.js",
+  "./data/vocabulary/social.js",
+  "./data/vocabulary/food-corpus.js", "./data/vocabulary/home-corpus.js",
+  "./data/vocabulary/people-corpus.js", "./data/vocabulary/work-corpus.js",
+  "./data/vocabulary/travel-corpus.js", "./data/vocabulary/health-corpus.js",
+  "./data/vocabulary/shopping-corpus.js", "./data/vocabulary/technology-corpus.js",
+  "./data/vocabulary/nature-corpus.js", "./data/vocabulary/education-corpus.js",
+  "./data/vocabulary/money-corpus.js", "./data/vocabulary/social-corpus.js"
+];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));

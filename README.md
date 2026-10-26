@@ -16,6 +16,12 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Ruta ampliada de gramática A1-C1, colocaciones y phrasal verbs por contexto.
 - Situaciones nuevas de restaurante, devoluciones, llamadas, reclamaciones, descripción de imágenes, listening y pronunciación de `th` y palabras enlazadas.
 - Banco ampliado de vocabulario editorial por salud, comida, casa, trabajo, viajes, compras, tecnología, naturaleza, estudios, dinero, vida social y personas.
+- Arquitectura de corpus separada por tema en [`data/vocabulary/`](./data/vocabulary/). Cada ficha tiene ID estable, subtema, CEFR editorial, frecuencia, prioridad, tipo de unidad, variante regional, ejemplo original y ejercicios asociados.
+- El primer lote grande de cocina está en [`data/vocabulary/food-expanded.js`](./data/vocabulary/food-expanded.js): ingredientes, sabores, dietas, platos, técnicas, medidas, utensilios, conservación, compra, seguridad y restaurante. La interfaz agrupa y abre cada subtema por separado.
+- El lote transversal de ampliación está en [`data/vocabulary/themes-expanded.js`](./data/vocabulary/themes-expanded.js) y cubre casa, personas, trabajo, viajes, salud, compras, tecnología, naturaleza, estudios, dinero y vida social con subtemas reales.
+- Dos modos de estudio: **unidades útiles** (palabras, expresiones, colocaciones y phrasal verbs) y **palabras únicas** (deduplicadas por tema). El catálogo legado se migra automáticamente para no perder contenido ni progreso.
+- Progreso independiente por tema, con palabras guardadas, respuestas correctas y porcentaje sobre palabras únicas.
+- Validador reproducible del contenido en [`scripts/validate-vocabulary.js`](./scripts/validate-vocabulary.js): detecta IDs repetidos, duplicados temáticos, campos incompletos, CEFR/tipos/frecuencia/prioridad inválidos y fichas sin ejercicios.
 - Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
 - Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
@@ -43,6 +49,53 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 `supabase-config.js` solo contiene la URL del proyecto y la publishable key. Nunca pongas en el repositorio una contraseña de base de datos, `service_role` key o cadena de conexión directa.
 
 La conversación y la pronunciación usan APIs del navegador: Safari puede pedir permiso para el micrófono y no todos los dispositivos ofrecen transcripción. La app muestra feedback orientativo, no una certificación fonética.
+
+## Ampliar el corpus sin perder calidad
+
+Cada tema se mantiene en un archivo independiente dentro de [`data/vocabulary/`](./data/vocabulary/). Para añadir una ficha, usa el mismo esquema:
+
+```js
+{
+  id: "food-new-item",
+  theme: "food",
+  subtopic: "Ingredients",
+  word: "example",
+  meaning: "traducción revisada",
+  type: "word",
+  cefr: "A2",
+  frequency: "high",
+  priority: 1,
+  variant: "both",
+  variantUk: "",
+  variantUs: "",
+  example: "An original example sentence.",
+  exercises: ["translation", "gap", "audio"]
+}
+```
+
+Antes de publicar un lote, ejecuta `node scripts/validate-vocabulary.js`. El validador exige **1.000 palabras únicas por tema como mínimo**, además de unidades útiles. Los recuentos que aparecen en la app son los que existen realmente en los archivos; no se inflarán cifras con formas verbales automáticas ni se copiarán libros, listas comerciales o subtítulos protegidos.
+
+### Corpus ampliado reproducible
+
+Los archivos `*-corpus.js` contienen 1.000 lemas adicionales por cada uno de los
+12 temas. Se generaron desde el diccionario inglés-español
+[`IvanDubls/llm_dictionary`](https://github.com/IvanDubls/llm_dictionary), publicado
+bajo licencia MIT, conservando el ejemplo inglés de cada entrada y filtrando
+duplicados, artículos aislados y entradas sin ejemplo. La fuente advierte que
+sus traducciones fueron generadas con IA; por eso estas fichas están pensadas
+como un lote amplio de trabajo y deben pasar una revisión editorial antes de
+considerarse material certificado.
+
+Para reproducir el lote, descarga `en_es_aidict.json` de esa fuente y ejecuta:
+
+```bash
+python3 scripts/build-vocabulary-corpus.py /ruta/a/en_es_aidict.json
+```
+
+El script usa `wordfreq` para priorizar vocabulario frecuente. Las coincidencias
+temáticas claras se seleccionan primero y el resto se completa con vocabulario
+general de comunicación para alcanzar el mínimo sin inventar palabras. La
+atribución y la licencia de la fuente deben conservarse al redistribuir el lote.
 
 ## Funciones que requieren infraestructura adicional
 

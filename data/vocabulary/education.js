@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"education-lecture", theme:"education", subtopic:"Classes", word:"lecture", meaning:"clase magistral", type:"word", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"The lecture starts at ten.", exercises:["translation","gap","audio"] },
+  { id:"education-research", theme:"education", subtopic:"Projects", word:"research", meaning:"investigación", type:"word", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"She is doing research for her project.", exercises:["translation","choice","audio"] },
+  { id:"education-scholarship", theme:"education", subtopic:"University", word:"scholarship", meaning:"beca", type:"word", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"He applied for a scholarship.", exercises:["translation","gap","speaking"] },
+  { id:"education-revise", theme:"education", subtopic:"Exams", word:"revise", meaning:"repasar", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"uk", variantUs:"review", example:"I need to revise for the exam.", exercises:["translation","choice","audio"] },
+  { id:"education-hand-in", theme:"education", subtopic:"Assignments", word:"hand in", meaning:"entregar", type:"phrasal verb", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"Please hand in your assignment by Friday.", exercises:["translation","gap","writing"] },
+  { id:"education-keep-up", theme:"education", subtopic:"Progress", word:"keep up", meaning:"mantener el ritmo", type:"phrasal verb", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"It is hard to keep up with the reading.", exercises:["translation","speaking","audio"] }
+);

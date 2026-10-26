@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"people-honest", theme:"people", subtopic:"Personality", word:"honest", meaning:"sincero", type:"word", cefr:"A2", frequency:"high", priority:1, variant:"both", example:"Please give me your honest opinion.", exercises:["translation","gap","audio"] },
+  { id:"people-ambitious", theme:"people", subtopic:"Personality", word:"ambitious", meaning:"ambicioso", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"She is ambitious and hard-working.", exercises:["translation","choice","speaking"] },
+  { id:"people-disappointed", theme:"people", subtopic:"Emotions", word:"disappointed", meaning:"decepcionado", type:"word", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"I was disappointed by the result.", exercises:["translation","gap","audio"] },
+  { id:"people-argument", theme:"people", subtopic:"Relationships", word:"argument", meaning:"discusión", type:"word", cefr:"B1", frequency:"high", priority:2, variant:"both", example:"They had an argument yesterday.", exercises:["translation","choice","audio"] },
+  { id:"people-get-along", theme:"people", subtopic:"Relationships", word:"get along", meaning:"llevarse bien", type:"phrasal verb", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"Do you get along with your neighbours?", exercises:["translation","gap","speaking"] },
+  { id:"people-on-the-same-page", theme:"people", subtopic:"Communication", word:"be on the same page", meaning:"estar de acuerdo / entenderse", type:"expression", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"Let's meet to make sure we are on the same page.", exercises:["translation","audio","speaking"] }
+);

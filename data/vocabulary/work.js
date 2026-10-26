@@ -1,0 +1,8 @@
+window.BIMBA_VOCABULARY.push(
+  { id:"work-manager", theme:"work", subtopic:"Office", word:"manager", meaning:"responsable / gerente", type:"word", cefr:"A1", frequency:"high", priority:1, variant:"both", example:"My manager is very supportive.", exercises:["translation","gap","audio"] },
+  { id:"work-agenda", theme:"work", subtopic:"Meetings", word:"agenda", meaning:"orden del día", type:"word", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"I sent the meeting agenda.", exercises:["translation","choice","audio"] },
+  { id:"work-minutes", theme:"work", subtopic:"Meetings", word:"minutes", meaning:"acta de reunión", type:"word", cefr:"B1", frequency:"medium", priority:2, variant:"both", example:"Could you share the minutes?", exercises:["translation","gap","speaking"] },
+  { id:"work-workload", theme:"work", subtopic:"Projects", word:"workload", meaning:"carga de trabajo", type:"word", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"My workload is heavy this week.", exercises:["translation","choice","audio"] },
+  { id:"work-meet-halfway", theme:"work", subtopic:"Negotiation", word:"meet halfway", meaning:"llegar a un punto intermedio", type:"expression", cefr:"B2", frequency:"medium", priority:2, variant:"both", example:"Could we meet halfway on the delivery date?", exercises:["translation","speaking","audio"] },
+  { id:"work-follow-up", theme:"work", subtopic:"Emails", word:"follow up", meaning:"hacer seguimiento", type:"phrasal verb", cefr:"B1", frequency:"high", priority:1, variant:"both", example:"I am following up on our call.", exercises:["translation","gap","writing"] }
+);
