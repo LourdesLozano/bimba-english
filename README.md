@@ -24,6 +24,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Validador reproducible del contenido en [`scripts/validate-vocabulary.js`](./scripts/validate-vocabulary.js): detecta IDs repetidos, duplicados temáticos, campos incompletos, CEFR/tipos/frecuencia/prioridad inválidos y fichas sin ejercicios.
 - Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
+- Gramática contrastiva para palabras parecidas: `some/any/no`, `something/anything/nothing`, `someone/anyone/no one`, `somewhere/anywhere/nowhere`, cuantificadores y alternativas (`much/many`, `few/little`, `each/every`, `both/either/neither`, `another/other`).
 - Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
 - Ejercicios de traducción, completar frases y ordenar palabras.
 - Repaso espaciado de palabras guardadas y errores de ejercicios.
@@ -37,6 +38,23 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Registro e inicio de sesión con Supabase.
 - Sincronización del progreso por usuario entre dispositivos.
 - Políticas RLS para que cada usuario solo pueda leer y modificar sus propios datos.
+
+### Criterio para la gramática contrastiva
+
+Las lecciones de palabras parecidas no enseñan listas para traducir literalmente:
+presentan primero la intención (afirmación, pregunta, negación, elección o
+cantidad), después comparan ejemplos mínimos y terminan con recuperación y una
+frase propia. Se ha aplicado especialmente a:
+
+- `some/any/no` y las familias `something/anything/nothing`,
+  `someone/anyone/no one` y `somewhere/anywhere/nowhere`.
+- `much/many`, `few/a few`, `little/a little`, `each/every/all`.
+- `both/either/neither` y `another/other/the other/others`.
+
+Las reglas se contrastaron con [British Council: indefinite pronouns and
+quantifiers](https://learnenglish.britishcouncil.org/grammar/english-grammar-reference/quantifiers),
+[Cambridge Dictionary: indefinite pronouns](https://dictionary.cambridge.org/grammar/british-grammar/pronouns-indefinite-pronouns),
+y [Cambridge Dictionary: quantifiers](https://dictionary.cambridge.org/grammar/british-grammar/quantifiers).
 
 ## Configurar Supabase
 

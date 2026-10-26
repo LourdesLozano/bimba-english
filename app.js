@@ -428,6 +428,14 @@ const audioPlayer = (text) => `<div class="audio-player"><button class="audio-co
 const curriculum = [
   { id: "sentence-basics", title: "Construir una frase", topic: "grammar", skill: "grammar", level: "A1", minutes: 12, description: "Sujeto, verbo, objeto, lugar y tiempo.", phrase: "I work from home on Mondays.", tip: "Piensa en bloques: quién + qué hace + dónde + cuándo." },
   { id: "in-on-at", title: "IN, ON y AT sin liarte", topic: "grammar", skill: "grammar", level: "A2", minutes: 20, description: "Tiempo, lugar, transporte y excepciones que realmente necesitas.", phrase: "I work at home on Monday in the morning.", tip: "Piensa en una escala: IN encierra, ON toca una superficie o día, AT señala un punto exacto.", guide: true },
+  { id: "some-any-no", title: "Some, any y no: elegir según la frase", topic: "grammar", skill: "grammar", level: "A2", minutes: 20, description: "Afirmaciones, preguntas, negación y ofrecimientos.", phrase: "I have some questions, but I don't have any answers.", tip: "Some suele presentar una cantidad; any aparece en preguntas y negativas; no ya niega el nombre.", guideKey: "some-any-no" },
+  { id: "something-anything-nothing", title: "Something, anything y nothing", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Distinguir cosas indefinidas sin crear dobles negaciones.", phrase: "Is there anything I can do? No, there is nothing to worry about.", tip: "Anything no significa siempre 'algo': depende de si preguntas, niegas o dices 'cualquier cosa'.", guideKey: "indefinite-pronouns" },
+  { id: "someone-anyone-no-one", title: "Someone, anyone y no one", topic: "grammar", skill: "grammar", level: "B1", minutes: 18, description: "Hablar de personas no identificadas y evitar errores con nobody.", phrase: "Someone called, but I don't know who it was.", tip: "No one ya es negativo: no digas I didn't see no one en inglés estándar.", guideKey: "indefinite-pronouns" },
+  { id: "somewhere-anywhere-nowhere", title: "Somewhere, anywhere y nowhere", topic: "grammar", skill: "grammar", level: "B1", minutes: 16, description: "Lugares indefinidos en afirmaciones, preguntas y negativas.", phrase: "We can meet somewhere quiet, but not anywhere too far away.", tip: "La misma lógica some/any/no se aplica a lugares.", guideKey: "indefinite-pronouns" },
+  { id: "much-many-few-little", title: "Much, many, few y little", topic: "grammar", skill: "grammar", level: "A2", minutes: 20, description: "Cantidad con nombres contables e incontables.", phrase: "There aren't many chairs, but there is a little space.", tip: "Many/few cuentan unidades; much/little hablan de una cantidad no contable.", guideKey: "quantifiers" },
+  { id: "each-every-all", title: "Each, every y all", topic: "grammar", skill: "grammar", level: "B1", minutes: 18, description: "Distribuir, generalizar y hablar de grupos.", phrase: "Every student has a different goal, and they all need practice.", tip: "Each mira a los miembros uno por uno; every generaliza el conjunto; all incluye el conjunto completo.", guideKey: "quantifiers" },
+  { id: "either-neither-both", title: "Either, neither y both", topic: "grammar", skill: "grammar", level: "B1", minutes: 18, description: "Elegir entre dos opciones y hablar de ambas.", phrase: "Both options are possible; either one is fine.", tip: "Both = los dos; either = uno de los dos; neither = ninguno de los dos.", guideKey: "quantifiers" },
+  { id: "another-other", title: "Another, other, the other y others", topic: "grammar", skill: "B1", minutes: 18, description: "No confundir otro, otros y el otro.", phrase: "Could I have another coffee? The other one was cold.", tip: "Another va con singular; other puede acompañar plural; the other señala el restante.", guideKey: "quantifiers" },
   { id: "adjectives", title: "Adjetivos en frases", topic: "grammar", skill: "grammar", level: "A2", minutes: 15, description: "Describir personas, cosas y emociones.", phrase: "She is a reliable colleague.", tip: "Con estados usamos be + adjetivo; delante de un nombre: a + adjetivo + noun." },
   { id: "adverbs", title: "Adverbios de frecuencia", topic: "grammar", skill: "grammar", level: "A2", minutes: 12, description: "Always, usually, often, sometimes y never.", phrase: "I usually work from home.", tip: "Van antes del verbo normal, pero después de be: I am usually tired." },
   { id: "past-simple", title: "Contar lo que pasó", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Pasado simple en afirmativa, negativa y pregunta.", phrase: "I finished the report yesterday.", tip: "En preguntas y negativas, did lleva el pasado y el verbo vuelve a su forma base." },
@@ -600,12 +608,47 @@ const topicExamples = {
   grammar: { title: "Preguntar con naturalidad", phrase: "Have you ever been to London?", meaning: "¿Has estado alguna vez en Londres?", word: "Have you ever...?" }
   , pronunciation: { title: "Ritmo natural", phrase: "Could you say that again, please?", meaning: "¿Podrías repetirlo, por favor?", word: "say that again" }
 };
+const grammarGuides = {
+  "some-any-no": {
+    title: "La lógica de some, any y no",
+    rows: [
+      ["SOME", "Afirmaciones y ofrecimientos/peticiones cuando esperas que sí", "I bought some bread. · Would you like some tea?"],
+      ["ANY", "Preguntas y negativas; también 'cualquiera' en frases abiertas", "Do you have any questions? · I don't have any money. · Choose any seat."],
+      ["NO", "Negación directa delante del nombre", "There is no sugar. = There isn't any sugar."]
+    ],
+    note: "No mezcles dos negaciones: I don't have any time o I have no time, no I don't have no time."
+  },
+  "indefinite-pronouns": {
+    title: "La familia some-, any- y no-",
+    rows: [
+      ["SOME-", "Algo/alguien/en algún sitio, normalmente en afirmaciones", "Someone left something somewhere."],
+      ["ANY-", "Algo/alguien/en algún sitio en preguntas y negativas; 'cualquiera' en afirmativas", "Did anyone see anything? · You can sit anywhere."],
+      ["NO-", "Nada/nadie/en ningún sitio; ya es negativo", "Nobody said anything. · There is nowhere to park."]
+    ],
+    note: "Después de something/anything/nothing usamos adjetivo: something interesting. No digas I didn't see nobody: usa I didn't see anybody o I saw nobody."
+  },
+  "quantifiers": {
+    title: "Cantidades y opciones sin confundirte",
+    rows: [
+      ["COUNT", "many/few, each/every y another se usan con unidades contables", "many books · a few ideas · each student · another day"],
+      ["MASS", "much/little se usan con incontables; en afirmativas son más naturales a lot of", "much time · a little water · a lot of advice"],
+      ["TWO", "both = los dos; either = uno de los dos; neither = ninguno", "Both are good. · Either is fine. · Neither works."]
+    ],
+    note: "Few/little sin artículo sugieren 'poco y no suficiente'; a few/a little significan 'algo, suficiente para algo'."
+  }
+};
 function lesson(id, preserveStep = false) {
   const item = curriculum.find(l => l.id === id) || curriculum[0];
   if (!preserveStep && state.lessonId !== id) { state.lessonId = id; state.lessonStep = 0; }
   const related = vocabularyCatalog.filter(word => item.phrase.toLowerCase().includes(word.word.toLowerCase())).slice(0, 4);
   const step = state.lessonStep || 0;
-  const steps = item.guide ? [
+  const guide = item.guideKey ? grammarGuides[item.guideKey] : null;
+  const steps = guide ? [
+    `<span class="tag">Paso 1 de 4 · La idea central</span><h3>${guide.title}</h3><p class="muted">Mira primero el contexto: no traduzcas cada palabra de forma automática.</p><div class="grammar-table">${guide.rows.map(([label, use, examples]) => `<div><strong>${label}</strong><span>${use}</span><b>${examples}</b></div>`).join("")}</div>`,
+    `<span class="tag">Paso 2 de 4 · Contrasta</span><h3>La diferencia aparece al cambiar la intención</h3><div class="notice"><strong>Truco:</strong> ${guide.note}</div><p class="muted">Lee los ejemplos en voz alta y fíjate en qué palabra cambia cuando la frase pasa de afirmativa a pregunta o negativa.</p>${audioPlayer(guide.rows.map(row => row[2].split(" · ")[0]).join(" "))}`,
+    `<span class="tag">Paso 3 de 4 · Recupera sin mirar</span><h3>Elige la lógica antes de la palabra</h3><button class="option" data-answer="right">Primero identifico si la frase es afirmativa, pregunta o negativa y si el nombre se puede contar.</button><button class="option" data-answer="wrong">Traduzco literalmente la palabra española y elijo la primera opción.</button>`,
+    `<span class="tag">Paso 4 de 4 · Produce</span><h3>Usa la estructura en tu vida</h3><label>Escribe dos frases<textarea id="writing-answer" placeholder="Write two sentences using this grammar..."></textarea></label><p class="muted small">Incluye una afirmación y una pregunta o negativa para comparar.</p><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Comprobar mis frases</button><div id="writing-feedback"></div>`
+  ] : item.guide ? [
     `<span class="tag">Paso 1 de 4 · La idea visual</span><h3>De lo grande a lo puntual</h3><p class="muted">No traduzcas siempre “en / sobre / a”. Elige según el tipo de relación:</p><div class="grammar-table"><div><strong>IN</strong><span>Dentro de un espacio o periodo amplio</span><b>in Spain · in a room · in July · in the morning</b></div><div><strong>ON</strong><span>Contacto con una superficie, un día o una fecha</span><b>on the table · on Monday · on 12 May</b></div><div><strong>AT</strong><span>Un punto, una hora o un lugar visto como actividad</span><b>at the door · at 8:00 · at work</b></div></div>${audioPlayer("I work at home on Monday in the morning.")}`,
     `<span class="tag">Paso 2 de 4 · Tiempo</span><h3>La regla que más vas a usar</h3><div class="grammar-table"><div><strong>IN</strong><span>meses, años, estaciones, siglos y partes del día</span><b>in April · in 2026 · in winter · in the evening</b></div><div><strong>ON</strong><span>días, fechas y día + parte del día</span><b>on Friday · on 26 October · on Friday night</b></div><div><strong>AT</strong><span>horas y momentos fijos</span><b>at 7:30 · at noon · at night · at the weekend (UK)</b></div></div><div class="notice"><strong>Excepciones importantes:</strong> decimos <em>at night</em>, no <em>in night</em>; pero <em>in the morning</em>. Con una fecha concreta: <em>on my birthday</em>, no <em>in my birthday</em>.</div>`,
     `<span class="tag">Paso 3 de 4 · Lugar y transporte</span><h3>Dentro, superficie o punto</h3><div class="grammar-table"><div><strong>IN</strong><span>ciudades, países, habitaciones y espacios cerrados</span><b>in London · in the kitchen · in a box</b></div><div><strong>ON</strong><span>superficies, calles, plantas y transporte público</span><b>on the wall · on King Street · on the bus</b></div><div><strong>AT</strong><span>punto concreto, evento o actividad</span><b>at the station · at a party · at work</b></div></div><div class="notice"><strong>Transporte:</strong> normalmente <em>on</em> the bus/train/plane, pero <em>in</em> a car/taxi porque estás dentro de un vehículo pequeño.</div>`,
@@ -759,7 +802,7 @@ document.addEventListener("click", async e => {
   if (action === "setup") return setView("profile");
   if (action === "next-lesson-step") {
     const lessonItem = curriculum.find(item => item.id === e.target.closest("[data-action=next-lesson-step]").dataset.lesson);
-    const stepCount = lessonItem?.guide ? 4 : 3;
+    const stepCount = lessonItem?.guide || lessonItem?.guideKey ? 4 : 3;
     state.lessonStep = Math.min(stepCount - 1, (state.lessonStep || 0) + 1);
     return lesson(lessonItem?.id, true);
   }
