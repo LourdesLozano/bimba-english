@@ -37,6 +37,8 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Lecciones de gramática que enlazan sus frases con palabras del catálogo.
 - Diagnóstico ampliado de 12 preguntas con dimensiones de gramática, vocabulario, escritura, escucha y pronunciación.
 - Práctica de conversación con grabación y transcripción del navegador cuando el dispositivo lo permite.
+- Conversación guiada por situaciones, con estructura para responder, texto opcional y grabación no obligatoria.
+- Listening activo con audios cortos, preguntas de detalle, transcripción revelable y navegación por actividades; funciona aunque Safari no ofrezca transcripción.
 - Recuperación de contraseña por email y avatar en Supabase Storage para cuentas sincronizadas.
 - Lecciones guiadas en tres pasos, escenarios de conversación, modo oscuro, logros y errores recurrentes.
 - Service worker para abrir el shell de la PWA cuando no haya conexión.

@@ -911,10 +911,20 @@ function speaking() {
   const selected = state.speakingScenario || 0;
   const scenario = scenarios[selected];
   const prompt = scenario[2];
-  content.innerHTML = `<div class="quiz"><div class="eyebrow">Hablar y pronunciar</div><h1>Practica una respuesta real</h1><p class="muted">Primero escucha la pregunta y después responde por escrito o con el micrófono. Así siempre puedes completar la actividad, aunque tu navegador no admita transcripción.</p><div class="checkboxes">${scenarios.map((item, index) => `<button class="check ${selected === index ? "active" : ""}" data-speaking-scenario="${index}">${item[1]}</button>`).join("")}</div><div class="card"><span class="tag">A2-B1 · ${scenario[3]}</span><h2>${prompt}</h2>${audioPlayer(prompt)}<label>Tu respuesta en inglés<textarea id="speaking-answer" placeholder="Write 2–4 sentences in English..."></textarea></label><div class="speaking-actions"><button class="btn pink" data-action="check-speaking">Comprobar respuesta</button><button class="btn secondary" data-action="record">🎙 Usar micrófono</button><button class="btn secondary" data-action="stop-record">Detener</button></div><div id="recording-status" class="recording-status"></div><div id="transcript" class="transcript">La transcripción aparecerá aquí si Safari o tu navegador la admite.</div><div id="speaking-feedback"></div><p class="muted small">Una respuesta útil tiene sujeto + verbo y al menos un detalle. La corrección es orientativa.</p></div></div>`;
+  content.innerHTML = `<div class="quiz"><div class="eyebrow">Conversación real</div><h1>Practica una respuesta útil</h1><p class="muted">Escucha la pregunta, prepara una respuesta y dilo en voz alta. La app te da una estructura clara aunque tu navegador no tenga transcripción.</p><div class="checkboxes">${scenarios.map((item, index) => `<button class="check ${selected === index ? "active" : ""}" data-speaking-scenario="${index}">${item[1]}</button>`).join("")}</div><div class="card"><span class="tag">A2-B1 · ${scenario[3]}</span><h2>${prompt}</h2>${audioPlayer(prompt)}<div class="speaking-framework"><strong>Tu respuesta puede incluir:</strong><span>1. Una respuesta directa</span><span>2. Un detalle concreto</span><span>3. Una pregunta o comentario final</span></div><label>Escribe tu respuesta en inglés<textarea id="speaking-answer" placeholder="Write 2–4 sentences in English..."></textarea></label><div class="speaking-actions"><button class="btn pink" data-action="check-speaking">Comprobar estructura</button><button class="btn secondary" data-action="record">🎙 Grabar mi voz</button><button class="btn secondary" data-action="stop-record">Detener</button></div><div id="recording-status" class="recording-status"></div><div id="transcript" class="transcript">Si Safari ofrece transcripción, aparecerá aquí. Si no, puedes practicar igualmente con tu texto.</div><div id="speaking-feedback"></div><p class="muted small">Una buena respuesta tiene sujeto + verbo, al menos cinco palabras y un detalle relacionado con la situación.</p></div></div>`;
+}
+function listening() {
+  const activities = [
+    { title: "Un cambio de planes", level: "A2", audio: "Hi, Emma. The meeting has moved to three o'clock because James is still on the train. Could you send everyone the new time?", transcript: "Hi, Emma. The meeting has moved to three o'clock because James is still on the train. Could you send everyone the new time?", question: "Why has the meeting moved?", options: ["James is ill.", "James is still travelling.", "Emma is late."], answer: 1, focus: "has moved · still · could you" },
+    { title: "En una cafetería", level: "B1", audio: "Could I have a flat white and a cheese sandwich, please? And could you make the sandwich without onions?", transcript: "Could I have a flat white and a cheese sandwich, please? And could you make the sandwich without onions?", question: "What does the customer ask to leave out?", options: ["Cheese.", "Milk.", "Onions."], answer: 2, focus: "Could I have...? · without" },
+    { title: "Un mensaje de trabajo", level: "B1", audio: "I have looked at the figures, and I think we should postpone the launch until next week. That will give us more time to test the app.", transcript: "I have looked at the figures, and I think we should postpone the launch until next week. That will give us more time to test the app.", question: "Why does the speaker suggest waiting?", options: ["To hire more people.", "To test the app more.", "To change the figures."], answer: 1, focus: "I think we should · until · give us time to" }
+  ];
+  const index = Math.min(state.listeningIndex || 0, activities.length - 1);
+  const activity = activities[index];
+  content.innerHTML = `<div class="quiz"><div class="eyebrow">Listening activo</div><h1>Escucha, comprende y comprueba</h1><p class="muted">Escucha dos veces sin mirar el texto. Después elige la idea principal y solo entonces revela la transcripción.</p><div class="checkboxes">${activities.map((item, i) => `<button class="check ${i === index ? "active" : ""}" data-listening-index="${i}">${item.level} · ${item.title}</button>`).join("")}</div><div class="card listening-card"><span class="tag">${activity.level} · ${activity.focus}</span><h2>${activity.title}</h2>${audioPlayer(activity.audio)}<p class="listening-instruction">Primera escucha: idea general. Segunda escucha: detalles que justifican tu respuesta.</p><h3>${activity.question}</h3>${activity.options.map((option, i) => `<button class="option" data-action="check-listening" data-choice="${i}" data-correct="${activity.answer}">${option}</button>`).join("")}<div id="listening-feedback"></div><button class="pill-button" data-action="reveal-listening">Mostrar transcripción</button><div id="listening-transcript" class="transcript hidden-transcript">${activity.transcript}</div><div class="practice-navigation"><button class="btn secondary" data-action="previous-listening" ${index === 0 ? "disabled" : ""}>← Anterior</button><span class="muted">${index + 1} / ${activities.length}</span><button class="btn secondary" data-action="next-listening" ${index === activities.length - 1 ? "disabled" : ""}>Siguiente →</button></div></div></div>`;
 }
 function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes crear tu perfil y hacer un diagnóstico corto. Después Bimba preparará tu ruta diaria.</div><button class="btn" data-action="setup">Crear mi perfil →</button><button class="btn secondary" data-action="start-diagnostic" style="margin-left:8px">Hacer diagnóstico</button></div></div>`; }
-function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, grammar, reference, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice, resetPassword }[currentView] || home)(); }
+function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, grammar, reference, series, speaking, listening, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice, resetPassword }[currentView] || home)(); }
 
 document.querySelector("#main-nav").addEventListener("click", e => { const button = e.target.closest("[data-view]"); if (button) setView(button.dataset.view); });
 document.querySelector("#profile-button").addEventListener("click", () => setView("profile"));
@@ -927,6 +937,8 @@ document.addEventListener("click", async e => {
   const view = e.target.closest("[data-view]"); if (view) return setView(view.dataset.view);
   const referenceTab = e.target.closest("[data-reference-tab]")?.dataset.referenceTab;
   if (referenceTab) { state.referenceTab = referenceTab; return render(); }
+  const listeningIndex = e.target.closest("[data-listening-index]")?.dataset.listeningIndex;
+  if (listeningIndex !== undefined) { state.listeningIndex = Number(listeningIndex); return render(); }
   const topicId = e.target.closest("[data-topic]")?.dataset.topic; if (topicId) return topic(topicId);
   const vocabId = e.target.closest("[data-vocab-topic]")?.dataset.vocabTopic; if (vocabId) return vocabularyTopic(vocabId);
   const vocabSection = e.target.closest("[data-vocab-section]")?.dataset.vocabSection; if (vocabSection) { const [topicId, index, subtopic] = vocabSection.split("|"); return vocabularySection(topicId, index, subtopic); }
@@ -1018,7 +1030,30 @@ document.addEventListener("click", async e => {
   if (speakingScenario !== undefined) { state.speakingScenario = Number(speakingScenario); return render(); }
   if (action === "logout") { await supabaseClient?.auth.signOut(); currentSession = null; setStatus("Guardado en este dispositivo"); toast("Sesión cerrada."); return setView("home"); }
   if (action === "lesson") return setView("learn");
-  if (action === "listen" || action === "speak") return setView("speaking");
+  if (action === "listen") return setView("listening");
+  if (action === "speak") return setView("speaking");
+  if (action === "check-listening") {
+    const button = e.target.closest("[data-action=check-listening]");
+    const feedback = document.querySelector("#listening-feedback");
+    const correct = Number(button.dataset.choice) === Number(button.dataset.correct);
+    if (correct) state.skills.listening = Math.min(100, (state.skills.listening || 0) + 3);
+    else state.errors = [...new Set([...(state.errors || []), "listening: comprensión detallada"])];
+    feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Correcto. Has identificado el detalle importante." : "💡 Aún no. Escucha otra vez buscando la razón exacta, no solo una palabra conocida."}</div>`;
+    await save();
+    return;
+  }
+  if (action === "reveal-listening") {
+    document.querySelector("#listening-transcript")?.classList.remove("hidden-transcript");
+    return;
+  }
+  if (action === "next-listening") {
+    state.listeningIndex = Math.min(2, (state.listeningIndex || 0) + 1);
+    return render();
+  }
+  if (action === "previous-listening") {
+    state.listeningIndex = Math.max(0, (state.listeningIndex || 0) - 1);
+    return render();
+  }
   if (action === "audio") {
     const text = e.target.closest("[data-action=audio]").dataset.text;
     speak(text);
