@@ -657,6 +657,88 @@ const grammarGuides = {
     note: "No elijas por traducción: primero pregunta qué función cumple el pronombre. ¿Hace la acción, la recibe, indica posesión, señala, une ideas o formula una pregunta?"
   }
 };
+const verbReference = [
+  ["be", "was/were", "been", "ser/estar", "I have been very busy today."],
+  ["become", "became", "become", "convertirse", "She became a doctor."],
+  ["begin", "began", "begun", "empezar", "The meeting began at nine."],
+  ["break", "broke", "broken", "romper", "Be careful not to break it."],
+  ["bring", "brought", "brought", "traer", "Please bring your passport."],
+  ["build", "built", "built", "construir", "They built a new bridge."],
+  ["buy", "bought", "bought", "comprar", "I bought some bread."],
+  ["catch", "caught", "caught", "coger/atrapar", "I caught the last train."],
+  ["choose", "chose", "chosen", "elegir", "Choose any seat you like."],
+  ["come", "came", "come", "venir", "Can you come tomorrow?"],
+  ["cost", "cost", "cost", "costar", "How much did it cost?"],
+  ["cut", "cut", "cut", "cortar", "Cut the paper in half."],
+  ["do", "did", "done", "hacer", "I have done my homework."],
+  ["draw", "drew", "drawn", "dibujar", "She drew a map."],
+  ["drink", "drank", "drunk", "beber", "He has drunk enough water."],
+  ["drive", "drove", "driven", "conducir", "She drove to work."],
+  ["eat", "ate", "eaten", "comer", "Have you eaten yet?"],
+  ["fall", "fell", "fallen", "caer", "The leaves have fallen."],
+  ["feel", "felt", "felt", "sentir(se)", "I felt better after resting."],
+  ["find", "found", "found", "encontrar", "I found my keys."],
+  ["fly", "flew", "flown", "volar", "They have flown to Madrid."],
+  ["forget", "forgot", "forgotten", "olvidar", "Don't forget your coat."],
+  ["get", "got", "got/gotten", "obtener/llegar/ponerse", "I got home late."],
+  ["give", "gave", "given", "dar", "She gave me good advice."],
+  ["go", "went", "gone", "ir", "We went to the cinema."],
+  ["grow", "grew", "grown", "crecer", "The plant has grown quickly."],
+  ["have", "had", "had", "tener", "I had a great time."],
+  ["hear", "heard", "heard", "oír", "I heard a strange noise."],
+  ["hold", "held", "held", "sujetar/mantener", "Hold the door, please."],
+  ["keep", "kept", "kept", "guardar/mantener", "Keep this receipt."],
+  ["know", "knew", "known", "saber/conocer", "I have known her for years."],
+  ["leave", "left", "left", "dejar/salir", "The train left on time."],
+  ["lend", "lent", "lent", "prestar", "Could you lend me a pen?"],
+  ["let", "let", "let", "dejar/permitir", "Let me help you."],
+  ["lose", "lost", "lost", "perder", "I lost my ticket."],
+  ["make", "made", "made", "hacer/fabricar", "Let's make a plan."],
+  ["mean", "meant", "meant", "significar", "What does this word mean?"],
+  ["meet", "met", "met", "conocer/reunirse", "We met at work."],
+  ["pay", "paid", "paid", "pagar", "I paid by card."],
+  ["put", "put", "put", "poner", "Put your bag here."],
+  ["read", "read", "read", "leer", "I read it yesterday."],
+  ["ride", "rode", "ridden", "montar", "She has ridden a horse."],
+  ["ring", "rang", "rung", "sonar/llamar", "The phone rang twice."],
+  ["run", "ran", "run", "correr", "He runs every morning."],
+  ["say", "said", "said", "decir", "She said hello."],
+  ["see", "saw", "seen", "ver", "Have you seen my phone?"],
+  ["sell", "sold", "sold", "vender", "They sold their house."],
+  ["send", "sent", "sent", "enviar", "I sent the email."],
+  ["set", "set", "set", "colocar/fijar", "Set an alarm for seven."],
+  ["show", "showed", "shown", "mostrar", "He showed me the way."],
+  ["sing", "sang", "sung", "cantar", "She has sung on stage."],
+  ["sit", "sat", "sat", "sentarse", "Please sit down."],
+  ["sleep", "slept", "slept", "dormir", "I slept badly last night."],
+  ["speak", "spoke", "spoken", "hablar", "She speaks three languages."],
+  ["spend", "spent", "spent", "gastar/pasar tiempo", "We spent the afternoon outside."],
+  ["stand", "stood", "stood", "estar de pie", "He stood by the door."],
+  ["steal", "stole", "stolen", "robar", "Someone stole my bike."],
+  ["swim", "swam", "swum", "nadar", "They swam in the sea."],
+  ["take", "took", "taken", "coger/llevar", "Take an umbrella."],
+  ["teach", "taught", "taught", "enseñar", "She taught me English."],
+  ["tell", "told", "told", "decir/contar", "Tell me the truth."],
+  ["think", "thought", "thought", "pensar", "I thought about it."],
+  ["throw", "threw", "thrown", "lanzar", "He threw the ball."],
+  ["understand", "understood", "understood", "entender", "I understood the question."],
+  ["wake", "woke", "woken", "despertarse", "I woke up early."],
+  ["wear", "wore", "worn", "llevar puesto", "She wore a blue dress."],
+  ["win", "won", "won", "ganar", "Our team won."],
+  ["write", "wrote", "written", "escribir", "I have written the report."]
+];
+const adverbReference = [
+  ["always", "frecuencia", "siempre", "I always check my email."], ["usually", "frecuencia", "normalmente", "I usually walk to work."], ["often", "frecuencia", "a menudo", "We often eat together."], ["sometimes", "frecuencia", "a veces", "She sometimes works late."], ["rarely", "frecuencia", "raramente", "He rarely watches TV."], ["never", "frecuencia", "nunca", "I never skip breakfast."],
+  ["already", "tiempo", "ya", "I've already finished."], ["still", "tiempo", "todavía", "Are you still working?"], ["just", "tiempo", "justo/ahora mismo", "I've just arrived."], ["yet", "tiempo", "todavía/ya", "Have you called yet?"], ["soon", "tiempo", "pronto", "See you soon."], ["recently", "tiempo", "recientemente", "I recently moved here."], ["lately", "tiempo", "últimamente", "Have you been busy lately?"],
+  ["here", "lugar", "aquí", "Come here, please."], ["there", "lugar", "allí", "Put it there."], ["everywhere", "lugar", "en todas partes", "I looked everywhere."], ["somewhere", "lugar", "en algún sitio", "Let's go somewhere quiet."], ["anywhere", "lugar", "en cualquier sitio", "You can sit anywhere."],
+  ["quickly", "modo", "rápidamente", "She answered quickly."], ["slowly", "modo", "lentamente", "Please speak slowly."], ["carefully", "modo", "cuidadosamente", "Read the instructions carefully."], ["easily", "modo", "fácilmente", "You can easily find it."], ["quietly", "modo", "en silencio", "He closed the door quietly."], ["well", "modo", "bien", "You speak English well."], ["badly", "modo", "mal", "I slept badly."],
+  ["very", "grado", "muy", "It's very cold."], ["quite", "grado", "bastante", "It's quite difficult."], ["too", "grado", "demasiado/también", "It's too expensive."], ["enough", "grado", "suficientemente", "Are you old enough?"], ["almost", "grado", "casi", "It's almost ready."], ["really", "grado", "realmente", "I really like it."], ["especially", "grado", "especialmente", "I like fruit, especially apples."],
+  ["fortunately", "comentario", "afortunadamente", "Fortunately, nobody was hurt."], ["probably", "probabilidad", "probablemente", "She'll probably come."], ["maybe", "probabilidad", "quizá", "Maybe he's busy."], ["definitely", "probabilidad", "sin duda", "I'll definitely call you."], ["perhaps", "probabilidad", "quizá", "Perhaps we should wait."],
+  ["however", "conector", "sin embargo", "It was hard; however, we finished."], ["therefore", "conector", "por lo tanto", "It was late; therefore, we left."], ["instead", "conector", "en lugar de", "Let's walk instead."], ["also", "conector", "también", "She also speaks French."], ["otherwise", "conector", "si no/de lo contrario", "Hurry up, otherwise we'll be late."]
+];
+const adjectiveReference = [
+  ["able", "capaz", "I am able to help."], ["accurate", "preciso", "The information is accurate."], ["active", "activo", "She leads an active life."], ["afraid", "asustado", "I'm afraid of dogs."], ["amazing", "increíble", "That was an amazing result."], ["ancient", "antiguo", "We visited an ancient city."], ["available", "disponible", "Is this room available?"], ["aware", "consciente", "Are you aware of the risks?"], ["basic", "básico", "These are the basic rules."], ["beautiful", "bonito", "What a beautiful view!"], ["brave", "valiente", "She was brave."], ["brief", "breve", "We had a brief meeting."], ["bright", "luminoso/brillante", "The room is bright."], ["broad", "amplio", "He has broad experience."], ["busy", "ocupado", "I'm busy this afternoon."], ["calm", "tranquilo", "Try to stay calm."], ["careful", "cuidadoso", "Be careful with that glass."], ["certain", "seguro", "I'm certain it's correct."], ["cheap", "barato", "This ticket is cheap."], ["clear", "claro", "The instructions are clear."], ["clever", "inteligente", "That's a clever idea."], ["comfortable", "cómodo", "These shoes are comfortable."], ["confident", "seguro de sí mismo", "She feels confident now."], ["confused", "confuso", "I was confused by the question."], ["convenient", "práctico", "The location is convenient."], ["crowded", "abarrotado", "The train was crowded."], ["curious", "curioso", "Children are naturally curious."], ["dangerous", "peligroso", "That road is dangerous."], ["deep", "profundo", "The lake is deep."], ["different", "diferente", "We have different opinions."], ["difficult", "difícil", "This exercise is difficult."], ["disappointed", "decepcionado", "He was disappointed."], ["early", "temprano", "I arrived early."], ["effective", "eficaz", "This is an effective method."], ["efficient", "eficiente", "She is very efficient."], ["empty", "vacío", "The room is empty."], ["equal", "igual", "Everyone should have equal opportunities."], ["essential", "esencial", "Sleep is essential."], ["excited", "emocionado", "I'm excited about the trip."], ["fair", "justo", "That seems fair."], ["familiar", "familiar", "The name sounds familiar."], ["famous", "famoso", "It's a famous painting."], ["friendly", "amable", "Our neighbours are friendly."], ["frightened", "asustado", "The child was frightened."], ["generous", "generoso", "That was very generous."], ["gentle", "suave", "Use a gentle voice."], ["glad", "contento", "I'm glad you're here."], ["grateful", "agradecido", "I'm grateful for your help."], ["healthy", "saludable", "A balanced diet is healthy."], ["honest", "honesto", "Please be honest."], ["huge", "enorme", "They live in a huge house."], ["impatient", "impaciente", "Don't be impatient."], ["important", "importante", "This is important."], ["independent", "independiente", "She is very independent."], ["kind", "amable", "He is kind to everyone."], ["lazy", "perezoso", "I feel lazy today."], ["likely", "probable", "It's likely to rain."], ["lonely", "solo", "He felt lonely."], ["lucky", "afortunado", "We were lucky."], ["modern", "moderno", "It's a modern building."], ["narrow", "estrecho", "The street is narrow."], ["natural", "natural", "Try to sound natural."], ["nervous", "nervioso", "I feel nervous before exams."], ["obvious", "obvio", "The answer is obvious."], ["ordinary", "normal", "It was an ordinary day."], ["patient", "paciente", "You need to be patient."], ["polite", "educado", "She was polite."], ["possible", "posible", "Is it possible?"], ["practical", "práctico", "That's practical advice."], ["proud", "orgulloso", "I'm proud of you."], ["quiet", "tranquilo/silencioso", "It's quiet here."], ["reliable", "fiable", "He is reliable."], ["similar", "parecido", "The two plans are similar."], ["simple", "sencillo", "The solution is simple."], ["skillful", "hábil", "She is a skillful cook."], ["strange", "extraño", "That sounds strange."], ["successful", "exitoso", "The project was successful."], ["tasty", "sabroso", "The soup is tasty."], ["tired", "cansado", "I'm tired today."], ["useful", "útil", "This tip is useful."], ["various", "varios", "We discussed various options."], ["warm", "cálido", "The room is warm."], ["worried", "preocupado", "I'm worried about him."]
+];
 function lesson(id, preserveStep = false) {
   const item = curriculum.find(l => l.id === id) || curriculum[0];
   if (!preserveStep && state.lessonId !== id) { state.lessonId = id; state.lessonStep = 0; }
@@ -692,6 +774,15 @@ function grammar() {
   const levels = ["A1", "A2", "B1", "B2", "C1"];
   const levelNames = { A1: "Base esencial", A2: "Construir confianza", B1: "Comunicarse con precisión", B2: "Matices y fluidez", C1: "Dominio avanzado" };
   content.innerHTML = `<div class="eyebrow">Gramática práctica</div><h1>Aprende la gramática para usarla</h1><p class="muted">Cada tema sigue el mismo ciclo: entiende una regla corta, observa ejemplos, recupera la idea y úsala en una frase propia. No memorices tablas aisladas.</p><div class="card grammar-method"><h2>Cómo trabajar cada tema</h2><div class="grammar-method-steps"><span><b>1</b> Entiende</span><span><b>2</b> Compara ejemplos</span><span><b>3</b> Responde sin mirar</span><span><b>4</b> Produce tu frase</span></div><p class="muted small">Haz las lecciones en orden, vuelve a las que falles y repásalas después de uno, dos y cuatro días.</p></div>${levels.map(level => { const lessons = grammarLessons.filter(item => item.level === level); return lessons.length ? `<section class="grammar-level"><div class="section-head"><div><span class="eyebrow">${level}</span><h2>${levelNames[level]}</h2></div><span class="tag">${lessons.length} lecciones</span></div><div class="cards grammar-cards">${lessons.map(item => `<div class="card"><span class="tag">${item.minutes} min</span><h3>${item.title}</h3><p class="muted">${item.description}</p><p class="grammar-tip">💡 ${item.tip}</p><button class="btn secondary" data-lesson="${item.id}">Estudiar tema →</button></div>`).join("")}</div></section>` : ""; }).join("")}`;
+}
+function reference() {
+  const tab = state.referenceTab || "verbs";
+  const query = (state.referenceQuery || "").toLowerCase();
+  const tabs = [["verbs", "Verbos · 3 formas"], ["adverbs", "Adverbios"], ["adjectives", "Adjetivos"]];
+  const data = tab === "verbs" ? verbReference : tab === "adverbs" ? adverbReference : adjectiveReference;
+  const filtered = data.filter(row => row.join(" ").toLowerCase().includes(query));
+  const listen = text => `<button class="reference-audio" data-action="audio" data-text="${escapeHtml(text)}" aria-label="Escuchar ${escapeHtml(text)}">▶</button>`;
+  content.innerHTML = `<div class="eyebrow">Tablas de consulta</div><h1>Palabras para tener a mano</h1><p class="muted">Consulta, escucha y guarda las palabras que quieras estudiar después. La tabla es un apoyo: aprende cada entrada también en una frase.</p><div class="reference-tabs">${tabs.map(([id, label]) => `<button class="pill-button${tab === id ? " active-reference-tab" : ""}" data-reference-tab="${id}">${label}</button>`).join("")}</div><input class="reference-search" data-reference-search value="${escapeHtml(state.referenceQuery || "")}" placeholder="Buscar una palabra o traducción..." aria-label="Buscar en la tabla"><div class="reference-count">${filtered.length} resultados</div>${tab === "verbs" ? `<div class="reference-table-wrap"><table class="reference-table"><thead><tr><th>Infinitivo</th><th>Pasado</th><th>Participio</th><th>Traducción</th><th>Ejemplo</th><th></th></tr></thead><tbody>${filtered.map(([base, past, participle, meaning, example]) => `<tr><td><strong>${base}</strong> ${listen(base)}</td><td>${past}</td><td>${participle}</td><td>${meaning}</td><td>${example} ${listen(example)}</td><td>${saveWordButton(base)}</td></tr>`).join("")}</tbody></table></div>` : `<div class="reference-grid">${filtered.map(([word, category, meaning, example]) => `<article class="card reference-card"><div><span class="tag">${category}</span><h3>${word} ${listen(word)}</h3><p>${meaning}</p><small>“${example}” ${listen(example)}</small></div>${saveWordButton(word)}</article>`).join("")}</div>`}`;
 }
 function topic(id) {
   const t = topics.find(item => item.id === id) || topics[0];
@@ -795,7 +886,7 @@ function speaking() {
   content.innerHTML = `<div class="quiz"><div class="eyebrow">Hablar y pronunciar</div><h1>Practica una respuesta real</h1><p class="muted">Primero escucha la pregunta y después responde por escrito o con el micrófono. Así siempre puedes completar la actividad, aunque tu navegador no admita transcripción.</p><div class="checkboxes">${scenarios.map((item, index) => `<button class="check ${selected === index ? "active" : ""}" data-speaking-scenario="${index}">${item[1]}</button>`).join("")}</div><div class="card"><span class="tag">A2-B1 · ${scenario[3]}</span><h2>${prompt}</h2>${audioPlayer(prompt)}<label>Tu respuesta en inglés<textarea id="speaking-answer" placeholder="Write 2–4 sentences in English..."></textarea></label><div class="speaking-actions"><button class="btn pink" data-action="check-speaking">Comprobar respuesta</button><button class="btn secondary" data-action="record">🎙 Usar micrófono</button><button class="btn secondary" data-action="stop-record">Detener</button></div><div id="recording-status" class="recording-status"></div><div id="transcript" class="transcript">La transcripción aparecerá aquí si Safari o tu navegador la admite.</div><div id="speaking-feedback"></div><p class="muted small">Una respuesta útil tiene sujeto + verbo y al menos un detalle. La corrección es orientativa.</p></div></div>`;
 }
 function onboarding() { content.innerHTML = `<div class="onboarding"><div class="card"><div class="eyebrow">Bienvenida a Bimba English</div><h1>Aprende inglés para tu vida real.</h1><p class="muted">Lecciones adaptadas a tu nivel, tus objetivos y lo que haces cada día.</p><div class="notice">Puedes crear tu perfil y hacer un diagnóstico corto. Después Bimba preparará tu ruta diaria.</div><button class="btn" data-action="setup">Crear mi perfil →</button><button class="btn secondary" data-action="start-diagnostic" style="margin-left:8px">Hacer diagnóstico</button></div></div>`; }
-function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, grammar, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice, resetPassword }[currentView] || home)(); }
+function render() { if (!state.user && currentView === "home") return onboarding(); ({ home, learn, grammar, reference, series, vocabulary, vocabularyTopics, vocabularyTopic, library, progress, week, profile, auth, diagnostic, practice, resetPassword }[currentView] || home)(); }
 
 document.querySelector("#main-nav").addEventListener("click", e => { const button = e.target.closest("[data-view]"); if (button) setView(button.dataset.view); });
 document.querySelector("#profile-button").addEventListener("click", () => setView("profile"));
@@ -806,6 +897,8 @@ document.querySelector("#menu-scrim").addEventListener("click", () => { document
 document.addEventListener("click", async e => {
   if (document.querySelector(".theme-menu") && !e.target.closest("#theme-button, .theme-menu")) document.querySelector(".theme-menu").remove();
   const view = e.target.closest("[data-view]"); if (view) return setView(view.dataset.view);
+  const referenceTab = e.target.closest("[data-reference-tab]")?.dataset.referenceTab;
+  if (referenceTab) { state.referenceTab = referenceTab; return render(); }
   const topicId = e.target.closest("[data-topic]")?.dataset.topic; if (topicId) return topic(topicId);
   const vocabId = e.target.closest("[data-vocab-topic]")?.dataset.vocabTopic; if (vocabId) return vocabularyTopic(vocabId);
   const vocabSection = e.target.closest("[data-vocab-section]")?.dataset.vocabSection; if (vocabSection) { const [topicId, index, subtopic] = vocabSection.split("|"); return vocabularySection(topicId, index, subtopic); }
@@ -1076,6 +1169,14 @@ document.addEventListener("click", async e => {
   }
   if (answer === "right") { state.lessons++; state.goalProgress = Math.min(100, state.goalProgress + 4); await save(); toast("¡Muy bien! Recuperación activa completada."); render(); }
   else if (answer === "wrong") toast("Casi. Escucha la frase una vez más.");
+});
+document.addEventListener("input", e => {
+  if (!e.target.matches("[data-reference-search]")) return;
+  state.referenceQuery = e.target.value;
+  reference();
+  const search = document.querySelector("[data-reference-search]");
+  search?.focus();
+  search?.setSelectionRange(state.referenceQuery.length, state.referenceQuery.length);
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") document.querySelector(".theme-menu")?.remove();

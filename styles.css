@@ -113,6 +113,21 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .grammar-table strong { grid-row: span 2; color: var(--pink-deep); font-size: 19px; }
 .grammar-table span { color: var(--muted); font-size: 13px; }
 .grammar-table b { font-size: 14px; }
+.reference-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 14px; }
+.active-reference-tab { background: var(--pink-deep); color: white; }
+.reference-search { width: 100%; max-width: 520px; margin: 8px 0; }
+.reference-count { color: var(--muted); font-size: 13px; margin: 10px 0; }
+.reference-table-wrap { overflow-x: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: white; }
+.reference-table { width: 100%; min-width: 760px; border-collapse: collapse; }
+.reference-table th, .reference-table td { padding: 12px 10px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.reference-table th { background: var(--pink-soft); color: var(--ink); font-size: 13px; }
+.reference-table tr:last-child td { border-bottom: 0; }
+.reference-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+.reference-card { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.reference-card h3 { margin: 8px 0 4px; }
+.reference-card p { margin: 0 0 7px; }
+.reference-card small { color: var(--muted); line-height: 1.4; }
+.reference-audio { display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 25px; padding: 0; border-radius: 50%; background: var(--pink-soft); color: var(--pink-deep); vertical-align: middle; }
 .grammar-method { margin: 22px 0 30px; }
 .grammar-method-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
 .grammar-method-steps span { display: flex; align-items: center; gap: 8px; padding: 10px; border-radius: 10px; background: var(--pink-soft); font-weight: 700; }

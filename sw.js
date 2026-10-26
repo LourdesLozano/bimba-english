@@ -1,4 +1,4 @@
-const CACHE_NAME = "bimba-shell-v3";
+const CACHE_NAME = "bimba-shell-v4";
 const APP_SHELL = [
   "./", "./index.html", "./styles.css", "./app.js", "./sw.js",
   "./manifest.webmanifest", "./supabase-config.js",
