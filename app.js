@@ -681,7 +681,11 @@ function lesson(id, preserveStep = false) {
   content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><div class="progress-bar"><i style="width:${((step + 1) / steps.length) * 100}%"></i></div><div class="card">${steps[step]}<div style="margin-top:20px">${step < steps.length - 1 ? `<button class="btn" data-action="next-lesson-step" data-lesson="${item.id}">Siguiente →</button>` : `<button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button>`}</div></div></div>`;
 }
 function learn() {
-  content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>¿Qué quieres aprender hoy?</h1><p class="muted">Bimba te recomendará el siguiente paso según tu objetivo, nivel y lo que ya hayas practicado.</p><div class="cards">${topics.map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div>`;
+  const filters = state.learnFilters || { topics: [], levels: [] };
+  const selectedTopics = filters.topics.length ? filters.topics : topics.map(topic => topic.id);
+  const selectedLevels = filters.levels.length ? filters.levels : vocabularyLevels.filter(level => level !== "all");
+  const filteredLessons = curriculum.filter(item => selectedTopics.includes(item.topic) && selectedLevels.includes(item.level));
+  content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>Aprender por temas</h1><p class="muted">Combina varios temas y niveles. Los filtros se aplican juntos para crear una ruta que encaje contigo.</p><div class="card learn-filters"><div class="filter-heading"><strong>Temas</strong><button class="pill-button" data-action="clear-learn-filters">Limpiar filtros</button></div><div class="multi-filter">${topics.map(topic => `<button class="multi-filter-option${selectedTopics.includes(topic.id) ? " selected" : ""}" data-learn-filter="topic" data-value="${topic.id}" aria-pressed="${selectedTopics.includes(topic.id)}">${topic.icon} ${topic.title}</button>`).join("")}</div><div class="filter-heading"><strong>Niveles</strong></div><div class="multi-filter">${vocabularyLevels.filter(level => level !== "all").map(level => `<button class="multi-filter-option${selectedLevels.includes(level) ? " selected" : ""}" data-learn-filter="level" data-value="${level}" aria-pressed="${selectedLevels.includes(level)}">${level}</button>`).join("")}</div><p class="muted small">Puedes elegir varios temas y niveles a la vez. Si no seleccionas ninguno, se muestran todos.</p></div><div class="section-head"><h2>Temas disponibles</h2><span class="tag">${selectedTopics.length} temas · ${selectedLevels.join(", ")}</span></div><div class="cards">${topics.filter(topic => selectedTopics.includes(topic.id)).map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div><div class="section-head"><h2>Lecciones que encajan</h2><span class="muted">${filteredLessons.length} resultados</span></div><div class="cards">${filteredLessons.length ? filteredLessons.map(item => `<div class="card"><span class="tag">${item.level} · ${item.minutes} min</span><h3>${item.title}</h3><p class="muted">${item.description}</p><button class="btn secondary" data-lesson="${item.id}">Empezar lección →</button></div>`).join("") : `<div class="card"><p class="muted">No hay lecciones con esta combinación. Prueba otro nivel o tema.</p></div>`}</div>`;
 }
 function grammar() {
   const grammarLessons = curriculum.filter(item => item.skill === "grammar");
@@ -820,6 +824,19 @@ document.addEventListener("click", async e => {
   const selectedTheme = e.target.closest(".theme-swatch")?.dataset.theme;
   if (selectedTheme) { applyTheme(selectedTheme); document.querySelector(".theme-menu")?.remove(); return toast(`Color ${themeNames[selectedTheme].toLowerCase()} aplicado.`); }
   if (action === "setup") return setView("profile");
+  const learnFilter = e.target.closest("[data-learn-filter]");
+  if (learnFilter) {
+    const type = learnFilter.dataset.learnFilter === "topic" ? "topics" : "levels";
+    const current = new Set(state.learnFilters?.[type] || []);
+    if (current.has(learnFilter.dataset.value)) current.delete(learnFilter.dataset.value);
+    else current.add(learnFilter.dataset.value);
+    state.learnFilters = { ...(state.learnFilters || { topics: [], levels: [] }), [type]: [...current] };
+    return render();
+  }
+  if (action === "clear-learn-filters") {
+    state.learnFilters = { topics: [], levels: [] };
+    return render();
+  }
   if (action === "next-lesson-step") {
     const lessonItem = curriculum.find(item => item.id === e.target.closest("[data-action=next-lesson-step]").dataset.lesson);
     const stepCount = lessonItem?.guide || lessonItem?.guideKey ? 4 : 3;
