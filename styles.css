@@ -74,6 +74,7 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .word h3 { margin: 0; } .word small { color: var(--muted); }
 .pill-button { background: var(--pink-soft); color: #a35976; border-radius: 20px; padding: 7px 11px; }
 .save-word-button.saved { background: var(--pink); color: #8f3f61; font-weight: 800; }
+.learn-word-save { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 14px 0; padding: 10px 12px; border-radius: 12px; background: var(--pink-soft); }
 .vocabulary-method { margin: 20px 0; }
 .vocabulary-method-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
 .vocabulary-method-steps div { display: grid; gap: 4px; padding: 12px; border-radius: 12px; background: var(--pink-soft); }
