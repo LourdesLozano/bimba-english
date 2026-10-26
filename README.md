@@ -25,6 +25,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
 - Gramática contrastiva para palabras parecidas: `some/any/no`, `something/anything/nothing`, `someone/anyone/no one`, `somewhere/anywhere/nowhere`, cuantificadores y alternativas (`much/many`, `few/little`, `each/every`, `both/either/neither`, `another/other`).
+- Pronombres por función: sujeto, objeto, posesivos, reflexivos, demostrativos, relativos e interrogativos, con ejemplos contrastivos.
 - Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
 - Ejercicios de traducción, completar frases y ordenar palabras.
 - Repaso espaciado de palabras guardadas y errores de ejercicios.
