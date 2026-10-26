@@ -96,6 +96,11 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .exercise-answer { display: grid; gap: 10px; margin-top: 16px; }
 .exercise-answer input { width: 100%; }
 .practice-help { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.grammar-table { display: grid; gap: 10px; margin: 16px 0; }
+.grammar-table > div { display: grid; grid-template-columns: 58px 1fr; gap: 2px 12px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--pink-soft); }
+.grammar-table strong { grid-row: span 2; color: var(--pink-deep); font-size: 19px; }
+.grammar-table span { color: var(--muted); font-size: 13px; }
+.grammar-table b { font-size: 14px; }
 .practice-navigation { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
 .practice-navigation .muted { text-align: center; font-size: 12px; }
 .practice-navigation button:disabled { opacity: .45; cursor: not-allowed; }

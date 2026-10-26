@@ -427,7 +427,7 @@ const speak = (text, rate = speechRate) => {
 const audioPlayer = (text) => `<div class="audio-player"><button class="audio-control" data-action="audio" data-text="${escapeHtml(text)}" aria-label="Reproducir audio">▶</button><button class="audio-pause" data-action="pause" aria-label="Pausar audio">Ⅱ</button><div class="audio-track"><strong>Escuchar en inglés</strong><span>${escapeHtml(text)}</span></div><button class="speed-button" data-action="speed">1×</button></div>`;
 const curriculum = [
   { id: "sentence-basics", title: "Construir una frase", topic: "grammar", skill: "grammar", level: "A1", minutes: 12, description: "Sujeto, verbo, objeto, lugar y tiempo.", phrase: "I work from home on Mondays.", tip: "Piensa en bloques: quién + qué hace + dónde + cuándo." },
-  { id: "in-on-at", title: "IN, ON y AT sin liarte", topic: "grammar", skill: "grammar", level: "A2", minutes: 15, description: "Tiempo y lugar con una regla visual.", phrase: "I work at home on Monday in the morning.", tip: "IN = dentro/periodo; ON = día/superficie; AT = punto/hora." },
+  { id: "in-on-at", title: "IN, ON y AT sin liarte", topic: "grammar", skill: "grammar", level: "A2", minutes: 20, description: "Tiempo, lugar, transporte y excepciones que realmente necesitas.", phrase: "I work at home on Monday in the morning.", tip: "Piensa en una escala: IN encierra, ON toca una superficie o día, AT señala un punto exacto.", guide: true },
   { id: "adjectives", title: "Adjetivos en frases", topic: "grammar", skill: "grammar", level: "A2", minutes: 15, description: "Describir personas, cosas y emociones.", phrase: "She is a reliable colleague.", tip: "Con estados usamos be + adjetivo; delante de un nombre: a + adjetivo + noun." },
   { id: "adverbs", title: "Adverbios de frecuencia", topic: "grammar", skill: "grammar", level: "A2", minutes: 12, description: "Always, usually, often, sometimes y never.", phrase: "I usually work from home.", tip: "Van antes del verbo normal, pero después de be: I am usually tired." },
   { id: "past-simple", title: "Contar lo que pasó", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Pasado simple en afirmativa, negativa y pregunta.", phrase: "I finished the report yesterday.", tip: "En preguntas y negativas, did lleva el pasado y el verbo vuelve a su forma base." },
@@ -501,6 +501,7 @@ const ensurePlan = () => {
   const done = new Set(state.completed || []);
   const weakSkills = Object.entries(state.skills || {}).sort(([, a], [, b]) => a - b).map(([skill]) => skill);
   const previousPending = (state.plan?.lessons || []).filter(id => !done.has(id));
+  const dueReview = reviewDue().length;
   const ranked = curriculum.filter(l => !done.has(l.id)).sort((a, b) => {
     const pendingA = previousPending.includes(a.id) ? 0 : 1;
     const pendingB = previousPending.includes(b.id) ? 0 : 1;
@@ -510,7 +511,9 @@ const ensurePlan = () => {
     const skillB = weakSkills.indexOf(b.skill);
     const goalA = preferred.includes(a.topic) ? 0 : 1;
     const goalB = preferred.includes(b.topic) ? 0 : 1;
-    return pendingA - pendingB || levelA - levelB || skillA - skillB || goalA - goalB || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
+    const grammarBoostA = a.id === "in-on-at" && (state.errors || []).some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
+    const grammarBoostB = b.id === "in-on-at" && (state.errors || []).some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
+    return pendingA - pendingB || grammarBoostA - grammarBoostB || levelA - levelB || skillA - skillB || goalA - goalB || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
   });
   const slots = minutes >= 45 ? 3 : minutes >= 25 ? 2 : 1;
   const selected = [];
@@ -518,10 +521,10 @@ const ensurePlan = () => {
     if (!selected.some(item => item.skill === lesson.skill) || selected.length < slots) selected.push(lesson);
     if (selected.length === slots) break;
   }
-  state.plan = { date: todayKey(), minutes, lessons: selected.map(l => l.id), level, weakSkills: weakSkills.slice(0, 3) };
+  state.plan = { date: todayKey(), minutes, lessons: selected.map(l => l.id), level, weakSkills: weakSkills.slice(0, 3), dueReview };
 };
 const currentPlanLessons = () => {
-  if (!state.plan || state.plan.date !== todayKey()) ensurePlan();
+  ensurePlan();
   return (state.plan?.lessons || []).map(id => curriculum.find(l => l.id === id)).filter(Boolean);
 };
 const reviewDue = () => (state.reviewQueue || []).filter(item => !item.nextReview || item.nextReview <= todayKey());
@@ -567,7 +570,7 @@ function home() {
   const name = escapeHtml(state.user?.name || "aprendiz");
   const planLessons = currentPlanLessons();
   const pending = planLessons[0];
-  content.innerHTML = `<div class="hero"><div class="hero-copy"><div class="eyebrow">Tu plan de hoy · 15 min</div><h1>Hola, ${name}.<br>Hoy puedes dar un pasito más.</h1><p class="muted">Una lección corta, práctica y pensada para tu objetivo: comunicarte con confianza.</p><button class="btn" data-action="lesson">Empezar mi lección <span>→</span></button></div><div class="hero-art" aria-label="Oso panda">🐼</div></div>
+  content.innerHTML = `<div class="hero"><div class="hero-copy"><div class="eyebrow">Tu plan de hoy · ${state.user?.dailyMinutes || 15} min</div><h1>Hola, ${name}.<br>Hoy puedes dar un pasito más.</h1><p class="muted">Una ruta adaptada a tu nivel, tu objetivo y lo que más necesitas practicar.</p><button class="btn" data-action="lesson">Empezar mi lección <span>→</span></button></div><div class="hero-art" aria-label="Oso panda">🐼</div></div>
   ${pending ? `<div class="section-head"><h2>Tu ruta de hoy</h2><span class="tag">${state.user?.dailyMinutes || 15} min · ${planLessons.length} ${planLessons.length === 1 ? "lección" : "lecciones"}</span></div><div class="card daily-plan"><div><span class="eyebrow">Siguiente recomendación · ${pending.level}</span><h2>${pending.title}</h2><p class="muted">${pending.description}</p><div class="tag">${pending.minutes} min · ${pending.skill}</div></div><button class="btn" data-lesson="${pending.id}">Empezar ahora →</button></div>` : `<div class="notice">Has completado tu ruta de hoy. Mañana tendrás nuevas lecciones.</div>`}
   <div class="section-head"><h2>Organiza tu aprendizaje</h2></div><div class="card"><p class="muted">Haz el diagnóstico para ajustar tu nivel o activa un recordatorio para no perder tu hábito.</p><button class="btn secondary" data-action="start-diagnostic">Repetir diagnóstico</button><button class="btn secondary" data-action="notification" style="margin-left:8px">Activar recordatorios</button></div>
   ${reviewDue().length ? `<div class="section-head"><h2>Repasos pendientes</h2></div><div class="card"><p>Tu memoria tiene ${reviewDue().length} elemento${reviewDue().length === 1 ? "" : "s"} listo${reviewDue().length === 1 ? "" : "s"} para repasar.</p><button class="btn secondary" data-view="vocabulary">Repasar ahora →</button></div>` : ""}
@@ -602,12 +605,17 @@ function lesson(id, preserveStep = false) {
   if (!preserveStep && state.lessonId !== id) { state.lessonId = id; state.lessonStep = 0; }
   const related = vocabularyCatalog.filter(word => item.phrase.toLowerCase().includes(word.word.toLowerCase())).slice(0, 4);
   const step = state.lessonStep || 0;
-  const steps = [
+  const steps = item.guide ? [
+    `<span class="tag">Paso 1 de 4 · La idea visual</span><h3>De lo grande a lo puntual</h3><p class="muted">No traduzcas siempre “en / sobre / a”. Elige según el tipo de relación:</p><div class="grammar-table"><div><strong>IN</strong><span>Dentro de un espacio o periodo amplio</span><b>in Spain · in a room · in July · in the morning</b></div><div><strong>ON</strong><span>Contacto con una superficie, un día o una fecha</span><b>on the table · on Monday · on 12 May</b></div><div><strong>AT</strong><span>Un punto, una hora o un lugar visto como actividad</span><b>at the door · at 8:00 · at work</b></div></div>${audioPlayer("I work at home on Monday in the morning.")}`,
+    `<span class="tag">Paso 2 de 4 · Tiempo</span><h3>La regla que más vas a usar</h3><div class="grammar-table"><div><strong>IN</strong><span>meses, años, estaciones, siglos y partes del día</span><b>in April · in 2026 · in winter · in the evening</b></div><div><strong>ON</strong><span>días, fechas y día + parte del día</span><b>on Friday · on 26 October · on Friday night</b></div><div><strong>AT</strong><span>horas y momentos fijos</span><b>at 7:30 · at noon · at night · at the weekend (UK)</b></div></div><div class="notice"><strong>Excepciones importantes:</strong> decimos <em>at night</em>, no <em>in night</em>; pero <em>in the morning</em>. Con una fecha concreta: <em>on my birthday</em>, no <em>in my birthday</em>.</div>`,
+    `<span class="tag">Paso 3 de 4 · Lugar y transporte</span><h3>Dentro, superficie o punto</h3><div class="grammar-table"><div><strong>IN</strong><span>ciudades, países, habitaciones y espacios cerrados</span><b>in London · in the kitchen · in a box</b></div><div><strong>ON</strong><span>superficies, calles, plantas y transporte público</span><b>on the wall · on King Street · on the bus</b></div><div><strong>AT</strong><span>punto concreto, evento o actividad</span><b>at the station · at a party · at work</b></div></div><div class="notice"><strong>Transporte:</strong> normalmente <em>on</em> the bus/train/plane, pero <em>in</em> a car/taxi porque estás dentro de un vehículo pequeño.</div>`,
+    `<span class="tag">Paso 4 de 4 · Comprueba que lo sabes</span><h3>Completa las tres preposiciones</h3><p class="muted">Escribe una frase sobre tu vida que incluya una hora, un día y un lugar.</p><label>Tu frase<textarea id="writing-answer" placeholder="I work ... Monday ... the morning ..."></textarea></label><p class="muted small">Pista: hora = AT · día = ON · parte del día o periodo = IN.</p><button class="btn secondary" data-action="check-writing" data-expected="I work at home on Monday in the morning.">Comprobar mi frase</button><div id="writing-feedback"></div>`
+  ] : [
     `<span class="tag">Paso 1 de 3 · Entender</span><h3>${item.tip}</h3><p class="muted">${item.description}</p><h2 class="selectable-phrase">${item.phrase.split(" ").map(word => `<button class="word-chip" data-action="save-word" data-word="${word.replace(/[?.!,]/g, "")}">${word}</button>`).join(" ")}</h2>${audioPlayer(item.phrase)}<p class="muted small">Escucha dos veces y guarda las palabras nuevas.</p>`,
     `<span class="tag">Paso 2 de 3 · Recuperar</span><h3>¿Qué idea expresa esta frase?</h3><button class="option" data-answer="right">La usaría en una situación real relacionada con ${item.topic || "este tema"}.</button><button class="option" data-answer="wrong">Solo sirve para traducir palabra a palabra.</button>`,
     `<span class="tag">Paso 3 de 3 · Producir</span><label>Escribe una frase parecida<textarea id="writing-answer" placeholder="Escribe aquí tu ejemplo en inglés..."></textarea></label><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Corregir mi frase</button><div id="writing-feedback"></div>`
   ];
-  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><div class="progress-bar"><i style="width:${((step + 1) / 3) * 100}%"></i></div><div class="card">${steps[step]}<div style="margin-top:20px">${step < 2 ? `<button class="btn" data-action="next-lesson-step" data-lesson="${item.id}">Siguiente →</button>` : `<button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button>`}</div></div></div>`;
+  content.innerHTML = `<div class="quiz"><button class="pill-button" data-view="home">← Mi ruta</button><div class="eyebrow" style="margin-top:22px">${item.level} · ${item.minutes} min · ${item.skill}</div><h1>${item.title}</h1><div class="progress-bar"><i style="width:${((step + 1) / steps.length) * 100}%"></i></div><div class="card">${steps[step]}<div style="margin-top:20px">${step < steps.length - 1 ? `<button class="btn" data-action="next-lesson-step" data-lesson="${item.id}">Siguiente →</button>` : `<button class="btn" data-action="complete-lesson" data-lesson="${item.id}">He practicado esta lección ✓</button>`}</div></div></div>`;
 }
 function learn() {
   content.innerHTML = `<div class="eyebrow">Elige tu camino</div><h1>¿Qué quieres aprender hoy?</h1><p class="muted">Bimba te recomendará el siguiente paso según tu objetivo, nivel y lo que ya hayas practicado.</p><div class="cards">${topics.map(t => `<div class="card"><div class="lesson-icon">${t.icon}</div><h3>${t.title}</h3><p class="muted">${t.description}</p><div>${t.subs.map(s => `<span class="tag">${s}</span>`).join("")}</div><button class="btn secondary" data-topic="${t.id}">Explorar tema →</button></div>`).join("")}</div>`;
