@@ -211,7 +211,93 @@ const grammarLexicon = [
   ["carry on", "continuar", "Please carry on with your work.", "phrasal verb", "B1"], ["work out", "resolver / hacer ejercicio", "We will work out a solution.", "phrasal verb", "B1"],
   ["bring up", "mencionar / criar", "She brought up an important point.", "phrasal verb", "B2"], ["rule out", "descartar", "We cannot rule out that possibility.", "phrasal verb", "C1"]
 ].map(([word, meaning, example, type, level]) => ({ word, meaning, example, type, level }));
-const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...curatedLexicon]
+const expansionLexicon = [
+  ["appointment","cita","noun","A1","I have a doctor's appointment on Friday.","health","Citas"],
+  ["medicine","medicina","noun","A1","Take your medicine after breakfast.","health","Médico y farmacia"],
+  ["fever","fiebre","noun","A2","She has a high fever.","health","Síntomas"],
+  ["cough","tos","noun","A2","My cough is getting better.","health","Síntomas"],
+  ["bandage","venda","noun","A2","Put a bandage on the cut.","health","Médico y farmacia"],
+  ["healthy","saludable","adjective","A1","I try to eat healthy food.","health","Hábitos saludables"],
+  ["treatment","tratamiento","noun","B1","The treatment lasted three weeks.","health","Médico y farmacia"],
+  ["recover","recuperarse","verb","B1","It took her a month to recover.","health","Hábitos saludables"],
+  ["ingredient","ingrediente","noun","A2","Check the ingredients for nuts.","food","Recetas y cocina"],
+  ["onion","cebolla","noun","A1","Chop the onion finely.","food","Frutas y verduras"],
+  ["garlic","ajo","noun","A1","Add two cloves of garlic.","food","Recetas y cocina"],
+  ["flour","harina","noun","A2","Mix the flour with the eggs.","food","Recetas y cocina"],
+  ["spicy","picante","adjective","A2","This sauce is too spicy for me.","food","Sabores"],
+  ["sweet","dulce","adjective","A1","Would you like something sweet?","food","Sabores"],
+  ["bitter","amargo","adjective","B1","The coffee tastes bitter.","food","Sabores"],
+  ["bake","hornear","verb","A2","Bake the cake for thirty minutes.","food","Recetas y cocina"],
+  ["fry","freír","verb","A2","Fry the onions in olive oil.","food","Recetas y cocina"],
+  ["portion","ración","noun","B1","The portions are very generous.","food","Platos y comidas"],
+  ["ceiling","techo","noun","A2","There is a lamp on the ceiling.","home","Habitaciones"],
+  ["stairs","escaleras","noun","A1","The bathroom is upstairs.","home","Habitaciones"],
+  ["carpet","alfombra","noun","A2","The carpet needs cleaning.","home","Muebles y objetos"],
+  ["screwdriver","destornillador","noun","B1","I need a screwdriver to fix it.","home","Problemas y reparaciones"],
+  ["neighbourhood","barrio","noun","A2","This is a quiet neighbourhood.","home","Casa y entorno"],
+  ["dust","polvo","noun","A2","There is dust on the shelf.","home","Tareas domésticas"],
+  ["repair","reparar","verb","B1","The plumber repaired the leak.","home","Problemas y reparaciones"],
+  ["manager","responsable","noun","A1","My manager is very supportive.","work","Oficina"],
+  ["department","departamento","noun","A2","She works in the sales department.","work","Oficina"],
+  ["agenda","orden del día","noun","B1","I sent the meeting agenda.","work","Reuniones"],
+  ["minutes","acta de reunión","noun","B1","Could you share the minutes?","work","Reuniones"],
+  ["target","objetivo","noun","B1","We need to reach our sales target.","work","Proyectos"],
+  ["negotiate","negociar","verb","B2","They negotiated a better contract.","work","Reuniones"],
+  ["promote","ascender","verb","B1","She was promoted last year.","work","Entrevistas y carrera"],
+  ["workload","carga de trabajo","noun","B2","My workload is heavy this week.","work","Proyectos"],
+  ["application","solicitud","noun","B1","I submitted my job application.","work","Entrevistas y carrera"],
+  ["platform","plataforma","noun","A1","The train leaves from platform three.","travel","Transporte y direcciones"],
+  ["delay","retraso","noun","A2","Our flight has a two-hour delay.","travel","Aeropuerto"],
+  ["departure","salida","noun","B1","The departure time has changed.","travel","Aeropuerto"],
+  ["destination","destino","noun","A2","What is your final destination?","travel","Transporte y direcciones"],
+  ["abroad","en el extranjero","adverb","B1","She has lived abroad for years.","travel","Preparar un viaje"],
+  ["suitcase","maleta","noun","A1","My suitcase is very heavy.","travel","Aeropuerto"],
+  ["refund","reembolso","noun","B1","I would like to request a refund.","shopping","Comprar y pagar"],
+  ["receipt","recibo","noun","A1","Keep your receipt, please.","shopping","Comprar y pagar"],
+  ["discount","descuento","noun","A2","Is there a student discount?","shopping","Calidad y opiniones"],
+  ["fitting room","probador","noun","A2","Where are the fitting rooms?","shopping","Ropa"],
+  ["refund","reembolso","noun","B1","The refund will arrive in five days.","shopping","Comprar y pagar"],
+  ["durable","resistente","adjective","B1","These bags are durable and practical.","shopping","Calidad y opiniones"],
+  ["device","dispositivo","noun","A2","This device connects to Wi-Fi.","technology","Dispositivos"],
+  ["screen","pantalla","noun","A1","The screen is cracked.","technology","Dispositivos"],
+  ["keyboard","teclado","noun","A1","My keyboard is not working.","technology","Dispositivos"],
+  ["privacy","privacidad","noun","B2","Check your privacy settings.","technology","Internet y cuentas"],
+  ["browse","navegar","verb","B1","I browse the internet on my phone.","technology","Internet y cuentas"],
+  ["backup","copia de seguridad","noun","B1","Make a backup of your photos.","technology","Problemas técnicos"],
+  ["update","actualizar","verb","A2","Please update the app.","technology","Problemas técnicos"],
+  ["cloud","nube","noun","B1","The files are stored in the cloud.","technology","Trabajo digital"],
+  ["forecast","previsión","noun","A2","The forecast says it will rain.","nature","Tiempo"],
+  ["thunderstorm","tormenta","noun","B1","A thunderstorm is coming.","nature","Tiempo"],
+  ["temperature","temperatura","noun","A1","The temperature is below zero.","nature","Tiempo"],
+  ["environment","medio ambiente","noun","B1","We should protect the environment.","nature","Paisajes"],
+  ["recycle","reciclar","verb","A2","We recycle glass and paper.","nature","Aire libre"],
+  ["wildlife","fauna","noun","B1","The park is home to diverse wildlife.","nature","Animales y plantas"],
+  ["assignment","tarea","noun","A2","I submitted my assignment yesterday.","education","Clase"],
+  ["lecture","clase magistral","noun","B1","The lecture starts at ten.","education","Clase"],
+  ["research","investigación","noun","B1","She is doing research for her project.","education","Aprender idiomas"],
+  ["scholarship","beca","noun","B2","He applied for a scholarship.","education","Organización"],
+  ["revise","repasar","verb","A2","I need to revise for the exam.","education","Exámenes"],
+  ["deadline","fecha límite","noun","B1","The deadline is next Monday.","education","Organización"],
+  ["budget","presupuesto","noun","A2","We need to plan our budget.","money","Presupuesto"],
+  ["income","ingresos","noun","B1","Their income has increased.","money","Presupuesto"],
+  ["savings","ahorros","noun","A2","I am trying to build up my savings.","money","Presupuesto"],
+  ["charge","cobrar","verb","B1","They charged me twice.","money","Pagos"],
+  ["transfer","transferencia","noun","A2","I made a bank transfer.","money","Banco"],
+  ["owe","deber","verb","B1","I still owe you twenty euros.","money","Problemas"],
+  ["invite","invitar","verb","A1","I would like to invite you to dinner.","social","Invitaciones"],
+  ["available","disponible","adjective","A2","Are you available on Saturday?","social","Invitaciones"],
+  ["cancel","cancelar","verb","A2","I am sorry, I have to cancel.","social","Planes"],
+  ["awkward","incómodo","adjective","B1","There was an awkward silence.","social","Reacciones"],
+  ["celebrate","celebrar","verb","A1","Let's celebrate your birthday.","social","Celebraciones"],
+  ["acquaintance","conocido","noun","B2","He is an old acquaintance of mine.","social","Relaciones"],
+  ["honest","sincero","adjective","A2","Please give me your honest opinion.","people","Personalidad"],
+  ["ambitious","ambicioso","adjective","B1","She is ambitious and hard-working.","people","Personalidad"],
+  ["disappointed","decepcionado","adjective","B1","I was disappointed by the result.","people","Emociones"],
+  ["patient","paciente","adjective","A2","You need to be patient.","people","Personalidad"],
+  ["argument","discusión","noun","B1","They had an argument yesterday.","people","Relaciones"],
+  ["trust","confiar","verb","B1","I trust my closest friends.","people","Relaciones"]
+].map(([word, meaning, type, level, example, topic, section]) => ({ word, meaning, type, level, example, topic, section, editorial: true }));
+const vocabularyCatalog = [...catalogFromTopics, ...grammarLexicon, ...curatedLexicon, ...expansionLexicon]
   .filter((item, index, catalog) => catalog.findIndex(candidate => candidate.word.toLowerCase() === item.word.toLowerCase()) === index)
   .map(item => ({ ...item, editorial: item.editorial ?? true }));
 const vocabularyPartOfSpeech = [
@@ -331,6 +417,34 @@ const curriculum = [
   ,{ id: "connected-speech", title: "Pronunciación: palabras enlazadas", topic: "pronunciation", skill: "pronunciation", level: "B1", minutes: 15, description: "Reconocer cómo se unen las palabras al hablar.", phrase: "What are you going to do?", tip: "En el inglés natural las palabras se conectan; practica por grupos de sentido." }
   ,{ id: "th-sounds", title: "Pronunciación: el sonido th", topic: "pronunciation", skill: "pronunciation", level: "B1", minutes: 15, description: "Distinguir el sonido de think y this.", phrase: "I think this is the right thing.", tip: "Coloca suavemente la lengua entre los dientes y deja salir el aire." }
 ];
+curriculum.push(
+  { id: "a1-personal-info", title: "Presentarte con confianza", topic: "conversation", skill: "speaking", level: "A1", minutes: 12, description: "Nombre, ciudad, trabajo y gustos.", phrase: "I live in Madrid and I work in a small shop.", tip: "Une dos frases con and para dar más información." },
+  { id: "a1-daily-time", title: "La hora y los momentos del día", topic: "daily", skill: "vocabulary", level: "A1", minutes: 12, description: "Hablar de horarios y rutinas.", phrase: "I have lunch at one o'clock.", tip: "Usa at con horas y in the morning/afternoon/evening." },
+  { id: "a1-family", title: "Hablar de tu familia", topic: "conversation", skill: "vocabulary", level: "A1", minutes: 12, description: "Relaciones, posesivos y descripción básica.", phrase: "My sister lives near my parents.", tip: "My, your, his y her indican posesión." },
+  { id: "a1-shopping", title: "Comprar algo sencillo", topic: "daily", skill: "speaking", level: "A1", minutes: 12, description: "Precios, tallas y peticiones básicas.", phrase: "How much is this blue shirt?", tip: "How much is...? pregunta por el precio de algo singular." },
+  { id: "a1-home", title: "Describir tu casa", topic: "daily", skill: "speaking", level: "A1", minutes: 12, description: "Habitaciones, muebles y there is/are.", phrase: "There is a sofa next to the window.", tip: "There is para uno; there are para varios." },
+  { id: "a2-past-weekend", title: "Contar tu fin de semana", topic: "conversation", skill: "speaking", level: "A2", minutes: 15, description: "Pasado simple con marcadores de tiempo.", phrase: "I went to the market and bought some fruit.", tip: "Usa yesterday, last weekend y ago para situar el pasado." },
+  { id: "a2-comparisons", title: "Comparar opciones", topic: "conversation", skill: "speaking", level: "A2", minutes: 15, description: "Elegir entre dos opciones y justificar.", phrase: "The train is faster but the bus is cheaper.", tip: "Une la comparación con but para expresar contraste." },
+  { id: "a2-health-appointment", title: "Pedir cita médica", topic: "health", skill: "speaking", level: "A2", minutes: 15, description: "Síntomas, fechas y peticiones en una consulta.", phrase: "I would like to make an appointment for next week.", tip: "I would like to... es una petición educada." },
+  { id: "a2-travel-directions", title: "Pedir y dar indicaciones", topic: "travel", skill: "speaking", level: "A2", minutes: 15, description: "Direcciones, transporte y puntos de referencia.", phrase: "Go straight on and turn left at the bank.", tip: "Practica los verbos de movimiento con un mapa mental." },
+  { id: "a2-listening-routine", title: "Listening: una rutina real", topic: "daily", skill: "listening", level: "A2", minutes: 15, description: "Identificar horas, acciones y frecuencia.", phrase: "I usually leave home at half past eight.", tip: "Busca primero las palabras de tiempo." },
+  { id: "a2-writing-message", title: "Escribir un mensaje informal", topic: "conversation", skill: "writing", level: "A2", minutes: 15, description: "Invitar, confirmar y cambiar un plan.", phrase: "Are you still free for coffee tomorrow?", tip: "Empieza con el motivo y termina con una pregunta clara." },
+  { id: "b1-storytelling", title: "Contar una historia", topic: "conversation", skill: "speaking", level: "B1", minutes: 20, description: "Ordenar acontecimientos con conectores.", phrase: "At first I was nervous, but eventually everything went well.", tip: "Usa first, then, suddenly, eventually y in the end." },
+  { id: "b1-opinions", title: "Explicar una opinión", topic: "conversation", skill: "speaking", level: "B1", minutes: 20, description: "Justificar ideas con razones y ejemplos.", phrase: "In my opinion, public transport should be cheaper.", tip: "Añade because y for example para desarrollar la idea." },
+  { id: "b1-work-meeting", title: "Participar en una reunión", topic: "work", skill: "speaking", level: "B1", minutes: 20, description: "Interrumpir con educación, proponer y resumir.", phrase: "Could I add something to that point?", tip: "Could I...? permite intervenir sin sonar brusco." },
+  { id: "b1-listening-news", title: "Listening: entender la idea principal", topic: "media", skill: "listening", level: "B1", minutes: 20, description: "Distinguir idea principal, detalles y opinión.", phrase: "The report focuses on changes in the local area.", tip: "No intentes traducir cada frase; identifica tema, postura y datos." },
+  { id: "b1-email-request", title: "Pedir algo por email", topic: "work", skill: "writing", level: "B1", minutes: 18, description: "Escribir una petición clara y educada.", phrase: "Could you let me know whether this is possible?", tip: "Explica el contexto antes de formular la petición." },
+  { id: "b1-pronunciation-ed", title: "Pronunciación: terminaciones -ed", topic: "pronunciation", skill: "pronunciation", level: "B1", minutes: 15, description: "Distinguir /t/, /d/ e /ɪd/ en verbos regulares.", phrase: "I watched, played and needed more time.", tip: "La terminación cambia según el último sonido del verbo." },
+  { id: "b2-negotiation", title: "Negociar una solución", topic: "work", skill: "speaking", level: "B2", minutes: 22, description: "Proponer, ceder y defender condiciones.", phrase: "Would you be willing to meet us halfway?", tip: "Las fórmulas indirectas ayudan a negociar con tacto." },
+  { id: "b2-formal-email", title: "Email formal y registro", topic: "work", skill: "writing", level: "B2", minutes: 22, description: "Distinguir tono cercano, neutro y formal.", phrase: "I would appreciate it if you could respond by Friday.", tip: "Evita contracciones y elige verbos precisos en registros formales." },
+  { id: "b2-listening-fast", title: "Listening: habla rápida", topic: "media", skill: "listening", level: "B2", minutes: 22, description: "Reconocer palabras enlazadas y omisiones.", phrase: "What do you reckon we should do about it?", tip: "Entrena grupos de sentido, no palabras aisladas." },
+  { id: "b2-collocations", title: "Colocaciones para sonar natural", topic: "conversation", skill: "vocabulary", level: "B2", minutes: 20, description: "Elegir el verbo que combina naturalmente.", phrase: "We need to reach an agreement.", tip: "Aprende reach an agreement, no make an agreement." },
+  { id: "b2-passive-process", title: "Describir un proceso", topic: "work", skill: "writing", level: "B2", minutes: 20, description: "Explicar instrucciones y procesos con voz pasiva.", phrase: "The data is reviewed before the report is published.", tip: "La pasiva centra la atención en el proceso." },
+  { id: "c1-persuasive", title: "Argumentar y persuadir", topic: "conversation", skill: "speaking", level: "C1", minutes: 25, description: "Construir una postura con matices y evidencia.", phrase: "While this approach has advantages, its long-term impact is uncertain.", tip: "Concede una objeción antes de presentar tu argumento principal." },
+  { id: "c1-academic-writing", title: "Escritura precisa y cohesionada", topic: "work", skill: "writing", level: "C1", minutes: 25, description: "Organizar párrafos, evidencias y conclusiones.", phrase: "This evidence suggests that further research is needed.", tip: "Usa verbos prudentes: suggests, appears, may indicate." },
+  { id: "c1-implicit-listening", title: "Listening: ironía y actitud", topic: "media", skill: "listening", level: "C1", minutes: 25, description: "Inferir intención más allá de las palabras.", phrase: "Well, that went exactly as planned, didn't it?", tip: "El tono puede contradecir el significado literal." },
+  { id: "c1-register", title: "Cambiar de registro", topic: "conversation", skill: "vocabulary", level: "C1", minutes: 22, description: "Expresar la misma idea de forma informal o formal.", phrase: "I am afraid this proposal is not feasible at present.", tip: "Elige vocabulario según la relación y la situación." }
+);
 const todayKey = () => new Date().toISOString().slice(0, 10);
 const ensurePlan = () => {
   if (!state.user) return;
@@ -339,12 +453,26 @@ const ensurePlan = () => {
   const goals = state.user.goals || [];
   const preferred = goals.includes("Trabajo") ? ["work", "grammar"] : goals.includes("Viajar") ? ["travel", "daily"] : ["conversation", "grammar"];
   const done = new Set(state.completed || []);
+  const weakSkills = Object.entries(state.skills || {}).sort(([, a], [, b]) => a - b).map(([skill]) => skill);
+  const previousPending = (state.plan?.lessons || []).filter(id => !done.has(id));
   const ranked = curriculum.filter(l => !done.has(l.id)).sort((a, b) => {
-    const aGoal = preferred.includes(a.topic) ? 0 : 1;
-    const bGoal = preferred.includes(b.topic) ? 0 : 1;
-    return aGoal - bGoal || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
+    const pendingA = previousPending.includes(a.id) ? 0 : 1;
+    const pendingB = previousPending.includes(b.id) ? 0 : 1;
+    const levelA = a.level === level ? 0 : Math.abs(a.level.charCodeAt(0) - level.charCodeAt(0));
+    const levelB = b.level === level ? 0 : Math.abs(b.level.charCodeAt(0) - level.charCodeAt(0));
+    const skillA = weakSkills.indexOf(a.skill);
+    const skillB = weakSkills.indexOf(b.skill);
+    const goalA = preferred.includes(a.topic) ? 0 : 1;
+    const goalB = preferred.includes(b.topic) ? 0 : 1;
+    return pendingA - pendingB || levelA - levelB || skillA - skillB || goalA - goalB || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
   });
-  state.plan = { date: todayKey(), minutes, lessons: ranked.slice(0, minutes >= 30 ? 3 : minutes >= 20 ? 2 : 1).map(l => l.id), level };
+  const slots = minutes >= 45 ? 3 : minutes >= 25 ? 2 : 1;
+  const selected = [];
+  for (const lesson of ranked) {
+    if (!selected.some(item => item.skill === lesson.skill) || selected.length < slots) selected.push(lesson);
+    if (selected.length === slots) break;
+  }
+  state.plan = { date: todayKey(), minutes, lessons: selected.map(l => l.id), level, weakSkills: weakSkills.slice(0, 3) };
 };
 const currentPlanLessons = () => {
   if (!state.plan || state.plan.date !== todayKey()) ensurePlan();
@@ -466,7 +594,20 @@ function vocabularyTopic(id) { const topic = vocabTopics.find(t => t.id === id) 
 function vocabularySection(topicId, index) { const topic = vocabTopics.find(t => t.id === topicId) || vocabTopics[0]; const [title, words] = topic.sections[Number(index)] || topic.sections[0]; content.innerHTML = `<div class="quiz"><button class="pill-button" data-vocab-topic="${topic.id}">← ${topic.title}</button><div class="eyebrow" style="margin-top:22px">${topic.icon} ${topic.title}</div><h1>${title}</h1><p class="muted">Escucha, mira el ejemplo y guarda lo que quieras repasar.</p><div class="card">${words.map(([word, meaning, example]) => `<div class="word"><div><h3>${word} <span class="tag">${meaning}</span></h3><small>“${example}”</small></div><div><button class="pill-button" data-action="audio" data-text="${example}">🔊</button><button class="pill-button" data-action="save-word" data-word="${word}">♡ Guardar</button></div></div>`).join("")}</div></div>`; }
 function library() { content.innerHTML = `<div class="eyebrow">Aprende a tu manera</div><h1>Lecciones sueltas</h1><p class="muted">Elige cualquier lección sin cambiar tu ruta diaria. La práctica se guardará igualmente.</p><div class="cards">${curriculum.map(item => `<div class="card"><span class="tag">${item.level} · ${item.minutes} min</span><h3>${item.title}</h3><p class="muted">${item.description}</p><button class="btn secondary" data-lesson="${item.id}">Hacer lección →</button></div>`).join("")}</div>`; }
 function progress() { const skills = Object.entries(state.skills || {}); const errors = state.errors || []; content.innerHTML = `<div class="eyebrow">Mira cómo avanzas</div><h1>Tu progreso real</h1><p class="muted">Bimba ajusta tus siguientes lecciones según lo que practicas y completas.</p><div class="card"><h2>Habilidades</h2>${skills.map(([key, value]) => `<div style="margin:16px 0"><div style="display:flex;justify-content:space-between"><strong>${({ grammar: "Gramática", vocabulary: "Vocabulario", listening: "Escucha", speaking: "Conversación", pronunciation: "Pronunciación" })[key] || key}</strong><span>${value}%</span></div><div class="progress-bar"><i style="width:${value}%"></i></div></div>`).join("")}</div><div class="card"><h2>Errores recurrentes</h2>${errors.length ? errors.map(error => `<p class="notice">↻ ${escapeHtml(error)}</p>`).join("") : `<p class="muted">Todavía no hay errores recurrentes. Practicar y equivocarte forma parte del aprendizaje.</p>`}</div><div class="card"><h2>Logros</h2><span class="tag">${state.completed.length >= 5 ? "🏅 5 lecciones" : "🌱 Primeros pasos"}</span> <span class="tag">${state.vocabulary.length >= 10 ? "📚 10 palabras" : "📝 Guarda palabras"}</span><span class="tag">${state.streak >= 7 ? "🔥 7 días" : "🔥 Racha activa"}</span></div><div class="section-head"><h2>Tu consejo de hoy</h2></div><div class="card"><h3>💡 Aprende en frases, no en listas</h3><p class="muted">Cuando guardes una palabra, practica también una frase propia. Así tu cerebro aprende cuándo y cómo usarla.</p></div>`; }
-function week() { const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]; const lessons = curriculum.slice(0, 7); content.innerHTML = `<div class="eyebrow">Tu calendario</div><h1>Plan de esta semana</h1><p class="muted">Si un día no estudias, la lección no desaparece: queda pendiente y se recoloca en tu ruta.</p><div class="week-grid">${days.map((day, i) => { const item = lessons[i]; const done = item && (state.completed || []).includes(item.id); return `<div class="card week-day"><span class="tag">${day}</span><h3>${item ? item.title : "Repaso libre"}</h3><p class="muted">${item ? `${item.minutes} min · ${item.level}` : "Vocabulario y errores"}</p><span class="${done ? "done" : "pending"}">${done ? "✓ Completada" : "Pendiente"}</span>${item && !done ? `<button class="pill-button" data-lesson="${item.id}">Hacer</button>` : ""}</div>`; }).join("")}</div>`; }
+function week() {
+  const days = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
+  const level = state.plan?.level || "A2";
+  const done = new Set(state.completed || []);
+  const weakSkills = Object.entries(state.skills || {}).sort(([, a], [, b]) => a - b).map(([skill]) => skill);
+  const bySkill = skill => curriculum.filter(item => item.level === level && item.skill === skill && !done.has(item.id));
+  const chosen = [];
+  [...weakSkills, "grammar", "vocabulary", "listening", "speaking", "pronunciation"].forEach(skill => {
+    const item = bySkill(skill).find(candidate => !chosen.includes(candidate));
+    if (item && chosen.length < 7) chosen.push(item);
+  });
+  curriculum.filter(item => !done.has(item.id) && !chosen.includes(item)).slice(0, 7 - chosen.length).forEach(item => chosen.push(item));
+  content.innerHTML = `<div class="eyebrow">Tu calendario</div><h1>Plan inteligente de esta semana</h1><p class="muted">Distribuye gramática, vocabulario, escucha, conversación y pronunciación. Las tareas pendientes se priorizan al recalcular tu ruta.</p><div class="card"><strong>Prioridad actual:</strong> ${weakSkills.slice(0, 3).map(skill => `<span class="tag">${skill}</span>`).join("")}</div><div class="week-grid">${days.map((day, i) => { const item = chosen[i]; const completed = item && done.has(item.id); return `<div class="card week-day"><span class="tag">${day}</span><h3>${item ? item.title : "Repaso libre"}</h3><p class="muted">${item ? `${item.minutes} min · ${item.level} · ${item.skill}` : "Vocabulario y errores"}</p><span class="${completed ? "done" : "pending"}">${completed ? "✓ Completada" : "Pendiente"}</span>${item && !completed ? `<button class="pill-button" data-lesson="${item.id}">Hacer</button>` : ""}</div>`; }).join("")}</div>`;
+}
 async function uploadAvatar(file) {
   if (!currentSession || !supabaseClient) return null;
   const path = `${currentSession.user.id}/avatar-${Date.now()}.${file.name.split(".").pop() || "jpg"}`;
@@ -628,10 +769,34 @@ document.addEventListener("click", async e => {
     const feedback = document.querySelector("#writing-feedback");
     if (!answer) return toast("Escribe primero una frase.");
     const hasSubject = /\b(i|you|he|she|we|they)\b/i.test(answer);
-    const hasVerb = /\b(am|is|are|work|works|have|has|do|does|go|goes|like|likes|can|will)\b/i.test(answer);
-    const commonFix = answer.replace(/\bI am agree\b/gi, "I agree").replace(/\binterested on\b/gi, "interested in").replace(/\bmore tall\b/gi, "taller");
-    const changed = commonFix !== answer;
-    feedback.innerHTML = `<div class="notice">${hasSubject && hasVerb ? `✅ Buena base: hay sujeto y verbo.${changed ? ` Una corrección frecuente sería: <strong>${escapeHtml(commonFix)}</strong>.` : " Revisa ahora el orden y los detalles."}` : "💡 Te falta una pieza: intenta incluir quién hace la acción y un verbo conjugado."}</div>`;
+    const hasVerb = /\b(am|is|are|was|were|be|work|works|worked|have|has|had|do|does|did|go|goes|went|like|likes|liked|can|could|will|would|should|need|needs|want|wants|make|makes|made)\b/i.test(answer);
+    const rules = [
+      [/\bI am agree\b/gi, "I agree", "Con agree usamos I agree, no I am agree."],
+      [/\binterested on\b/gi, "interested in", "Interested va con la preposición in."],
+      [/\bdepend of\b/gi, "depend on", "Depend va con on."],
+      [/\bmarried with\b/gi, "married to", "Married va normalmente con to."],
+      [/\bmore tall\b/gi, "taller", "Los adjetivos cortos forman el comparativo con -er."],
+      [/\bmore cheap\b/gi, "cheaper", "Cheap forma el comparativo con -er."],
+      [/\bpeople is\b/gi, "people are", "People es plural y necesita are."],
+      [/\bhe go\b/gi, "he goes", "En presente simple, he/she/it necesita -s."],
+      [/\bshe work\b/gi, "she works", "En presente simple, he/she/it necesita -s."],
+      [/\byesterday I go\b/gi, "yesterday I went", "Con yesterday usamos pasado."],
+      [/\bdid went\b/gi, "did go", "Después de did usamos el verbo en forma base."],
+      [/\bdiscuss about\b/gi, "discuss", "Discuss no necesita about."],
+      [/\bexplain me\b/gi, "explain to me", "Explain necesita to antes de la persona."],
+      [/\bmake a photo\b/gi, "take a photo", "La colocación natural es take a photo."],
+      [/\bdo a decision\b/gi, "make a decision", "La colocación natural es make a decision."]
+    ];
+    let corrected = answer;
+    const notes = [];
+    rules.forEach(([pattern, replacement, note]) => { if (pattern.test(corrected)) { corrected = corrected.replace(pattern, replacement); notes.push(note); } });
+    const changed = corrected !== answer;
+    const suggestions = [];
+    if (!hasSubject) suggestions.push("incluye un sujeto (I, you, he, she, we o they)");
+    if (!hasVerb) suggestions.push("incluye un verbo conjugado");
+    if (answer.length < 12) suggestions.push("amplía la frase con un detalle de tiempo, lugar o motivo");
+    const message = suggestions.length ? `💡 Prueba a ${suggestions.join(" y ")}.` : `✅ Buena base: hay sujeto y verbo.${changed ? ` Corrección sugerida: <strong>${escapeHtml(corrected)}</strong>` : " Ahora intenta añadir un detalle para hacerla más natural."}`;
+    feedback.innerHTML = `<div class="notice">${message}${notes.length ? `<p class="muted"><strong>Por qué:</strong> ${notes.join(" ")}</p>` : ""}</div>`;
     if (!hasSubject || !hasVerb || changed) state.errors = [...new Set([...state.errors, changed ? `escritura: ${answer}` : "construcción de frases"])];
     await save();
     return;

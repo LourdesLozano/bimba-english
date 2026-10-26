@@ -15,6 +15,10 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Catálogo editorial de vocabulario para A1-C1, con traducciones y ejemplos revisados, filtros por nivel y categoría gramatical. Se han retirado las formas verbales automáticas que aparecían como palabras independientes.
 - Ruta ampliada de gramática A1-C1, colocaciones y phrasal verbs por contexto.
 - Situaciones nuevas de restaurante, devoluciones, llamadas, reclamaciones, descripción de imágenes, listening y pronunciación de `th` y palabras enlazadas.
+- Banco ampliado de vocabulario editorial por salud, comida, casa, trabajo, viajes, compras, tecnología, naturaleza, estudios, dinero, vida social y personas.
+- Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
+- Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
+- Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
 - Ejercicios de traducción, completar frases y ordenar palabras.
 - Repaso espaciado de palabras guardadas y errores de ejercicios.
 - Lecciones de gramática que enlazan sus frases con palabras del catálogo.
