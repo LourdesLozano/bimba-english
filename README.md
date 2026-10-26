@@ -27,6 +27,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
 - Gramática contrastiva para palabras parecidas: `some/any/no`, `something/anything/nothing`, `someone/anyone/no one`, `somewhere/anywhere/nowhere`, cuantificadores y alternativas (`much/many`, `few/little`, `each/every`, `both/either/neither`, `another/other`).
 - Pronombres por función: sujeto, objeto, posesivos, reflexivos, demostrativos, relativos e interrogativos, con ejemplos contrastivos.
+- Las guías de gramática explican también la colocación: dónde va cada elemento respecto al verbo, objeto, nombre, auxiliar o preposición. La guía de adverbios distingue frecuencia, tiempo, modo, lugar, grado y conectores.
 - Tablas de consulta con verbos frecuentes en infinitivo, pasado y participio, además de adverbios y adjetivos agrupados por uso. Incluyen búsqueda, ejemplos, escucha y guardado en el vocabulario personal.
 - Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
 - Ejercicios de traducción, completar frases y ordenar palabras.

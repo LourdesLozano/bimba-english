@@ -445,7 +445,7 @@ const curriculum = [
   { id: "relative-pronouns", title: "Who, which, that y whose", topic: "grammar", skill: "grammar", level: "B1", minutes: 20, description: "Unir ideas y describir personas y cosas.", phrase: "The colleague who helped me is from Madrid.", tip: "Who suele referirse a personas; which a cosas; whose expresa posesión.", guideKey: "pronouns" },
   { id: "interrogative-pronouns", title: "Who, what, which y whose en preguntas", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Elegir el pronombre correcto al preguntar.", phrase: "Which one is yours, and whose is this?", tip: "Which suele elegir entre opciones; what pregunta de forma abierta; whose pregunta por el dueño.", guideKey: "pronouns" },
   { id: "adjectives", title: "Adjetivos en frases", topic: "grammar", skill: "grammar", level: "A2", minutes: 15, description: "Describir personas, cosas y emociones.", phrase: "She is a reliable colleague.", tip: "Con estados usamos be + adjetivo; delante de un nombre: a + adjetivo + noun." },
-  { id: "adverbs", title: "Adverbios de frecuencia", topic: "grammar", skill: "grammar", level: "A2", minutes: 12, description: "Always, usually, often, sometimes y never.", phrase: "I usually work from home.", tip: "Van antes del verbo normal, pero después de be: I am usually tired." },
+  { id: "adverbs", title: "Adverbios: uso y posición", topic: "grammar", skill: "grammar", level: "A2", minutes: 20, description: "Frecuencia, tiempo, modo, lugar, grado y conectores.", phrase: "I usually work from home.", tip: "La posición depende del tipo: frecuencia antes del verbo normal, modo después del objeto y lugar normalmente al final.", guideKey: "adverbs" },
   { id: "past-simple", title: "Contar lo que pasó", topic: "grammar", skill: "grammar", level: "A2", minutes: 18, description: "Pasado simple en afirmativa, negativa y pregunta.", phrase: "I finished the report yesterday.", tip: "En preguntas y negativas, did lleva el pasado y el verbo vuelve a su forma base." },
   { id: "work-email", title: "Escribir un email claro", topic: "work", skill: "writing", level: "B1", minutes: 18, description: "Pedir, confirmar y cerrar emails profesionales.", phrase: "Could you send me the updated file, please?", tip: "Could you... es una forma educada y muy útil para pedir algo." },
   { id: "daily-routine", title: "Hablar de tu rutina", topic: "daily", skill: "speaking", level: "A1", minutes: 12, description: "Frases para contar tu día de forma natural.", phrase: "I usually get up at seven.", tip: "Usa usually para hábitos y at + hora concreta." },
@@ -647,14 +647,26 @@ const grammarGuides = {
   "pronouns": {
     title: "Todos los pronombres por función",
     rows: [
-      ["SUBJECT", "Hace la acción: I, you, he, she, it, we, they", "She called me. · They work here."],
-      ["OBJECT", "Recibe la acción o va después de una preposición: me, him, her, us, them", "I saw him. · Come with me."],
-      ["POSSESSIVE", "my/your/his delante de nombre; mine/yours/his sin nombre", "This is my bag. · The bag is mine."],
-      ["REFLEXIVE", "myself, yourself, himself... cuando acción y receptor coinciden", "I taught myself. · She hurt herself."],
-      ["DEMONSTRATIVE", "this/these cerca; that/those lejos; singular/plural", "This is easy. · Those are expensive."],
-      ["RELATIVE / QUESTION", "who/persona, which/cosa u opción, whose/posesión, what/qué", "The person who called · Which is yours?"]
+      ["SUBJECT", "Hace la acción: I, you, he, she, it, we, they", "She called me. · They work here.", "Normalmente antes del verbo: sujeto + verbo + resto."],
+      ["OBJECT", "Recibe la acción o va después de una preposición: me, him, her, us, them", "I saw him. · Come with me.", "Después del verbo o de una preposición: verb + object / preposition + object."],
+      ["POSSESSIVE", "my/your/his delante de nombre; mine/yours/his sin nombre", "This is my bag. · The bag is mine.", "my/your + nombre; mine/yours va solo, normalmente al final o tras be."],
+      ["REFLEXIVE", "myself, yourself, himself... cuando acción y receptor coinciden", "I taught myself. · She hurt herself.", "Después del verbo o de la preposición; también al final para dar énfasis: I did it myself."],
+      ["DEMONSTRATIVE", "this/these cerca; that/those lejos; singular/plural", "This is easy. · Those are expensive.", "Delante del nombre o solos como sujeto/objeto: These shoes / I prefer those."],
+      ["RELATIVE / QUESTION", "who/persona, which/cosa u opción, whose/posesión, what/qué", "The person who called · Which is yours?", "En preguntas suelen ir al principio; en relativas van justo después del nombre que describen."]
     ],
     note: "No elijas por traducción: primero pregunta qué función cumple el pronombre. ¿Hace la acción, la recibe, indica posesión, señala, une ideas o formula una pregunta?"
+  },
+  "adverbs": {
+    title: "Adverbios: cuándo usarlos y dónde colocarlos",
+    rows: [
+      ["FREQUENCY", "always, usually, often, sometimes, rarely, never indican con qué frecuencia ocurre algo.", "I usually work from home. · She never drives.", "Antes del verbo normal; después de be. Con auxiliares, después del primer auxiliar: I have often seen it."],
+      ["TIME", "already, just, still, yet, soon, recently sitúan la acción en el tiempo.", "I've already eaten. · Are you still working? · I haven't called yet.", "already/just/still suelen ir antes del verbo principal; yet suele ir al final en preguntas y negativas; soon/recently también pueden ir al final."],
+      ["MANNER", "well, quickly, slowly, carefully explican cómo se hace algo.", "She speaks clearly. · He opened it carefully.", "Normalmente después del verbo y del objeto: She answered the question carefully. No separes verbo y objeto."],
+      ["PLACE", "here, there, everywhere, somewhere, anywhere indican dónde.", "Put it there. · We looked everywhere.", "Normalmente después del verbo o del objeto: I saw him there. También al principio para dar énfasis: Here comes the bus."],
+      ["DEGREE", "very, really, quite, too, almost, enough modifican intensidad o cantidad.", "It's very cold. · She runs really fast. · It's warm enough.", "Antes del adjetivo/adverbio: very tired; enough va después del adjetivo/adverbio: old enough, y antes del nombre: enough time."],
+      ["COMMENT / LINKING", "fortunately, probably, however, therefore expresan actitud, probabilidad o relación entre ideas.", "Probably, she'll call. · It was late; however, we stayed.", "Al principio con coma es muy claro; probably también puede ir antes del verbo principal o después de be: She'll probably come / She is probably right."]
+    ],
+    note: "Primero identifica qué modifica el adverbio: frecuencia, tiempo, modo, lugar, intensidad o toda la oración. La posición cambia según la categoría; no coloques todos como si fueran iguales."
   }
 };
 const verbReference = [
@@ -746,7 +758,7 @@ function lesson(id, preserveStep = false) {
   const step = state.lessonStep || 0;
   const guide = item.guideKey ? grammarGuides[item.guideKey] : null;
   const steps = guide ? [
-    `<span class="tag">Paso 1 de 4 · La idea central</span><h3>${guide.title}</h3><p class="muted">Mira primero el contexto: no traduzcas cada palabra de forma automática.</p><div class="grammar-table">${guide.rows.map(([label, use, examples]) => `<div><strong>${label}</strong><span>${use}</span><b>${examples}</b></div>`).join("")}</div>`,
+    `<span class="tag">Paso 1 de 4 · La idea central</span><h3>${guide.title}</h3><p class="muted">Mira primero el contexto: no traduzcas cada palabra de forma automática.</p><div class="grammar-table">${guide.rows.map(([label, use, examples, placement]) => `<div><strong>${label}</strong><span>${use}</span><b>${examples}</b>${placement ? `<small class="grammar-position"><b>Colocación:</b> ${placement}</small>` : ""}</div>`).join("")}</div>`,
     `<span class="tag">Paso 2 de 4 · Contrasta</span><h3>La diferencia aparece al cambiar la intención</h3><div class="notice"><strong>Truco:</strong> ${guide.note}</div><p class="muted">Lee los ejemplos en voz alta y fíjate en qué palabra cambia cuando la frase pasa de afirmativa a pregunta o negativa.</p>${audioPlayer(guide.rows.map(row => row[2].split(" · ")[0]).join(" "))}`,
     `<span class="tag">Paso 3 de 4 · Recupera sin mirar</span><h3>Elige la lógica antes de la palabra</h3><button class="option" data-answer="right">Primero identifico si la frase es afirmativa, pregunta o negativa y si el nombre se puede contar.</button><button class="option" data-answer="wrong">Traduzco literalmente la palabra española y elijo la primera opción.</button>`,
     `<span class="tag">Paso 4 de 4 · Produce</span><h3>Usa la estructura en tu vida</h3><label>Escribe dos frases<textarea id="writing-answer" placeholder="Write two sentences using this grammar..."></textarea></label><p class="muted small">Incluye una afirmación y una pregunta o negativa para comparar.</p><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Comprobar mis frases</button><div id="writing-feedback"></div>`

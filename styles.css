@@ -113,6 +113,7 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .grammar-table strong { grid-row: span 2; color: var(--pink-deep); font-size: 19px; }
 .grammar-table span { color: var(--muted); font-size: 13px; }
 .grammar-table b { font-size: 14px; }
+.grammar-position { grid-column: 2; color: var(--muted); font-size: 13px; line-height: 1.4; }
 .reference-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 14px; }
 .active-reference-tab { background: var(--pink-deep); color: white; }
 .reference-search { width: 100%; max-width: 520px; margin: 8px 0; }
