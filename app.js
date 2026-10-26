@@ -518,18 +518,21 @@ const ensurePlan = () => {
   const weakSkills = Object.entries(state.skills || {}).sort(([, a], [, b]) => a - b).map(([skill]) => skill);
   const previousPending = (state.plan?.lessons || []).filter(id => !done.has(id));
   const dueReview = reviewDue().length;
+  const recentErrors = state.errors || [];
   const ranked = curriculum.filter(l => !done.has(l.id)).sort((a, b) => {
     const pendingA = previousPending.includes(a.id) ? 0 : 1;
     const pendingB = previousPending.includes(b.id) ? 0 : 1;
-    const levelA = a.level === level ? 0 : Math.abs(a.level.charCodeAt(0) - level.charCodeAt(0));
-    const levelB = b.level === level ? 0 : Math.abs(b.level.charCodeAt(0) - level.charCodeAt(0));
+    const levelA = a.level === level ? 0 : Math.abs((a.level || level).charCodeAt(0) - level.charCodeAt(0));
+    const levelB = b.level === level ? 0 : Math.abs((b.level || level).charCodeAt(0) - level.charCodeAt(0));
     const skillA = weakSkills.indexOf(a.skill);
     const skillB = weakSkills.indexOf(b.skill);
     const goalA = preferred.includes(a.topic) ? 0 : 1;
     const goalB = preferred.includes(b.topic) ? 0 : 1;
-    const grammarBoostA = a.id === "in-on-at" && (state.errors || []).some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
-    const grammarBoostB = b.id === "in-on-at" && (state.errors || []).some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
-    return pendingA - pendingB || grammarBoostA - grammarBoostB || levelA - levelB || skillA - skillB || goalA - goalB || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
+    const errorA = recentErrors.some(error => new RegExp(a.skill, "i").test(error) || new RegExp(a.id, "i").test(error)) ? -2 : 0;
+    const errorB = recentErrors.some(error => new RegExp(b.skill, "i").test(error) || new RegExp(b.id, "i").test(error)) ? -2 : 0;
+    const grammarBoostA = a.id === "in-on-at" && recentErrors.some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
+    const grammarBoostB = b.id === "in-on-at" && recentErrors.some(error => /prepos|in-on-at/i.test(error)) ? -1 : 0;
+    return pendingA - pendingB || errorA - errorB || grammarBoostA - grammarBoostB || levelA - levelB || skillA - skillB || goalA - goalB || Math.abs(a.minutes - minutes) - Math.abs(b.minutes - minutes);
   });
   const slots = minutes >= 45 ? 3 : minutes >= 25 ? 2 : 1;
   const selected = [];
@@ -537,7 +540,16 @@ const ensurePlan = () => {
     if (!selected.some(item => item.skill === lesson.skill) || selected.length < slots) selected.push(lesson);
     if (selected.length === slots) break;
   }
-  state.plan = { date: todayKey(), minutes, lessons: selected.map(l => l.id), level, weakSkills: weakSkills.slice(0, 3), dueReview };
+  const reasons = Object.fromEntries(selected.map(lesson => [lesson.id,
+    recentErrors.some(error => new RegExp(lesson.skill, "i").test(error) || new RegExp(lesson.id, "i").test(error))
+      ? "Porque has tenido errores recientes aquí."
+      : weakSkills[0] === lesson.skill
+        ? "Porque es una de tus habilidades menos practicadas."
+        : preferred.includes(lesson.topic)
+          ? "Porque encaja con uno de tus objetivos."
+          : "Para mantener equilibrada tu práctica."
+  ]));
+  state.plan = { date: todayKey(), minutes, lessons: selected.map(l => l.id), level, weakSkills: weakSkills.slice(0, 3), dueReview, reasons };
 };
 const currentPlanLessons = () => {
   ensurePlan();
@@ -587,7 +599,7 @@ function home() {
   const planLessons = currentPlanLessons();
   const pending = planLessons[0];
   content.innerHTML = `<div class="hero"><div class="hero-copy"><div class="eyebrow">Tu plan de hoy · ${state.user?.dailyMinutes || 15} min</div><h1>Hola, ${name}.<br>Hoy puedes dar un pasito más.</h1><p class="muted">Una ruta adaptada a tu nivel, tu objetivo y lo que más necesitas practicar.</p><button class="btn" data-action="lesson">Empezar mi lección <span>→</span></button></div><div class="hero-art" aria-label="Oso panda">🐼</div></div>
-  ${pending ? `<div class="section-head"><h2>Tu ruta de hoy</h2><span class="tag">${state.user?.dailyMinutes || 15} min · ${planLessons.length} ${planLessons.length === 1 ? "lección" : "lecciones"}</span></div><div class="card daily-plan"><div><span class="eyebrow">Siguiente recomendación · ${pending.level}</span><h2>${pending.title}</h2><p class="muted">${pending.description}</p><div class="tag">${pending.minutes} min · ${pending.skill}</div></div><button class="btn" data-lesson="${pending.id}">Empezar ahora →</button></div>` : `<div class="notice">Has completado tu ruta de hoy. Mañana tendrás nuevas lecciones.</div>`}
+  ${pending ? `<div class="section-head"><h2>Tu ruta de hoy</h2><span class="tag">${state.user?.dailyMinutes || 15} min · ${planLessons.length} ${planLessons.length === 1 ? "lección" : "lecciones"}</span></div><div class="card daily-plan"><div><span class="eyebrow">Siguiente recomendación · ${pending.level || state.plan?.level || "tu nivel"}</span><h2>${pending.title}</h2><p class="muted">${pending.description}</p><p class="muted small"><strong>Por qué ahora:</strong> ${escapeHtml(state.plan?.reasons?.[pending.id] || "Siguiente paso recomendado para ti.")}</p><div class="tag">${pending.minutes} min · ${pending.skill}</div></div><button class="btn" data-lesson="${pending.id}">Empezar ahora →</button></div>${state.plan?.dueReview ? `<div class="card route-review"><strong>Antes o después de la lección:</strong> tienes ${state.plan.dueReview} palabra${state.plan.dueReview === 1 ? "" : "s"} lista${state.plan.dueReview === 1 ? "" : "s"} para repasar. <button class="pill-button" data-view="vocabulary">Ir al repaso →</button></div>` : ""}` : `<div class="notice">Has completado tu ruta de hoy. Mañana tendrás nuevas lecciones.</div>`}
   <div class="section-head"><h2>Organiza tu aprendizaje</h2></div><div class="card"><p class="muted">Haz el diagnóstico para ajustar tu nivel o activa un recordatorio para no perder tu hábito.</p><button class="btn secondary" data-action="start-diagnostic">Repetir diagnóstico</button><button class="btn secondary" data-action="notification" style="margin-left:8px">Activar recordatorios</button></div>
   ${reviewDue().length ? `<div class="section-head"><h2>Repasos pendientes</h2></div><div class="card"><p>Tu memoria tiene ${reviewDue().length} elemento${reviewDue().length === 1 ? "" : "s"} listo${reviewDue().length === 1 ? "" : "s"} para repasar.</p><button class="btn secondary" data-view="vocabulary">Repasar ahora →</button></div>` : ""}
   <div class="section-head"><h2>Tu progreso</h2><button class="btn secondary" data-view="progress">Ver detalles</button></div>
@@ -654,7 +666,8 @@ const grammarGuides = {
       ["DEMONSTRATIVE", "this/these cerca; that/those lejos; singular/plural", "This is easy. · Those are expensive.", "Delante del nombre o solos como sujeto/objeto: These shoes / I prefer those."],
       ["RELATIVE / QUESTION", "who/persona, which/cosa u opción, whose/posesión, what/qué", "The person who called · Which is yours?", "En preguntas suelen ir al principio; en relativas van justo después del nombre que describen."]
     ],
-    note: "No elijas por traducción: primero pregunta qué función cumple el pronombre. ¿Hace la acción, la recibe, indica posesión, señala, une ideas o formula una pregunta?"
+    note: "No elijas por traducción: primero pregunta qué función cumple el pronombre. ¿Hace la acción, la recibe, indica posesión, señala, une ideas o formula una pregunta?",
+    exercise: ["Completa: This bag is ___.", ["my", "mine", "I"], 1, "Mine sustituye a my bag y puede aparecer solo después de be."]
   },
   "adverbs": {
     title: "Adverbios: cuándo usarlos y dónde colocarlos",
@@ -666,7 +679,8 @@ const grammarGuides = {
       ["DEGREE", "very, really, quite, too, almost, enough modifican intensidad o cantidad.", "It's very cold. · She runs really fast. · It's warm enough.", "Antes del adjetivo/adverbio: very tired; enough va después del adjetivo/adverbio: old enough, y antes del nombre: enough time."],
       ["COMMENT / LINKING", "fortunately, probably, however, therefore expresan actitud, probabilidad o relación entre ideas.", "Probably, she'll call. · It was late; however, we stayed.", "Al principio con coma es muy claro; probably también puede ir antes del verbo principal o después de be: She'll probably come / She is probably right."]
     ],
-    note: "Primero identifica qué modifica el adverbio: frecuencia, tiempo, modo, lugar, intensidad o toda la oración. La posición cambia según la categoría; no coloques todos como si fueran iguales."
+    note: "Primero identifica qué modifica el adverbio: frecuencia, tiempo, modo, lugar, intensidad o toda la oración. La posición cambia según la categoría; no coloques todos como si fueran iguales.",
+    exercise: ["Elige la posición natural: She ___ works from home.", ["usually", "works usually"], 0, "Los adverbios de frecuencia suelen ir antes del verbo normal: She usually works."]
   }
 };
 const verbReference = [
@@ -760,7 +774,7 @@ function lesson(id, preserveStep = false) {
   const steps = guide ? [
     `<span class="tag">Paso 1 de 4 · La idea central</span><h3>${guide.title}</h3><p class="muted">Mira primero el contexto: no traduzcas cada palabra de forma automática.</p><div class="grammar-table">${guide.rows.map(([label, use, examples, placement]) => `<div><strong>${label}</strong><span>${use}</span><b>${examples}</b>${placement ? `<small class="grammar-position"><b>Colocación:</b> ${placement}</small>` : ""}</div>`).join("")}</div>`,
     `<span class="tag">Paso 2 de 4 · Contrasta</span><h3>La diferencia aparece al cambiar la intención</h3><div class="notice"><strong>Truco:</strong> ${guide.note}</div><p class="muted">Lee los ejemplos en voz alta y fíjate en qué palabra cambia cuando la frase pasa de afirmativa a pregunta o negativa.</p>${audioPlayer(guide.rows.map(row => row[2].split(" · ")[0]).join(" "))}`,
-    `<span class="tag">Paso 3 de 4 · Recupera sin mirar</span><h3>Elige la lógica antes de la palabra</h3><button class="option" data-answer="right">Primero identifico si la frase es afirmativa, pregunta o negativa y si el nombre se puede contar.</button><button class="option" data-answer="wrong">Traduzco literalmente la palabra española y elijo la primera opción.</button>`,
+    `<span class="tag">Paso 3 de 4 · Recupera sin mirar</span><h3>${guide.exercise ? guide.exercise[0] : "Elige la lógica antes de la palabra"}</h3>${guide.exercise ? guide.exercise[1].map((option, index) => `<button class="option" data-action="check-grammar-choice" data-choice="${index}" data-correct="${guide.exercise[2]}" data-explanation="${escapeHtml(guide.exercise[3])}">${option}</button>`).join("") : `<button class="option" data-answer="right">Primero identifico si la frase es afirmativa, pregunta o negativa y si el nombre se puede contar.</button><button class="option" data-answer="wrong">Traduzco literalmente la palabra española y elijo la primera opción.</button>`}<div id="grammar-feedback"></div>`,
     `<span class="tag">Paso 4 de 4 · Produce</span><h3>Usa la estructura en tu vida</h3><label>Escribe dos frases<textarea id="writing-answer" placeholder="Write two sentences using this grammar..."></textarea></label><p class="muted small">Incluye una afirmación y una pregunta o negativa para comparar.</p><button class="btn secondary" data-action="check-writing" data-expected="${item.phrase}">Comprobar mis frases</button><div id="writing-feedback"></div>`
   ] : item.guide ? [
     `<span class="tag">Paso 1 de 4 · La idea visual</span><h3>De lo grande a lo puntual</h3><p class="muted">No traduzcas siempre “en / sobre / a”. Elige según el tipo de relación:</p><div class="grammar-table"><div><strong>IN</strong><span>Dentro de un espacio o periodo amplio</span><b>in Spain · in a room · in July · in the morning</b></div><div><strong>ON</strong><span>Contacto con una superficie, un día o una fecha</span><b>on the table · on Monday · on 12 May</b></div><div><strong>AT</strong><span>Un punto, una hora o un lugar visto como actividad</span><b>at the door · at 8:00 · at work</b></div></div>${audioPlayer("I work at home on Monday in the morning.")}`,
@@ -809,7 +823,9 @@ function seriesScene(id) {
 }
 function vocabulary() {
   const saved = state.vocabulary || [];
-  content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Guardar una palabra es el principio. Para aprenderla de verdad, recupérala sin mirar, úsala en una frase y vuelve a verla cuando toque.</p><div class="card vocabulary-method"><h2>Cómo estudiar cada palabra</h2><div class="vocabulary-method-steps"><div><b>1</b><strong>Contexto</strong><span>Escucha el ejemplo y entiende la situación.</span></div><div><b>2</b><strong>Recuperación</strong><span>Tapa la traducción e intenta recordarla.</span></div><div><b>3</b><strong>Producción</strong><span>Di o escribe una frase propia.</span></div><div><b>4</b><strong>Repaso</strong><span>Vuelve hoy, en 1, 2, 4 y 8 días.</span></div></div><p class="muted small">No marques “Lo sé” por reconocerla al verla: úsalo cuando puedas recordar el significado y construir una frase sin ayuda.</p><button class="btn secondary" data-view="practice">Practicar palabras ahora →</button></div><div class="card"><p><strong>${saved.length}</strong> palabras guardadas · <strong>${reviewDue().length}</strong> repasos pendientes</p>${saved.length ? saved.map(v => `<div class="word"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type || "expresión")}</span></h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”</small></div><div><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button>${saveWordButton(v.word, "Quitar")}<button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sé</button></div></div>`).join("") : `<p class="muted">Guarda palabras desde cualquier tema para empezar tu lista.</p>`}</div>`;
+  const due = new Set(reviewDue().map(item => item.word));
+  const reviewInfo = word => state.reviewQueue.find(item => item.word === word);
+  content.innerHTML = `<div class="eyebrow">Tu memoria inteligente</div><h1>Mi vocabulario</h1><p class="muted">Guardar una palabra es el principio. Para aprenderla de verdad, recupérala sin mirar, úsala en una frase y vuelve a verla cuando toque.</p><div class="card vocabulary-method"><h2>Cómo estudiar cada palabra</h2><div class="vocabulary-method-steps"><div><b>1</b><strong>Contexto</strong><span>Escucha el ejemplo y entiende la situación.</span></div><div><b>2</b><strong>Recuperación</strong><span>Tapa la traducción e intenta recordarla.</span></div><div><b>3</b><strong>Producción</strong><span>Di o escribe una frase propia.</span></div><div><b>4</b><strong>Repaso</strong><span>Vuelve hoy, en 1, 2, 4 y 8 días.</span></div></div><p class="muted small">No marques “Lo sé” por reconocerla al verla: úsalo cuando puedas recordar el significado y construir una frase sin ayuda.</p><button class="btn secondary" data-view="practice">Practicar palabras ahora →</button></div><div class="card"><p><strong>${saved.length}</strong> palabras guardadas · <strong>${due.size}</strong> repasos pendientes</p>${saved.length ? saved.map(v => { const info = reviewInfo(v.word); return `<div class="word${due.has(v.word) ? " review-due" : ""}"><div><h3>${escapeHtml(v.word)} <span class="tag">${escapeHtml(v.type || "expresión")}</span>${due.has(v.word) ? '<span class="tag due-tag">Toca repasar</span>' : ""}</h3><small>${escapeHtml(v.meaning)} · “${escapeHtml(v.example)}”${info?.nextReview && !due.has(v.word) ? ` · próximo: ${escapeHtml(info.nextReview)}` : ""}</small></div><div class="word-actions"><button class="pill-button" data-action="audio" data-text="${escapeHtml(v.example)}">🔊</button>${saveWordButton(v.word, "Quitar")}<button class="pill-button" data-action="review-hard" data-word="${escapeHtml(v.word)}">Me costó</button><button class="pill-button" data-action="review-word" data-word="${escapeHtml(v.word)}">Lo sabía</button></div></div>`; }).join("") : `<p class="muted">Guarda palabras desde cualquier tema para empezar tu lista.</p>`}</div>`;
 }
 function practice() {
   const filters = state.practiceFilters || { level: "all", type: "all", topic: "all", mode: "useful" };
@@ -916,7 +932,7 @@ document.addEventListener("click", async e => {
   const vocabSection = e.target.closest("[data-vocab-section]")?.dataset.vocabSection; if (vocabSection) { const [topicId, index, subtopic] = vocabSection.split("|"); return vocabularySection(topicId, index, subtopic); }
   const seriesId = e.target.closest("[data-series]")?.dataset.series; if (seriesId) return seriesScene(seriesId);
   const lessonId = e.target.closest("[data-lesson]")?.dataset.lesson;
-  if (lessonId && !e.target.closest("[data-action=complete-lesson]")) return lesson(lessonId);
+  if (lessonId && !e.target.closest("[data-action]")) return lesson(lessonId);
   const action = e.target.closest("[data-action]")?.dataset.action;
   if (e.target.closest("#theme-button")) {
     const menu = document.querySelector(".theme-menu");
@@ -1059,6 +1075,22 @@ document.addEventListener("click", async e => {
   if (action === "review-word") {
     await addReview(e.target.closest("[data-action=review-word]").dataset.word, 4);
     return toast("¡Bien! Volveremos a repasarla más adelante.");
+  }
+  if (action === "review-hard") {
+    const word = e.target.closest("[data-action=review-hard]").dataset.word;
+    await addReview(word, 1);
+    toast("La veremos pronto otra vez.");
+    return render();
+  }
+  if (action === "check-grammar-choice") {
+    const button = e.target.closest("[data-action=check-grammar-choice]");
+    const feedback = document.querySelector("#grammar-feedback");
+    const correct = Number(button.dataset.choice) === Number(button.dataset.correct);
+    feedback.innerHTML = `<div class="feedback ${correct ? "" : "error"}">${correct ? "✅ Correcto. " : "💡 Aún no: "}${escapeHtml(button.dataset.explanation)}</div>`;
+    if (!correct) state.errors = [...new Set([...(state.errors || []), `grammar: ${state.lessonId || "grammar"}`])];
+    state.skills.grammar = Math.min(100, (state.skills.grammar || 0) + (correct ? 2 : 0));
+    await save();
+    return;
   }
   if (action === "check-writing") {
     const answer = document.querySelector("#writing-answer")?.value.trim();

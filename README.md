@@ -24,6 +24,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Método de vocabulario basado en contexto, recuperación activa, producción propia y repaso espaciado; la lista guardada explica qué hacer en cada paso.
 - Validador reproducible del contenido en [`scripts/validate-vocabulary.js`](./scripts/validate-vocabulary.js): detecta IDs repetidos, duplicados temáticos, campos incompletos, CEFR/tipos/frecuencia/prioridad inválidos y fichas sin ejercicios.
 - Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
+- Ruta diaria adaptativa que muestra el motivo de cada recomendación, prioriza errores recientes y reserva los repasos pendientes.
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
 - Gramática contrastiva para palabras parecidas: `some/any/no`, `something/anything/nothing`, `someone/anyone/no one`, `somewhere/anywhere/nowhere`, cuantificadores y alternativas (`much/many`, `few/little`, `each/every`, `both/either/neither`, `another/other`).
 - Pronombres por función: sujeto, objeto, posesivos, reflexivos, demostrativos, relativos e interrogativos, con ejemplos contrastivos.
@@ -32,6 +33,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - Lecciones nuevas A1-C1 con práctica de speaking, writing, listening, vocabulario, gramática y pronunciación.
 - Ejercicios de traducción, completar frases y ordenar palabras.
 - Repaso espaciado de palabras guardadas y errores de ejercicios.
+- Repaso con intervalos progresivos, fecha del siguiente repaso y elección explícita entre “Me costó” y “Lo sabía”.
 - Lecciones de gramática que enlazan sus frases con palabras del catálogo.
 - Diagnóstico ampliado de 12 preguntas con dimensiones de gramática, vocabulario, escritura, escucha y pronunciación.
 - Práctica de conversación con grabación y transcripción del navegador cuando el dispositivo lo permite.

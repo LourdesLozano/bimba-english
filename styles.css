@@ -59,6 +59,11 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .lesson-card { border: 1px solid var(--line); padding: 20px; border-radius: 17px; background: white; display: flex; flex-direction: column; gap: 12px; }
 .lesson-card .lesson-icon { background: var(--pink-soft); width: 43px; height: 43px; border-radius: 13px; display: grid; place-items: center; font-size: 21px; }
 .daily-plan { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: linear-gradient(110deg, #fff, #fff6f8); }
+.route-review { margin-top: 12px; background: var(--pink-soft); }
+.route-review .pill-button { margin-left: 8px; }
+.review-due { border-left: 4px solid var(--pink-deep); padding-left: 12px; }
+.due-tag { background: #fff0d3; color: #966b24; }
+.word-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
 .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
 .week-day { min-height: 160px; padding: 14px; }
 .week-day h3 { font-size: 14px; }
@@ -169,6 +174,12 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
   .nav-item { font-size: 11px; }
   .week-grid { grid-template-columns: 1fr; }
   .daily-plan { align-items: flex-start; flex-direction: column; }
+  .route-review .pill-button { margin: 10px 0 0; }
+  .word { align-items: flex-start; flex-direction: column; }
+  .word-actions { justify-content: flex-start; width: 100%; }
+  .grammar-table > div { grid-template-columns: 1fr; gap: 5px; }
+  .grammar-table strong { grid-row: auto; }
+  .grammar-position { grid-column: 1; }
   .grammar-method-steps, .grammar-cards { grid-template-columns: 1fr; }
   .vocabulary-method-steps { grid-template-columns: 1fr; }
 }
