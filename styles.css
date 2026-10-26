@@ -74,6 +74,11 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
 .word h3 { margin: 0; } .word small { color: var(--muted); }
 .pill-button { background: var(--pink-soft); color: #a35976; border-radius: 20px; padding: 7px 11px; }
 .save-word-button.saved { background: var(--pink); color: #8f3f61; font-weight: 800; }
+.vocabulary-method { margin: 20px 0; }
+.vocabulary-method-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+.vocabulary-method-steps div { display: grid; gap: 4px; padding: 12px; border-radius: 12px; background: var(--pink-soft); }
+.vocabulary-method-steps b { width: 25px; height: 25px; display: grid; place-items: center; border-radius: 50%; background: var(--pink-deep); color: white; }
+.vocabulary-method-steps span { color: var(--muted); font-size: 12px; }
 .audio-player { display: flex; align-items: center; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff9fb; margin: 14px 0; }
 .audio-control, .audio-pause, .speed-button { flex: 0 0 auto; border-radius: 50%; width: 36px; height: 36px; display: grid; place-items: center; background: var(--pink-deep); color: white; font-weight: 800; }
 .audio-pause { background: #633f4e; }
@@ -143,6 +148,7 @@ h1, h2, h3, p { margin-top: 0; } h1 { font-size: clamp(28px, 4vw, 42px); line-he
   .week-grid { grid-template-columns: 1fr; }
   .daily-plan { align-items: flex-start; flex-direction: column; }
   .grammar-method-steps, .grammar-cards { grid-template-columns: 1fr; }
+  .vocabulary-method-steps { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) { .filter-grid { grid-template-columns: 1fr; } }
 @media (max-width: 420px) {

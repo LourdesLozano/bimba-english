@@ -21,6 +21,7 @@ Abre `index.html` en un navegador o sirve esta carpeta con un servidor estático
 - El lote transversal de ampliación está en [`data/vocabulary/themes-expanded.js`](./data/vocabulary/themes-expanded.js) y cubre casa, personas, trabajo, viajes, salud, compras, tecnología, naturaleza, estudios, dinero y vida social con subtemas reales.
 - Dos modos de estudio: **unidades útiles** (palabras, expresiones, colocaciones y phrasal verbs) y **palabras únicas** (deduplicadas por tema). El catálogo legado se migra automáticamente para no perder contenido ni progreso.
 - Progreso independiente por tema, con palabras guardadas, respuestas correctas y porcentaje sobre palabras únicas.
+- Método de vocabulario basado en contexto, recuperación activa, producción propia y repaso espaciado; la lista guardada explica qué hacer en cada paso.
 - Validador reproducible del contenido en [`scripts/validate-vocabulary.js`](./scripts/validate-vocabulary.js): detecta IDs repetidos, duplicados temáticos, campos incompletos, CEFR/tipos/frecuencia/prioridad inválidos y fichas sin ejercicios.
 - Plan semanal inteligente que equilibra habilidades, nivel, objetivos, errores y lecciones pendientes.
 - Corrección local ampliada para artículos de uso, preposiciones, comparativos, tiempos, concordancia, colocaciones y errores frecuentes de interferencia del español.
